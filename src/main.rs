@@ -1,21 +1,51 @@
 mod error;
 mod cli;
 mod response;
-mod connection;
+mod config;
+mod terminal;
+mod event;
 
 use redis::Client;
 use error::RRTopError;
 use std::time::Duration;
-use crate::response::Info;
-use crate::connection::Config;
+use crate::config::Config;
+use cli::cli;
+use crate::event::{Events, AppEvent};
+use crossterm::event::Event;
 
 fn main() -> Result<(), RRTopError> {
-    let config = connection::Config::parse(cli::cli())?;
+    let config = config::Config::parse(cli())?;
     let mut client = connect(&config)?;
-    let result: Info = redis::cmd("INFO").query(&mut client)?;
 
-    println!("{:?}", result);
+    let terminal = terminal::create()?;
 
+    let mut events = Events::with_config(config, client)?;
+
+    loop {
+        match events.next()? {
+            AppEvent::Terminal(event) => {
+                match event {
+                    Event::Key(_) => {}
+                    Event::Mouse(_) => {}
+                    Event::Resize(_, _) => {}
+                }
+            }
+            AppEvent::Tick => {
+                events.send(AppEvent::Command)?;
+            }
+            AppEvent::Terminate => {
+                events.terminate();
+                break;
+            }
+            AppEvent::Result => {}
+            _ => {}
+        }
+    }
+
+    // let result: Info = redis::cmd("INFO").query(&mut client)?;
+    // println!("{:?}", result);
+
+    terminal::clean(terminal)?;
     Ok(())
 }
 
