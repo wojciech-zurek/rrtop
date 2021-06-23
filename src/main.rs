@@ -4,6 +4,9 @@ mod response;
 mod config;
 mod terminal;
 mod event;
+mod workers;
+mod layout;
+mod widget;
 
 use redis::Client;
 use error::RRTopError;
@@ -15,13 +18,14 @@ use crossterm::event::Event;
 
 fn main() -> Result<(), RRTopError> {
     let config = config::Config::parse(cli())?;
-    let mut client = connect(&config)?;
+    let client = connect(&config)?;
 
-    let terminal = terminal::create()?;
+    let mut terminal = terminal::create()?;
 
     let mut events = Events::with_config(config, client)?;
 
     loop {
+        layout::home::draw(&mut terminal)?;
         match events.next()? {
             AppEvent::Terminal(event) => {
                 match event {
@@ -37,7 +41,7 @@ fn main() -> Result<(), RRTopError> {
                 events.terminate();
                 break;
             }
-            AppEvent::Result => {}
+            AppEvent::Result(info) => {}
             _ => {}
         }
     }
