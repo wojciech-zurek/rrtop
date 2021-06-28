@@ -1,11 +1,13 @@
 use clap::ArgMatches;
 use crate::error::RRTopError;
+use crate::colorscheme::ColorScheme;
 
 pub struct Config {
     pub timeout: u64,
     pub url: String,
     pub worker_number: usize,
     pub tick_rate: u64,
+    pub color_scheme: ColorScheme,
 }
 
 impl Config {
@@ -21,11 +23,14 @@ impl Config {
             format!("redis://{}:{}/", host, port)
         };
 
+        let color_scheme = matches.value_of("color-scheme").unwrap().into();
+
         Ok(Config {
             timeout,
             url,
             worker_number,
             tick_rate,
+            color_scheme,
         })
     }
 }

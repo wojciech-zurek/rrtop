@@ -25,7 +25,7 @@ pub struct Events {
 }
 
 impl Events {
-    pub fn with_config(config: Config, client: Client) -> io::Result<Events> {
+    pub fn with_config(config: &Config, client: Client) -> io::Result<Events> {
         let (tx, rx) = flume::unbounded();
         let terminal_worker = setup_terminal_worker(tx.clone())?;
         let tick_worker = setup_tick_worker(tx.clone(), Duration::from_secs(config.tick_rate))?;

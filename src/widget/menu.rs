@@ -3,26 +3,29 @@ use tui::layout::Rect;
 use tui::buffer::Buffer;
 use tui::text::{Span, Spans};
 use tui::style::{Style, Modifier};
+use crate::colorscheme::ColorScheme;
 
-pub struct Menu {
+pub struct Menu<'a> {
     pub titles: Vec<String>,
-    pub selected: usize,
+    selected_tab: usize,
+    color_scheme: &'a ColorScheme,
 }
 
-impl Menu {
-    pub fn new() -> Self {
+impl <'a>Menu<'a> {
+    pub fn new(color_scheme: &'a ColorScheme) -> Self {
         Menu {
             titles: vec!["Main".to_owned(), "Other".to_owned()],
-            selected: 0
+            selected_tab: 0,
+            color_scheme,
         }
     }
 
-    pub fn select(&mut self, selected: usize){
-        self.selected = selected
+    pub fn select(&mut self, selected_tab: usize) {
+        self.selected_tab = selected_tab
     }
 }
 
-impl Widget for &Menu {
+impl <'a> Widget for & Menu<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let titles = self
             .titles
@@ -38,13 +41,10 @@ impl Widget for &Menu {
 
         let tabs = Tabs::new(titles)
             //   .block(Block::default().borders(Borders::ALL).title("Tabs"))
-            .select(self.selected)
+            .select(self.selected_tab)
             // .style(Style::default().fg(Color::Cyan))
             .highlight_style(
-                Style::default()
-                    .add_modifier(Modifier::BOLD)
-                    .add_modifier(Modifier::REVERSED)
-                //    .bg(Color::Black),
+                self.color_scheme.menu_highlight_style
             );
 
         tabs.render(area, buf);

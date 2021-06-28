@@ -7,6 +7,9 @@ mod event;
 mod workers;
 mod layout;
 mod widget;
+mod colorscheme;
+mod app;
+mod update;
 
 use redis::Client;
 use error::RRTopError;
@@ -14,7 +17,9 @@ use std::time::Duration;
 use crate::config::Config;
 use cli::cli;
 use crate::event::{Events, AppEvent};
-use crossterm::event::Event;
+use crossterm::event::{Event, KeyCode};
+use crate::app::App;
+use crate::update::Updatable;
 
 fn main() -> Result<(), RRTopError> {
     let config = config::Config::parse(cli())?;
@@ -22,14 +27,20 @@ fn main() -> Result<(), RRTopError> {
 
     let mut terminal = terminal::create()?;
 
-    let mut events = Events::with_config(config, client)?;
+    let mut events = Events::with_config(&config, client)?;
+    let mut app = App::new(&config.color_scheme);
 
     loop {
-        layout::home::draw(&mut terminal)?;
+        layout::draw(&mut terminal, &app)?;
         match events.next()? {
             AppEvent::Terminal(event) => {
                 match event {
-                    Event::Key(_) => {}
+                    Event::Key(e) => {
+                        match e.code {
+                            KeyCode::Tab => {app.on_tab()}
+                            _ => {}
+                        }
+                    }
                     Event::Mouse(_) => {}
                     Event::Resize(_, _) => {}
                 }
@@ -41,7 +52,9 @@ fn main() -> Result<(), RRTopError> {
                 events.terminate();
                 break;
             }
-            AppEvent::Result(info) => {}
+            AppEvent::Result(info) => {
+                &app.status_bar.update(&info);
+            }
             _ => {}
         }
     }

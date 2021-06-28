@@ -58,7 +58,6 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                         // println!("Done command {:?}", thread::current().name());
                         match redis::cmd("INFO").query::<Info>(&mut client) {
                             Ok(info) => {
-                                //todo send result
                                 if let Err(e) = tx.send(AppEvent::Result(info)) {
                                     eprintln!("{}", e);//todo: log error
                                     break;

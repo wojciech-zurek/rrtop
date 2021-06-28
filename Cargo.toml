@@ -12,3 +12,4 @@ redis = "0.20.2"
 crossterm = "0.20"
 tui = { version = "0.15", default-features = false, features = ['crossterm'] }
 flume = "0.10"
+chrono = "0.4"

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use redis::{FromRedisValue, RedisResult, Value, from_redis_value};
 
 #[derive(Debug, PartialEq)]
-pub struct Info(HashMap<String, String>);
+pub struct Info(pub HashMap<String, String>);
 
 impl FromRedisValue for Info {
     fn from_redis_value(v: &Value) -> RedisResult<Self> {
