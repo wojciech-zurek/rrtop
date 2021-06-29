@@ -1,5 +1,5 @@
 use crate::colorscheme::ColorScheme;
-use tui::widgets::{Widget, Block, Borders, Sparkline, Paragraph};
+use tui::widgets::{Widget, Block, Borders, Paragraph};
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
 use crate::event::Message;
@@ -8,6 +8,7 @@ use tui::style::{Modifier, Style, Color};
 use size::Size;
 use tui::text::Span;
 use tui::text::Spans;
+use crate::widget::sparkline::{Sparkline, RenderDirection};
 
 pub struct Network<'a> {
     title: String,
@@ -21,7 +22,7 @@ pub struct Network<'a> {
 impl<'a> Network<'a> {
     pub fn new(color_scheme: &'a ColorScheme) -> Self {
         Network {
-            title: "Network usage".to_string(),
+            title: " Network usage ".to_string(),
             input: Vec::new(),
             output: Vec::new(),
             total_input: 0,
@@ -43,37 +44,45 @@ impl<'a> Widget for &Network<'a> {
             .direction(Direction::Vertical)
             .constraints(
                 [
+                    Constraint::Length(1),
                     Constraint::Length(2),
                     Constraint::Length(2),
+                    Constraint::Length(1),
                     Constraint::Length(2),
                     Constraint::Length(2),
                 ]
                     .as_ref(),
             )
             .horizontal_margin(2)
-            .vertical_margin(2)
+            .vertical_margin(1)
             .split(area);
         //rx
         let spans = vec![
-            Spans::from(Span::from(format!("Total rx: {}", Size::Bytes(self.total_input)))),
-            Spans::from(Span::from(format!("Rx/s: {}/s", Size::Bytes(self.input.last().unwrap_or(&0).to_owned()))))
+            Spans::from(Span::styled(format!("Total rx: {}", Size::Bytes(self.total_input)), Style::default().add_modifier(Modifier::BOLD))),
+            Spans::from(Span::styled(format!("    Rx/s: {}/s", Size::Bytes(self.input.last().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
         ];
-        Paragraph::new(spans).render(chunks[0], buf);
+        Paragraph::new(spans).render(chunks[1], buf);
         Sparkline::default()
-            .data(&self.input)
-            .style(Style::default().fg(Color::Yellow))
-            .render(chunks[1], buf);
+            .data(self.input.iter().rev().map(|it| *it).collect::<Vec<u64>>().as_slice())
+            .show_baseline(true)
+            .fill_baseline(true)
+            .direction(RenderDirection::RightToLeft)
+            .style(Style::default().fg(Color::Green).bg(Color::Reset))
+            .render(chunks[2], buf);
 
         //tx
         let spans = vec![
-            Spans::from(Span::from(format!("Total tx: {}", Size::Bytes(self.total_output)))),
-            Spans::from(Span::from(format!("Tx/s: {}/s", Size::Bytes(self.output.last().unwrap_or(&0).to_owned()))))
+            Spans::from(Span::styled(format!("Total tx: {}", Size::Bytes(self.total_output)), Style::default().add_modifier(Modifier::BOLD))),
+            Spans::from(Span::styled(format!("    Tx/s: {}/s", Size::Bytes(self.output.last().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
         ];
-        Paragraph::new(spans).render(chunks[2], buf);
+        Paragraph::new(spans).render(chunks[4], buf);
         Sparkline::default()
-            .data(&self.output)
-            .style(Style::default().fg(Color::Blue))
-            .render(chunks[3], buf);
+            .data(self.output.iter().rev().map(|it| *it).collect::<Vec<u64>>().as_slice())
+            .show_baseline(true)
+            .fill_baseline(true)
+            .direction(RenderDirection::RightToLeft)
+            .style(Style::default().fg(Color::Blue).bg(Color::Reset))
+            .render(chunks[5], buf);
     }
 }
 
