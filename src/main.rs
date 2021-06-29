@@ -52,8 +52,9 @@ fn main() -> Result<(), RRTopError> {
                 events.terminate();
                 break;
             }
-            AppEvent::Result(info) => {
-                &app.status_bar.update(&info);
+            AppEvent::Result(message) => {
+                &app.status_bar.update(&message);
+                &app.network.update(&message);
             }
             _ => {}
         }

@@ -13,7 +13,21 @@ pub enum AppEvent {
     Tick,
     Terminate,
     Command,
-    Result(Info),
+    Result(Message),
+}
+
+pub struct Message {
+    pub info: Info,
+    pub latency: u128,
+}
+
+impl Message {
+    pub fn new(info: Info, latency: u128) -> Self {
+        Message {
+            info,
+            latency,
+        }
+    }
 }
 
 pub struct Events {

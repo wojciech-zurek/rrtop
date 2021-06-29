@@ -1,10 +1,12 @@
 use crate::colorscheme::ColorScheme;
 use crate::widget::menu::Menu;
 use crate::widget::status_bar::StatusBar;
+use crate::widget::network::Network;
 
 pub struct App<'a> {
     pub menu: Menu<'a>,
     pub status_bar: StatusBar<'a>,
+    pub network: Network<'a>,
     pub selected_tab: usize,
 }
 
@@ -13,6 +15,7 @@ impl<'a> App<'a> {
         App {
             menu: Menu::new(color_scheme),
             status_bar: StatusBar::new(color_scheme),
+            network: Network::new(color_scheme),
             selected_tab: 0,
         }
     }

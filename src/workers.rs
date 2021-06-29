@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyModifiers};
 use flume::{Sender, Receiver};
-use crate::event::AppEvent;
-use std::{io, thread};
+use crate::event::{AppEvent, Message};
+use std::{io, thread, time};
 use std::thread::JoinHandle;
 use crossterm::event::Event::Key;
 use crossterm::event;
@@ -53,24 +53,23 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                 let event = rx.recv().unwrap_or(AppEvent::Terminate);
                 match event {
                     AppEvent::Command => {
-                        // println!("Incoming command {:?}", thread::current().name());
-                        // sleep(Duration::from_secs(2));
-                        // println!("Done command {:?}", thread::current().name());
+                        let start = time::Instant::now();
                         match redis::cmd("INFO").query::<Info>(&mut client) {
                             Ok(info) => {
-                                if let Err(e) = tx.send(AppEvent::Result(info)) {
+                                if let Err(e) = tx.send(
+                                    AppEvent::Result(Message::new(info, start.elapsed().as_millis()))
+                                ) {
                                     eprintln!("{}", e);//todo: log error
                                     break;
                                 }
                             }
                             Err(e) => {
                                 eprintln!("{}", e);//todo: log error
-                                break;// ?
+                                //break;// ?
                             }
                         };
                     }
                     AppEvent::Terminate => {
-                        // println!("Terminate {:?}", thread::current().name());
                         break;
                     }
                     _ => {}

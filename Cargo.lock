@@ -519,6 +519,7 @@ dependencies = [
  "crossterm 0.20.0",
  "flume",
  "redis",
+ "size",
  "tui",
 ]
 
@@ -573,6 +574,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e51e73328dc4ac0c7ccbda3a494dfa03df1de2f46018127f60c693f2648455b0"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "size"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e5021178e8e70579d009fb545932e274ec2dde4c917791c6063d1002bee2a56"
+dependencies = [
+ "num-traits",
 ]
 
 [[package]]
