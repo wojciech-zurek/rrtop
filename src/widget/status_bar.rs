@@ -5,7 +5,6 @@ use tui::widgets::{Widget, Borders, Block, Paragraph};
 use tui::text::Span;
 use crate::update::Updatable;
 use crate::event::Message;
-use std::borrow::Borrow;
 
 pub struct StatusBar<'a> {
     uptime: i64,

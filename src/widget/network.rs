@@ -9,25 +9,29 @@ use size::Size;
 use tui::text::Span;
 use tui::text::Spans;
 use crate::widget::sparkline::{Sparkline, RenderDirection};
+use std::collections::VecDeque;
 
 pub struct Network<'a> {
     title: String,
-    input: Vec<u64>,
-    output: Vec<u64>,
+    input: VecDeque<u64>,
+    output: VecDeque<u64>,
     total_input: i64,
     total_output: i64,
     color_scheme: &'a ColorScheme,
+    max_elements: usize,
 }
 
 impl<'a> Network<'a> {
     pub fn new(color_scheme: &'a ColorScheme) -> Self {
+        let max_elements = 250;
         Network {
             title: " Network usage ".to_string(),
-            input: Vec::new(),
-            output: Vec::new(),
+            input: VecDeque::with_capacity(max_elements),
+            output: VecDeque::with_capacity(max_elements),
             total_input: 0,
             total_output: 0,
             color_scheme,
+            max_elements,
         }
     }
 }
@@ -59,11 +63,11 @@ impl<'a> Widget for &Network<'a> {
         //rx
         let spans = vec![
             Spans::from(Span::styled(format!("Total rx: {}", Size::Bytes(self.total_input)), Style::default().add_modifier(Modifier::BOLD))),
-            Spans::from(Span::styled(format!("    Rx/s: {}/s", Size::Bytes(self.input.last().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
+            Spans::from(Span::styled(format!("    Rx/s: {}/s", Size::Bytes(self.input.front().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
         Sparkline::default()
-            .data(self.input.iter().rev().map(|it| *it).collect::<Vec<u64>>().as_slice())
+            .data(self.input.iter().map(|it| *it).collect::<Vec<u64>>().as_slice())
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
@@ -73,11 +77,11 @@ impl<'a> Widget for &Network<'a> {
         //tx
         let spans = vec![
             Spans::from(Span::styled(format!("Total tx: {}", Size::Bytes(self.total_output)), Style::default().add_modifier(Modifier::BOLD))),
-            Spans::from(Span::styled(format!("    Tx/s: {}/s", Size::Bytes(self.output.last().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
+            Spans::from(Span::styled(format!("    Tx/s: {}/s", Size::Bytes(self.output.front().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
         ];
         Paragraph::new(spans).render(chunks[4], buf);
         Sparkline::default()
-            .data(self.output.iter().rev().map(|it| *it).collect::<Vec<u64>>().as_slice())
+            .data(self.output.iter().map(|it| *it).collect::<Vec<u64>>().as_slice())
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
@@ -90,20 +94,35 @@ impl<'a> Updatable<&Message> for Network<'a> {
     fn update(&mut self, message: &Message) {
         if let Some(total_input) = message.info.0.get("total_net_input_bytes") {
             self.total_input = total_input.parse::<i64>().unwrap_or(0);
+        } else {
+            self.total_input = 0;
         }
 
         if let Some(total_output) = message.info.0.get("total_net_output_bytes") {
             self.total_output = total_output.parse::<i64>().unwrap_or(0);
+        } else {
+            self.total_output = 0;
         }
 
+        if self.input.len() >= self.max_elements {
+            self.input.pop_back();
+        }
         if let Some(input) = message.info.0.get("instantaneous_input_kbps") {
             let i = input.parse::<f64>().unwrap_or(0.0);
-            self.input.push((i * 1000.0) as u64);
+            self.input.push_front((i * 1000.0) as u64);
+        } else {
+            self.input.push_front(0);
+        }
+
+        if self.output.len() >= self.max_elements {
+            self.output.pop_back();
         }
 
         if let Some(output) = message.info.0.get("instantaneous_output_kbps") {
             let o = output.parse::<f64>().unwrap_or(0.0);
-            self.output.push((o * 1000.0) as u64);
+            self.output.push_front((o * 1000.0) as u64);
+        } else {
+            self.output.push_front(0);
         }
     }
 }

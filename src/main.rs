@@ -28,7 +28,7 @@ fn main() -> Result<(), RRTopError> {
     let mut terminal = terminal::create()?;
 
     let mut events = Events::with_config(&config, client)?;
-    let mut app = App::new(&config.color_scheme);
+    let mut app = App::new(&config.color_scheme, config.tick_rate);
 
     loop {
         layout::draw(&mut terminal, &app)?;
@@ -55,6 +55,8 @@ fn main() -> Result<(), RRTopError> {
             AppEvent::Result(message) => {
                 &app.status_bar.update(&message);
                 &app.network.update(&message);
+                &app.throughput.update(&message);
+                &app.cpu.update(&message);
             }
             _ => {}
         }
