@@ -4,6 +4,7 @@ use crate::widget::status_bar::StatusBar;
 use crate::widget::network::Network;
 use crate::widget::throughput::Throughput;
 use crate::widget::cpu::Cpu;
+use crate::widget::memory::Memory;
 
 pub struct App<'a> {
     pub menu: Menu<'a>,
@@ -11,6 +12,7 @@ pub struct App<'a> {
     pub network: Network<'a>,
     pub throughput: Throughput<'a>,
     pub cpu: Cpu<'a>,
+    pub memory: Memory<'a>,
     pub selected_tab: usize,
 }
 
@@ -22,6 +24,7 @@ impl<'a> App<'a> {
             network: Network::new(color_scheme),
             throughput: Throughput::new(color_scheme),
             cpu: Cpu::new(color_scheme, tick_rate),
+            memory: Memory::new(color_scheme, tick_rate),
             selected_tab: 0,
         }
     }

@@ -37,7 +37,7 @@ fn main() -> Result<(), RRTopError> {
                 match event {
                     Event::Key(e) => {
                         match e.code {
-                            KeyCode::Tab => {app.on_tab()}
+                            KeyCode::Tab => { app.on_tab() }
                             _ => {}
                         }
                     }
@@ -57,6 +57,7 @@ fn main() -> Result<(), RRTopError> {
                 &app.network.update(&message);
                 &app.throughput.update(&message);
                 &app.cpu.update(&message);
+                &app.memory.update(&message);
             }
             _ => {}
         }

@@ -29,7 +29,19 @@ pub fn draw(f: &mut Frame<Backend>, area: Rect, app: &App) {
 }
 
 fn draw_top(f: &mut Frame<Backend>, area: Rect, app: &App) {
-    f.render_widget(&app.cpu, area);
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(50),
+                Constraint::Percentage(12),
+            ]
+                .as_ref(),
+        )
+        .split(area);
+
+    f.render_widget(&app.cpu, chunks[0]);
+    f.render_widget(&app.memory, chunks[1]);
 }
 
 fn draw_middle(f: &mut Frame<Backend>, area: Rect, app: &App) {

@@ -55,7 +55,7 @@ impl<'a> Widget for &Throughput<'a> {
 
         let spans = vec![
             Spans::from(Span::styled(format!("Total commands: {}", self.total_commands), Style::default().add_modifier(Modifier::BOLD))),
-            Spans::from(Span::styled(format!("          Ops/s: {} ops/s", self.ops_per_sec.front().unwrap_or(&0).to_owned()), Style::default().add_modifier(Modifier::BOLD)))
+            Spans::from(Span::styled(format!("         Ops/s: {} ops/s", self.ops_per_sec.front().unwrap_or(&0).to_owned()), Style::default().add_modifier(Modifier::BOLD)))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
         Sparkline::default()

@@ -27,7 +27,7 @@ impl<'a> Cpu<'a> {
     pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
         let max_elements = 250;
         Cpu {
-            title: " CPU ".to_string(),
+            title: " CPU usage".to_string(),
             cpu_sys: VecDeque::with_capacity(max_elements),
             cpu_user: VecDeque::with_capacity(max_elements),
             last_cpu_sys: 0.0,
@@ -53,13 +53,13 @@ impl<'a> Widget for &Cpu<'a> {
             .direction(Direction::Vertical)
             .constraints(
                 [
-                    Constraint::Length(5),
-                    Constraint::Length(5),
+                    Constraint::Length(6),
+                    Constraint::Length(6),
                 ]
                     .as_ref(),
             )
-            .horizontal_margin(2)
-            .vertical_margin(1)
+            .horizontal_margin(1)
+            .vertical_margin(0)
             .split(area);
 
 
@@ -77,12 +77,12 @@ impl<'a> Widget for &Cpu<'a> {
         Chart::new(vec![dataset])
             .y_axis(Axis::default().bounds([0.0, 15.0]))
             .x_axis(Axis::default()
-                .bounds([self.update_count as f64 - (area.width as f64) / 3.0, self.update_count as f64 + 1.0])
+                .bounds([self.update_count as f64 - area.width as f64, self.update_count as f64 + 1.0])
             )
             .render(chunks[0], buf);
 
         //cpu user
-        let cpu_user = self.cpu_user.iter().map(|it| (it.0, it.1)).collect::<Vec<(f64, f64)>>();
+        let cpu_user = self.cpu_user.iter().map(|it| (it.0, it.1 * -1.0)).collect::<Vec<(f64, f64)>>();
 
         let dataset = Dataset::default()
             .marker(Marker::Braille)
@@ -92,26 +92,25 @@ impl<'a> Widget for &Cpu<'a> {
 
         //chart
         Chart::new(vec![dataset])
-            .y_axis(Axis::default().bounds([0.0, 15.0]))
+            .y_axis(Axis::default().bounds([-15.0, 0.0]))
             .x_axis(Axis::default()
-                .bounds([self.update_count as f64 - (area.width as f64) / 3.0, self.update_count as f64 + 1.0])
+                .bounds([self.update_count as f64 - area.width as f64, self.update_count as f64 + 1.0])
             )
             .render(chunks[1], buf);
 
 
         buf.set_string(
             area.x + 3,
-            area.y + 7,
-            format!("User CPU: {:.02}%", self.last_diff_cpu_user),
-            Style::default().add_modifier(Modifier::BOLD).fg(Color::Blue),
+            area.y + 2,
+            format!(" Sys CPU: {:.02}%", self.last_diff_cpu_sys),
+            Style::default().add_modifier(Modifier::BOLD).fg(Color::Red),
         );
 
-        let last = self.cpu_sys.front().unwrap_or(&(0.0, 0.001));
         buf.set_string(
             area.x + 3,
-            area.y + 2,
-            format!(" Sys CPU: {:.02}% {}", self.last_diff_cpu_sys, &last.1),
-            Style::default().add_modifier(Modifier::BOLD).fg(Color::Red),
+            area.y + 9,
+            format!("User CPU: {:.02}%", self.last_diff_cpu_user),
+            Style::default().add_modifier(Modifier::BOLD).fg(Color::Blue),
         );
     }
 }
@@ -121,14 +120,10 @@ impl<'a> Updatable<&Message> for Cpu<'a> {
         self.update_count += 1;
 
         //cpu sys
-        if self.cpu_sys.len() >= self.max_elements {
-            self.cpu_sys.pop_back();
-        }
-
-        if let Some(used_cpu_sys) = message.info.0.get("used_cpu_sys") {
+        let diff_cpu_sys = if let Some(used_cpu_sys) = message.info.0.get("used_cpu_sys") {
             let cpu_sys = used_cpu_sys.parse::<f64>().unwrap_or(0.0);
 
-            let diff_cpu_sys = if self.last_cpu_sys == 0.0 {
+            if self.last_cpu_sys == 0.0 {
                 self.last_cpu_sys = cpu_sys;
                 0.0001
             } else {
@@ -139,24 +134,23 @@ impl<'a> Updatable<&Message> for Cpu<'a> {
                 } else {
                     diff
                 }
-            };
-
-            self.last_diff_cpu_sys = diff_cpu_sys * 100.0;
-
-            self.cpu_sys.push_front((self.update_count as f64, (diff_cpu_sys * 10_000.0).log2()));
+            }
         } else {
-            self.cpu_sys.push_front((self.update_count as f64, 0.0));
+            0.0
+        };
+
+        self.last_diff_cpu_sys = diff_cpu_sys * 100.0;
+
+        if self.cpu_sys.len() >= self.max_elements {
+            self.cpu_sys.pop_back();
         }
+
+        self.cpu_sys.push_front((self.update_count as f64, (diff_cpu_sys * 10_000.0).log2()));
 
         // cpu user
-        if self.cpu_user.len() >= self.max_elements {
-            self.cpu_user.pop_back();
-        }
-
-        if let Some(used_cpu_user) = message.info.0.get("used_cpu_user") {
+        let diff_cpu_user = if let Some(used_cpu_user) = message.info.0.get("used_cpu_user") {
             let cpu_user = used_cpu_user.parse::<f64>().unwrap_or(0.0);
-
-            let diff_cpu_user = if self.last_cpu_user == 0.0 {
+            if self.last_cpu_user == 0.0 {
                 self.last_cpu_user = cpu_user;
                 0.0001
             } else {
@@ -167,13 +161,17 @@ impl<'a> Updatable<&Message> for Cpu<'a> {
                 } else {
                     diff
                 }
-            };
-
-            self.last_diff_cpu_user = diff_cpu_user * 100.0;
-
-            self.cpu_user.push_front((self.update_count as f64, (diff_cpu_user * 10_000.0).log2()));
+            }
         } else {
-            self.cpu_user.push_front((self.update_count as f64, 0.0));
+            0.0
+        };
+
+        self.last_diff_cpu_user = diff_cpu_user * 100.0;
+
+        if self.cpu_user.len() >= self.max_elements {
+            self.cpu_user.pop_back();
         }
+
+        self.cpu_user.push_front((self.update_count as f64, (diff_cpu_user * 10_000.0).log2()));
     }
 }

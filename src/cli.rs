@@ -3,6 +3,12 @@ use clap::{ArgMatches, App, Arg};
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
 const NAME: &str = env!("CARGO_PKG_NAME");
+const DEFAULT_HOST: &str = "127.0.0.1";
+const DEFAULT_PORT: &str = "6379";
+const DEFAULT_CONNECTION_TIMEOUT: &str = "5";
+const DEFAULT_TICK_RATE: &str = "2";
+const DEFAULT_WORKER_NUMBER: &str = "1";
+const DEFAULT_COLOR_SCHEME: &str = "default";
 
 pub fn cli() -> ArgMatches {
     App::new(NAME)
@@ -12,13 +18,13 @@ pub fn cli() -> ArgMatches {
         .arg(Arg::new("host")
             .short('h')
             .about("Server hostname.")
-            .default_value("127.0.0.1")
+            .default_value(DEFAULT_HOST)
             .required(false)
             .takes_value(true))
         .arg(Arg::new("port")
             .short('p')
             .about("Server port.")
-            .default_value("6379")
+            .default_value(DEFAULT_PORT)
             .required(false)
             .takes_value(true))
         .arg(Arg::new("socket")
@@ -29,26 +35,26 @@ pub fn cli() -> ArgMatches {
         .arg(Arg::new("connection-timeout")
             .short('t')
             .about("Connection timeout in seconds")
-            .default_value("5")
+            .default_value(DEFAULT_CONNECTION_TIMEOUT)
             .required(false)
             .takes_value(true))
         .arg(Arg::new("tick-rate")
             .short('r')
             .about("Tick rate in seconds. Be careful.")
-            .default_value("3")
+            .default_value(DEFAULT_TICK_RATE)
             .required(false)
             .takes_value(true))
         .arg(Arg::new("worker-number")
             .short('w')
             .about("Worker number Be careful.")
-            .default_value("1")
+            .default_value(DEFAULT_WORKER_NUMBER)
             .required(false)
             .takes_value(true))
         .arg(Arg::new("color-scheme")
             .short('c')
             .about("Color scheme.")
             .possible_values(&["default", "nord"])
-            .default_value("default")
+            .default_value(DEFAULT_COLOR_SCHEME)
             .required(false)
             .takes_value(true))
         .get_matches()

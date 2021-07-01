@@ -4,3 +4,5 @@ pub mod network;
 pub mod sparkline;
 pub mod throughput;
 pub mod cpu;
+pub mod memory;
+pub mod memory_sparkline;
