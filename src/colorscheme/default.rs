@@ -1,12 +1,24 @@
-use crate::colorscheme::ColorScheme;
-use tui::style::{Style, Modifier};
+use crate::colorscheme::{ColorScheme, ColorHolder};
+use tui::style::{Style, Modifier, Color};
 
 
-pub fn new() -> ColorScheme {
-    ColorScheme {
-        text: Style::default(),
-        menu_highlight_style: Style::default()
-            .add_modifier(Modifier::BOLD)
-            .add_modifier(Modifier::REVERSED),
+pub fn new() -> ColorHolder {
+    ColorHolder {
+        main_bg: Color::Reset,
+        main_fg: Color::Reset,
+        menu_bg: Color::Reset,
+        menu_fg: Color::Reset,
+        memory_title_fg: Color::Reset,
+        memory_border_fg: Color::Reset,
+        memory_max_memory_text_fg: Color::Reset,
+        memory_max_memory_dataset_fg: Color::Reset,
+        memory_used_memory_text_fg: Color::Reset,
+        memory_used_memory_dataset_fg: Color::Reset,
+        cpu_title_fg: Color::Reset,
+        cpu_border_fg: Color::Reset,
+        cpu_sys_cpu_text_fg: Color::Reset,
+        cpu_sys_cpu_dataset_fg: Color::Reset,
+        cpu_user_cpu_text_fg: Color::Reset,
+        cpu_user_cpu_dataset_fg: Color::Reset
     }
 }

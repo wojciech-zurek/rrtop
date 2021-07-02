@@ -6,8 +6,8 @@ use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
 use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders};
 use tui::symbols::Marker;
-use tui::style::{Style, Color, Modifier};
 use tui::text::Span;
+use crate::widget::{title, title_span};
 
 pub struct Cpu<'a> {
     title: String,
@@ -27,7 +27,7 @@ impl<'a> Cpu<'a> {
     pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
         let max_elements = 250;
         Cpu {
-            title: " CPU usage".to_string(),
+            title: "CPU usage".to_owned(),
             cpu_sys: VecDeque::with_capacity(max_elements),
             cpu_user: VecDeque::with_capacity(max_elements),
             last_cpu_sys: 0.0,
@@ -46,8 +46,9 @@ impl<'a> Widget for &Cpu<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         Block::default()
             .borders(Borders::ALL)
-            //.border_style(colorscheme.borders)
-            .title(Span::from(self.title.as_str())).render(area, buf);
+            .border_style(self.color_scheme.cpu_border)
+            .title(title_span(&self.title, self.color_scheme.cpu_title, self.color_scheme.cpu_border))
+            .render(area, buf);
 
         let chunks = Layout::default()
             .direction(Direction::Vertical)
@@ -69,7 +70,7 @@ impl<'a> Widget for &Cpu<'a> {
         let dataset = Dataset::default()
             .marker(Marker::Braille)
             .graph_type(GraphType::Line)
-            .style(Style::default().fg(Color::Red))
+            .style(self.color_scheme.cpu_sys_cpu_dataset)
             .data(&cpu_sys);
 
 
@@ -79,6 +80,7 @@ impl<'a> Widget for &Cpu<'a> {
             .x_axis(Axis::default()
                 .bounds([self.update_count as f64 - area.width as f64, self.update_count as f64 + 1.0])
             )
+            .style(self.color_scheme.cpu_chart)
             .render(chunks[0], buf);
 
         //cpu user
@@ -87,7 +89,7 @@ impl<'a> Widget for &Cpu<'a> {
         let dataset = Dataset::default()
             .marker(Marker::Braille)
             .graph_type(GraphType::Line)
-            .style(Style::default().fg(Color::Blue))
+            .style(self.color_scheme.cpu_user_cpu_dataset)
             .data(&cpu_user);
 
         //chart
@@ -96,6 +98,7 @@ impl<'a> Widget for &Cpu<'a> {
             .x_axis(Axis::default()
                 .bounds([self.update_count as f64 - area.width as f64, self.update_count as f64 + 1.0])
             )
+            .style(self.color_scheme.cpu_chart)
             .render(chunks[1], buf);
 
 
@@ -103,14 +106,14 @@ impl<'a> Widget for &Cpu<'a> {
             area.x + 3,
             area.y + 2,
             format!(" Sys CPU: {:.02}%", self.last_diff_cpu_sys),
-            Style::default().add_modifier(Modifier::BOLD).fg(Color::Red),
+            self.color_scheme.cpu_sys_cpu_text,
         );
 
         buf.set_string(
             area.x + 3,
             area.y + 9,
             format!("User CPU: {:.02}%", self.last_diff_cpu_user),
-            Style::default().add_modifier(Modifier::BOLD).fg(Color::Blue),
+            self.color_scheme.cpu_user_cpu_text,
         );
     }
 }

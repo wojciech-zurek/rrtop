@@ -10,6 +10,7 @@ use tui::text::Span;
 use tui::text::Spans;
 use crate::widget::sparkline::{Sparkline, RenderDirection};
 use std::collections::VecDeque;
+use crate::widget::title;
 
 pub struct Network<'a> {
     title: String,
@@ -25,7 +26,7 @@ impl<'a> Network<'a> {
     pub fn new(color_scheme: &'a ColorScheme) -> Self {
         let max_elements = 250;
         Network {
-            title: " Network usage ".to_string(),
+            title: title("Network usage"),
             input: VecDeque::with_capacity(max_elements),
             output: VecDeque::with_capacity(max_elements),
             total_input: 0,

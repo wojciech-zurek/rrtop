@@ -1,4 +1,4 @@
-use tui::widgets::{Widget, Tabs};
+use tui::widgets::{Widget, Tabs, Block, Borders};
 use tui::layout::Rect;
 use tui::buffer::Buffer;
 use tui::text::{Span, Spans};
@@ -40,11 +40,10 @@ impl <'a> Widget for & Menu<'a> {
             .collect();
 
         let tabs = Tabs::new(titles)
-            //   .block(Block::default().borders(Borders::ALL).title("Tabs"))
             .select(self.selected_tab)
-            // .style(Style::default().fg(Color::Cyan))
+            .style(self.color_scheme.main)
             .highlight_style(
-                self.color_scheme.menu_highlight_style
+                self.color_scheme.menu_highlight
             );
 
         tabs.render(area, buf);

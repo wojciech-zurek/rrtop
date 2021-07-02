@@ -9,6 +9,7 @@ use tui::text::Span;
 use tui::text::Spans;
 use crate::widget::sparkline::{Sparkline, RenderDirection};
 use std::collections::VecDeque;
+use crate::widget::title;
 
 pub struct Throughput<'a> {
     title: String,
@@ -22,7 +23,7 @@ impl<'a> Throughput<'a> {
     pub fn new(color_scheme: &'a ColorScheme) -> Self {
         let max_elements = 250;
         Throughput {
-            title: " Throughput ".to_string(),
+            title: title("Throughput"),
             ops_per_sec: VecDeque::with_capacity(max_elements),
             total_commands: 0,
             color_scheme,

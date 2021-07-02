@@ -40,8 +40,6 @@ fn draw_status_bar(f: &mut Frame<Backend>, area: Rect, app: &App) {
                 .as_ref(),
         )
         .split(area);
-
-
     f.render_widget(&app.menu, chunks[0]);
     f.render_widget(&app.status_bar, chunks[1]);
 }

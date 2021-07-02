@@ -31,21 +31,15 @@ impl<'a> StatusBar<'a> {
 impl<'a> Widget for &StatusBar<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let duration = chrono::Duration::seconds(self.uptime);
+
         let uptime = format!("{}d {:02}:{:02}:{:02}", duration.num_days(), duration.num_hours() % 24, duration.num_minutes() % 60, duration.num_seconds() % 60);
 
         let s = Span::from(format!("{}ms {} (v{}) pid:{}({})", self.latency, uptime, self.version, self.process_id, self.role));
 
-        // let border_style = Style::default().fg(NORD_3).add_modifier(Modifier::BOLD);
-
-        let paragraph = Paragraph::new(s)
+        Paragraph::new(s)
             .alignment(Alignment::Right)
-            .block(
-                Block::default()
-                    //       .title(Span::styled(self.title.as_str(), title_style))
-                    //   .border_style(border_style)
-                    .borders(Borders::NONE)
-            );
-        paragraph.render(area, buf);
+            .style(self.color_scheme.main)
+            .render(area, buf);
     }
 }
 

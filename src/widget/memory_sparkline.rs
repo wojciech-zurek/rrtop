@@ -11,6 +11,7 @@ use tui::text::Span;
 use tui::text::Spans;
 use size::Size;
 use crate::widget::sparkline::{RenderDirection, Sparkline};
+use crate::widget::title;
 
 pub struct Memory<'a> {
     title: String,
@@ -27,7 +28,7 @@ impl<'a> Memory<'a> {
     pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
         let max_elements = 250;
         Memory {
-            title: " Memory usage ".to_string(),
+            title: title("Memory usage"),
             used_memory: VecDeque::new(),
             last_used_memory: 0,
             last_max_memory: 0,
