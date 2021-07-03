@@ -7,7 +7,7 @@ use tui::buffer::Buffer;
 use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders};
 use tui::symbols::Marker;
 use tui::text::Span;
-use crate::widget::{title, title_span, LINE_SYMBOL, DOT_SYMBOL};
+use crate::widget::{title, title_span, MIN_DOT_SYMBOL};
 use tui::style::Color;
 
 pub struct Cpu<'a> {
@@ -64,6 +64,11 @@ impl<'a> Widget for &Cpu<'a> {
             .vertical_margin(0)
             .split(area);
 
+        for i in area.left() + 2..area.right() - 2 {
+            buf.get_mut(i, 5)
+                .set_style(self.color_scheme.cpu_chart_line)
+                .set_symbol(MIN_DOT_SYMBOL);
+        }
 
         //cpu sys
         let cpu_sys = self.cpu_sys.iter().map(|it| (it.0, it.1)).collect::<Vec<(f64, f64)>>();
@@ -116,12 +121,6 @@ impl<'a> Widget for &Cpu<'a> {
             format!("User CPU: {:.02}%", self.last_diff_cpu_user),
             self.color_scheme.cpu_user_cpu_text,
         );
-
-        for i in area.left() + 2..area.right() - 2 {
-            buf.get_mut(i, 5)
-                .set_style(self.color_scheme.cpu_chart_line)
-                .set_symbol(DOT_SYMBOL);
-        }
     }
 }
 

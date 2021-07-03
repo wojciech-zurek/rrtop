@@ -12,6 +12,7 @@ pub mod memory;
 pub mod memory_sparkline;
 
 const DOT_SYMBOL: &str = ".";
+const MIN_DOT_SYMBOL: &str = "⡀";
 const LINE_SYMBOL: &str = "_";
 
 fn title(title: &str) -> String {
