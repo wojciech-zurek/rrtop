@@ -14,8 +14,10 @@ use crate::widget::{title, title_span};
 pub struct Memory<'a> {
     title: String,
     used_memory: VecDeque<(f64, f64)>,
+    rss_memory: VecDeque<(f64, f64)>,
     max_memory: VecDeque<(f64, f64)>,
     last_used_memory: u64,
+    last_rss_memory: u64,
     last_max_memory: u64,
     color_scheme: &'a ColorScheme,
     max_elements: usize,
@@ -29,8 +31,10 @@ impl<'a> Memory<'a> {
         Memory {
             title: "memory".to_owned(),
             used_memory: VecDeque::new(),
+            rss_memory: VecDeque::new(),
             max_memory: VecDeque::new(),
             last_used_memory: 0,
+            last_rss_memory: 0,
             last_max_memory: 0,
             color_scheme,
             max_elements,
@@ -61,8 +65,17 @@ impl<'a> Widget for &Memory<'a> {
             .style(self.color_scheme.memory_used_memory_dataset)
             .data(&used_memory);
 
+        //rss memory
+        let rss_memory = self.rss_memory.iter().map(|it| (it.0, it.1)).collect::<Vec<(f64, f64)>>();
+
+        let rss_memory_dataset = Dataset::default()
+            .marker(Marker::Braille)
+            .graph_type(GraphType::Line)
+            .style(self.color_scheme.memory_rss_memory_dataset)
+            .data(&rss_memory);
+
         //chart
-        Chart::new(vec![max_memory_dataset, used_memory_dataset])
+        Chart::new(vec![max_memory_dataset, used_memory_dataset, rss_memory_dataset])
             .block(Block::default()
                 .borders(Borders::ALL)
                 .border_style(self.color_scheme.memory_border)
@@ -85,6 +98,13 @@ impl<'a> Widget for &Memory<'a> {
         buf.set_string(
             area.x + 3,
             area.y + 9,
+            format!("RSS memory: {}", Size::Bytes(self.last_rss_memory)),
+            self.color_scheme.memory_rss_memory_text,
+        );
+
+        buf.set_string(
+            area.x + 3,
+            area.y + 10,
             format!("Used memory: {}", Size::Bytes(self.last_used_memory)),
             self.color_scheme.memory_used_memory_text,
         );
@@ -109,6 +129,21 @@ impl<'a> Updatable<&Message> for Memory<'a> {
         }
 
         self.used_memory.push_front((self.update_count as f64, (used_memory as f64).log2()));
+
+        //used memory
+        let rss_memory = if let Some(rss_memory) = message.info.0.get("used_memory_rss") {
+            rss_memory.parse::<u64>().unwrap_or(0)
+        } else {
+            0
+        };
+
+        self.last_rss_memory = rss_memory;
+
+        if self.rss_memory.len() >= self.max_elements {
+            self.rss_memory.pop_back();
+        }
+
+        self.rss_memory.push_front((self.update_count as f64, (rss_memory as f64).log2()));
 
         // max memory
         let max_memory = if let Some(max_memory) = message.info.0.get("maxmemory") {

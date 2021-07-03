@@ -21,6 +21,8 @@ pub struct ColorHolder {
     memory_max_memory_dataset_fg: Color,
     memory_used_memory_text_fg: Color,
     memory_used_memory_dataset_fg: Color,
+    memory_rss_memory_text_fg: Color,
+    memory_rss_memory_dataset_fg: Color,
 
     cpu_title_fg: Color,
     cpu_border_fg: Color,
@@ -74,6 +76,8 @@ pub struct ColorScheme {
     pub memory_max_memory_dataset: Style,
     pub memory_used_memory_text: Style,
     pub memory_used_memory_dataset: Style,
+    pub memory_rss_memory_text: Style,
+    pub memory_rss_memory_dataset: Style,
 
     pub cpu_title: Style,
     pub cpu_border: Style,
@@ -129,6 +133,8 @@ impl ColorScheme {
                 .fg(ch.memory_used_memory_text_fg)
                 .add_modifier(Modifier::BOLD),
             memory_used_memory_dataset: Style::default().fg(ch.memory_used_memory_dataset_fg),
+            memory_rss_memory_text: Style::default().fg(ch.memory_rss_memory_text_fg),
+            memory_rss_memory_dataset: Style::default().fg(ch.memory_rss_memory_dataset_fg),
 
             cpu_title: Style::default().fg(ch.cpu_title_fg),
             cpu_border: Style::default().fg(ch.cpu_border_fg),

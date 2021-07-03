@@ -18,6 +18,8 @@ pub fn new() -> ColorHolder {
         memory_max_memory_dataset_fg: Color::Reset,
         memory_used_memory_text_fg: Color::Reset,
         memory_used_memory_dataset_fg: Color::Reset,
+        memory_rss_memory_text_fg: Color::Reset,
+        memory_rss_memory_dataset_fg: Color::Reset,
         cpu_title_fg: Color::Reset,
         cpu_border_fg: Color::Reset,
         cpu_chart_line_fg: Color::Reset,

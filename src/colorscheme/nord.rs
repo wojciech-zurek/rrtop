@@ -20,6 +20,8 @@ pub fn new() -> ColorHolder {
         memory_max_memory_dataset_fg: Color::Rgb(191, 97, 106),
         memory_used_memory_text_fg: Color::Rgb(129, 161, 193),
         memory_used_memory_dataset_fg: Color::Rgb(129, 161, 193),
+        memory_rss_memory_text_fg: Color::Rgb(163, 190, 140),
+        memory_rss_memory_dataset_fg: Color::Rgb(163, 190, 140),
 
         cpu_title_fg: Color::Rgb(143, 188, 187),
         cpu_border_fg: Color::Rgb(76, 86, 106),
