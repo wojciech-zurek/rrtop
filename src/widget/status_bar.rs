@@ -38,7 +38,7 @@ impl<'a> Widget for &StatusBar<'a> {
 
         Paragraph::new(s)
             .alignment(Alignment::Right)
-            .style(self.color_scheme.main)
+            .style(self.color_scheme.status_bar)
             .render(area, buf);
     }
 }

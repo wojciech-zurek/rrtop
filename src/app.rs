@@ -5,6 +5,7 @@ use crate::widget::network::Network;
 use crate::widget::throughput::Throughput;
 use crate::widget::cpu::Cpu;
 use crate::widget::memory::Memory;
+use tui::style::Style;
 
 pub struct App<'a> {
     pub menu: Menu<'a>,
@@ -14,10 +15,11 @@ pub struct App<'a> {
     pub cpu: Cpu<'a>,
     pub memory: Memory<'a>,
     pub selected_tab: usize,
+    pub draw_background: Option<Style>,
 }
 
 impl<'a> App<'a> {
-    pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
+    pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64, draw_background: Option<Style>) -> Self {
         App {
             menu: Menu::new(color_scheme),
             status_bar: StatusBar::new(color_scheme),
@@ -26,6 +28,7 @@ impl<'a> App<'a> {
             cpu: Cpu::new(color_scheme, tick_rate),
             memory: Memory::new(color_scheme, tick_rate),
             selected_tab: 0,
+            draw_background,
         }
     }
 

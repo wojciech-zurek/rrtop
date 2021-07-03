@@ -9,6 +9,7 @@ const DEFAULT_CONNECTION_TIMEOUT: &str = "5";
 const DEFAULT_TICK_RATE: &str = "2";
 const DEFAULT_WORKER_NUMBER: &str = "1";
 const DEFAULT_COLOR_SCHEME: &str = "default";
+const TRUE: &str = "true";
 
 pub fn cli() -> ArgMatches {
     App::new(NAME)
@@ -55,6 +56,12 @@ pub fn cli() -> ArgMatches {
             .about("Color scheme.")
             .possible_values(&["default", "nord"])
             .default_value(DEFAULT_COLOR_SCHEME)
+            .required(false)
+            .takes_value(true))
+        .arg(Arg::new("draw-background")
+            .short('d')
+            .about("Draw background")
+            .default_value(TRUE)
             .required(false)
             .takes_value(true))
         .get_matches()

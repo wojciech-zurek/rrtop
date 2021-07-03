@@ -10,7 +10,7 @@ use tui::text::Span;
 use tui::text::Spans;
 use crate::widget::sparkline::{Sparkline, RenderDirection};
 use std::collections::VecDeque;
-use crate::widget::title;
+use crate::widget::{title, title_span};
 
 pub struct Network<'a> {
     title: String,
@@ -41,8 +41,9 @@ impl<'a> Widget for &Network<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         Block::default()
             .borders(Borders::ALL)
-            //.border_style(colorscheme.borders)
-            .title(Span::from(self.title.as_str())).render(area, buf);
+            .border_style(self.color_scheme.network_border)
+            .title(title_span(&self.title, self.color_scheme.network_title, self.color_scheme.network_border))
+            .render(area, buf);
 
 
         let chunks = Layout::default()
@@ -63,8 +64,8 @@ impl<'a> Widget for &Network<'a> {
             .split(area);
         //rx
         let spans = vec![
-            Spans::from(Span::styled(format!("Total rx: {}", Size::Bytes(self.total_input)), Style::default().add_modifier(Modifier::BOLD))),
-            Spans::from(Span::styled(format!("    Rx/s: {}/s", Size::Bytes(self.input.front().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
+            Spans::from(Span::styled(format!("Total rx: {}", Size::Bytes(self.total_input)), self.color_scheme.network_rx_total_text)),
+            Spans::from(Span::styled(format!("    Rx/s: {}/s", Size::Bytes(self.input.front().unwrap_or(&0).to_owned())), self.color_scheme.network_rx_s_text))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
         Sparkline::default()
@@ -72,13 +73,14 @@ impl<'a> Widget for &Network<'a> {
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
-            .style(Style::default().fg(Color::Green).bg(Color::Reset))
+            .style(self.color_scheme.network_rx_sparkline)
+            .baseline_style(self.color_scheme.network_rx_sparkline_baseline)
             .render(chunks[2], buf);
 
         //tx
         let spans = vec![
-            Spans::from(Span::styled(format!("Total tx: {}", Size::Bytes(self.total_output)), Style::default().add_modifier(Modifier::BOLD))),
-            Spans::from(Span::styled(format!("    Tx/s: {}/s", Size::Bytes(self.output.front().unwrap_or(&0).to_owned())), Style::default().add_modifier(Modifier::BOLD)))
+            Spans::from(Span::styled(format!("Total tx: {}", Size::Bytes(self.total_output)), self.color_scheme.network_tx_total_text)),
+            Spans::from(Span::styled(format!("    Tx/s: {}/s", Size::Bytes(self.output.front().unwrap_or(&0).to_owned())), self.color_scheme.network_tx_s_text))
         ];
         Paragraph::new(spans).render(chunks[4], buf);
         Sparkline::default()
@@ -86,7 +88,8 @@ impl<'a> Widget for &Network<'a> {
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
-            .style(Style::default().fg(Color::Blue).bg(Color::Reset))
+            .style(self.color_scheme.network_tx_sparkline)
+            .baseline_style(self.color_scheme.network_rx_sparkline_baseline)
             .render(chunks[5], buf);
     }
 }

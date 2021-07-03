@@ -7,7 +7,8 @@ use tui::buffer::Buffer;
 use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders};
 use tui::symbols::Marker;
 use tui::text::Span;
-use crate::widget::{title, title_span};
+use crate::widget::{title, title_span, LINE_SYMBOL, DOT_SYMBOL};
+use tui::style::Color;
 
 pub struct Cpu<'a> {
     title: String,
@@ -27,7 +28,7 @@ impl<'a> Cpu<'a> {
     pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
         let max_elements = 250;
         Cpu {
-            title: "CPU usage".to_owned(),
+            title: "cpu".to_owned(),
             cpu_sys: VecDeque::with_capacity(max_elements),
             cpu_user: VecDeque::with_capacity(max_elements),
             last_cpu_sys: 0.0,
@@ -115,6 +116,12 @@ impl<'a> Widget for &Cpu<'a> {
             format!("User CPU: {:.02}%", self.last_diff_cpu_user),
             self.color_scheme.cpu_user_cpu_text,
         );
+
+        for i in area.left() + 2..area.right() - 2 {
+            buf.get_mut(i, 5)
+                .set_style(self.color_scheme.cpu_chart_line)
+                .set_symbol(DOT_SYMBOL);
+        }
     }
 }
 

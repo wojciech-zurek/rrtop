@@ -2,10 +2,16 @@ use tui::{Frame};
 use crate::app::App;
 use tui::layout::{Layout, Direction, Constraint, Rect};
 use crate::terminal::{Backend, Terminal};
+use tui::style::{Style, Color};
 
 pub mod home;
 
 pub fn draw(terminal: &mut Terminal, app: &App) -> std::io::Result<()> {
+    if let Some(style) = app.draw_background {
+        let area = terminal.get_frame().size();
+        terminal.current_buffer_mut().set_style(area, style);
+    }
+
     terminal.draw(|f| {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
@@ -17,7 +23,6 @@ pub fn draw(terminal: &mut Terminal, app: &App) -> std::io::Result<()> {
                     .as_ref(),
             )
             .split(f.size());
-
         match app.selected_tab {
             0 => { home::draw(f, chunks[0], app) }
             _ => {}

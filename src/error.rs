@@ -3,12 +3,14 @@ use std::num::ParseIntError;
 use redis::RedisError;
 use flume::{RecvError, SendError};
 use crate::event::AppEvent;
+use std::str::ParseBoolError;
 
 #[derive(Debug)]
 pub enum RRTopError {
     RedisError(RedisError),
     UnknownQueryRedisError(String),
     ParseIntError(std::num::ParseIntError),
+    ParseBoolError(std::str::ParseBoolError),
     IoError(std::io::Error),
     RecvError(RecvError),
     SendError(SendError<AppEvent>),
@@ -20,6 +22,7 @@ impl fmt::Display for RRTopError {
         match self {
             RRTopError::RedisError(e) => write!(f, "{}", e),
             RRTopError::ParseIntError(e) => write!(f, "{}", e),
+            RRTopError::ParseBoolError(e) => write!(f, "{}", e),
             RRTopError::UnknownQueryRedisError(e) => write!(f, "{}", e),
             RRTopError::IoError(e) => write!(f, "{}", e),
             RRTopError::RecvError(e) => write!(f, "{}", e),
@@ -33,6 +36,12 @@ impl std::error::Error for RRTopError {}
 impl From<ParseIntError> for RRTopError {
     fn from(e: ParseIntError) -> Self {
         RRTopError::ParseIntError(e)
+    }
+}
+
+impl From<ParseBoolError> for RRTopError {
+    fn from(e: ParseBoolError) -> Self {
+        RRTopError::ParseBoolError(e)
     }
 }
 

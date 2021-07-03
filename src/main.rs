@@ -28,7 +28,7 @@ fn main() -> Result<(), RRTopError> {
     let mut terminal = terminal::create()?;
 
     let mut events = Events::with_config(&config, client)?;
-    let mut app = App::new(&config.color_scheme, config.tick_rate);
+    let mut app = App::new(&config.color_scheme, config.tick_rate, config.draw_background);
 
     loop {
         layout::draw(&mut terminal, &app)?;
@@ -42,7 +42,7 @@ fn main() -> Result<(), RRTopError> {
                         }
                     }
                     Event::Mouse(_) => {}
-                    Event::Resize(_, _) => {}
+                    Event::Resize(_, _) => { layout::draw(&mut terminal, &app)?; }
                 }
             }
             AppEvent::Tick => {

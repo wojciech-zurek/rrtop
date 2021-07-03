@@ -27,7 +27,7 @@ impl<'a> Memory<'a> {
     pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
         let max_elements = 250;
         Memory {
-            title: "Memory usage".to_owned(),
+            title: "memory".to_owned(),
             used_memory: VecDeque::new(),
             max_memory: VecDeque::new(),
             last_used_memory: 0,
