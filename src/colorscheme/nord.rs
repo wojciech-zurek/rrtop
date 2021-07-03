@@ -5,8 +5,12 @@ pub fn new() -> ColorHolder {
     ColorHolder {
         main_bg: Color::Rgb(46, 52, 64),
         main_fg: Color::Rgb(216, 222, 233),
+
         menu_bg: Color::Rgb(46, 52, 64),
-        menu_fg: Color::Rgb(129, 161, 193),
+        menu_fg: Color::Rgb(76, 86, 106),
+        menu_divider_fg: Color::Rgb(76, 86, 106),
+        menu_highlight_bg: Color::Rgb(46, 52, 64),
+        menu_highlight_fg: Color::Rgb(129, 161, 193),
 
         status_bar_fg: Color::Rgb(76, 86, 106),
 

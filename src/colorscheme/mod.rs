@@ -6,8 +6,12 @@ use tui::style::{Style, Color, Modifier};
 pub struct ColorHolder {
     main_bg: Color,
     main_fg: Color,
+
     menu_bg: Color,
     menu_fg: Color,
+    menu_divider_fg: Color,
+    menu_highlight_bg: Color,
+    menu_highlight_fg: Color,
 
     status_bar_fg: Color,
 
@@ -56,6 +60,9 @@ impl From<&str> for ColorHolder {
 
 pub struct ColorScheme {
     pub main: Style,
+
+    pub menu: Style,
+    pub menu_divider: Style,
     pub menu_highlight: Style,
 
     pub status_bar: Style,
@@ -100,12 +107,14 @@ pub struct ColorScheme {
 impl ColorScheme {
     pub fn new(ch: ColorHolder) -> ColorScheme {
         ColorScheme {
-            main: Style::default().bg(ch.main_bg).fg(ch.main_fg),
+            main: Style::default().fg(ch.main_fg).bg(ch.main_bg),
+
+            menu: Style::default().fg(ch.menu_fg).bg(ch.menu_bg),
+            menu_divider: Style::default().fg(ch.menu_divider_fg),
             menu_highlight: Style::default()
-                .add_modifier(Modifier::BOLD)
-                .add_modifier(Modifier::REVERSED)
-                .fg(ch.menu_fg)
-                .bg(ch.menu_bg),
+                .fg(ch.menu_highlight_fg)
+                .bg(ch.menu_highlight_bg)
+                .add_modifier(Modifier::BOLD),
 
             status_bar: Style::default().fg(ch.status_bar_fg),
 
