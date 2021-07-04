@@ -23,7 +23,7 @@ impl<'a> Throughput<'a> {
     pub fn new(color_scheme: &'a ColorScheme) -> Self {
         let max_elements = 250;
         Throughput {
-            title: "Throughput".to_owned(),
+            title: "throughput".to_owned(),
             ops_per_sec: VecDeque::with_capacity(max_elements),
             total_commands: 0,
             color_scheme,
@@ -73,20 +73,22 @@ impl<'a> Widget for &Throughput<'a> {
 
 impl<'a> Updatable<&Message> for Throughput<'a> {
     fn update(&mut self, message: &Message) {
-        if let Some(total_commands) = message.info.0.get("total_commands_processed") {
-            self.total_commands = total_commands.parse::<u128>().unwrap_or(0);
+        self.total_commands = if let Some(total_commands) = message.info.0.get("total_commands_processed") {
+            total_commands.parse::<u128>().unwrap_or(0)
         } else {
-            self.total_commands = 0;
-        }
+            0
+        };
 
         if self.ops_per_sec.len() >= self.max_elements {
             self.ops_per_sec.pop_back();
         }
-        if let Some(ops_per_sec) = message.info.0.get("instantaneous_ops_per_sec") {
-            let i = ops_per_sec.parse::<u64>().unwrap_or(0);
-            self.ops_per_sec.push_front(i);
+
+        let ops_per_sec = if let Some(ops_per_sec) = message.info.0.get("instantaneous_ops_per_sec") {
+            ops_per_sec.parse::<u64>().unwrap_or(0)
         } else {
-            self.ops_per_sec.push_front(0);
-        }
+            0
+        };
+
+        self.ops_per_sec.push_front(ops_per_sec);
     }
 }

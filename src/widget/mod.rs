@@ -10,6 +10,7 @@ pub mod throughput;
 pub mod cpu;
 pub mod memory;
 pub mod memory_sparkline;
+pub mod stat;
 
 const DOT_SYMBOL: &str = ".";
 const MIN_DOT_SYMBOL: &str = "⡀";

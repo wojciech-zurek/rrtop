@@ -49,6 +49,13 @@ pub struct ColorHolder {
     network_tx_s_text_fg: Color,
     network_tx_sparkline_fg: Color,
     network_tx_sparkline_baseline_fg: Color,
+
+    stat_title_fg: Color,
+    stat_border_fg: Color,
+    stat_table_header_fg: Color,
+    stat_table_row_top_fg: Color,
+    stat_table_row_middle_fg: Color,
+    stat_table_row_bottom_fg: Color,
 }
 
 impl From<&str> for ColorHolder {
@@ -105,6 +112,13 @@ pub struct ColorScheme {
     pub network_tx_s_text: Style,
     pub network_tx_sparkline: Style,
     pub network_tx_sparkline_baseline: Style,
+
+    pub stat_title: Style,
+    pub stat_border: Style,
+    pub stat_table_header: Style,
+    pub stat_table_row_top: Style,
+    pub stat_table_row_middle: Style,
+    pub stat_table_row_bottom: Style,
 
 }
 
@@ -178,6 +192,15 @@ impl ColorScheme {
                 .add_modifier(Modifier::BOLD),
             network_tx_sparkline: Style::default().fg(ch.network_tx_sparkline_fg),
             network_tx_sparkline_baseline: Style::default().fg(ch.network_tx_sparkline_baseline_fg),
+
+            stat_title: Style::default().fg(ch.stat_title_fg),
+            stat_border: Style::default().fg(ch.stat_border_fg),
+            stat_table_header: Style::default()
+                .fg(ch.stat_table_header_fg)
+                .add_modifier(Modifier::BOLD),
+            stat_table_row_top: Style::default().fg(ch.stat_table_row_top_fg),
+            stat_table_row_middle: Style::default().fg(ch.stat_table_row_middle_fg),
+            stat_table_row_bottom: Style::default().fg(ch.stat_table_row_bottom_fg),
         }
     }
 }
@@ -186,5 +209,54 @@ impl From<&str> for ColorScheme {
     fn from(s: &str) -> Self {
         let ch = ColorHolder::from(s);
         ColorScheme::new(ch)
+    }
+}
+
+impl ColorScheme {
+    pub fn color_table_cell(&self, index: u8, size: u16) -> Style {
+        let start_color = self.stat_table_row_top.fg.unwrap_or(Color::Rgb(255, 255, 255));
+        let mut start_r: f32;
+        let mut start_g: f32;
+        let mut start_b: f32;
+
+        match start_color {
+            Color::Rgb(r, g, b) => {
+                start_r = r as f32;
+                start_g = g as f32;
+                start_b = b as f32;
+            }
+            _ => return Style::default().fg(start_color)
+        }
+
+        let min = start_r.min(start_g).min(start_b) as u8;
+
+        let stop_color = self.stat_table_row_bottom.fg.unwrap_or(Color::Rgb(min, min, min));
+
+        let mut stop_r: f32;
+        let mut stop_g: f32;
+        let mut stop_b: f32;
+
+        match stop_color {
+            Color::Rgb(r, g, b) => {
+                stop_r = r as f32;
+                stop_g = g as f32;
+                stop_b = b as f32;
+            }
+            _ => return Style::default().fg(start_color)
+        }
+
+        let s = match size {
+            0..=12 => 12,
+            12..=30 => size,
+            _ => 30
+        } as f32;
+
+        let idx = index as f32;
+
+        let r = (start_r - (((start_r - stop_r).max(0.0) / s) * idx)).max(stop_r);
+        let g = (start_g - (((start_g - stop_g).max(0.0) / s) * idx)).max(stop_g);
+        let b = (start_b - (((start_b - stop_b).max(0.0) / s) * idx)).max(stop_b);
+
+        Style::default().fg(Color::Rgb(r as u8, g as u8, b as u8))
     }
 }

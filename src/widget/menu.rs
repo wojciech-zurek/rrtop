@@ -38,7 +38,6 @@ impl<'a> Widget for &Menu<'a> {
 
         let tabs = Tabs::new(titles)
             .select(self.selected_tab)
-            .style(self.color_scheme.main)
             .divider(Span::styled(symbols::line::VERTICAL, self.color_scheme.menu_divider))
             .highlight_style(self.color_scheme.menu_highlight);
 

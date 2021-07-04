@@ -6,7 +6,7 @@ use tui::style::{Style, Color};
 
 pub mod home;
 
-pub fn draw(terminal: &mut Terminal, app: &App) -> std::io::Result<()> {
+pub fn draw(terminal: &mut Terminal, app: &mut App) -> std::io::Result<()> {
     if let Some(style) = app.draw_background {
         let area = terminal.get_frame().size();
         terminal.current_buffer_mut().set_style(area, style);

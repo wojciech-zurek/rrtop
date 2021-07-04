@@ -14,7 +14,7 @@ use crate::widget::{title, title_span};
 pub struct Memory<'a> {
     title: String,
     used_memory: VecDeque<(f64, f64)>,
-    rss_memory: VecDeque<(f64, f64)>,
+    used_rss_memory: VecDeque<(f64, f64)>,
     max_memory: VecDeque<(f64, f64)>,
     last_used_memory: u64,
     last_rss_memory: u64,
@@ -31,7 +31,7 @@ impl<'a> Memory<'a> {
         Memory {
             title: "memory".to_owned(),
             used_memory: VecDeque::new(),
-            rss_memory: VecDeque::new(),
+            used_rss_memory: VecDeque::new(),
             max_memory: VecDeque::new(),
             last_used_memory: 0,
             last_rss_memory: 0,
@@ -66,13 +66,13 @@ impl<'a> Widget for &Memory<'a> {
             .data(&used_memory);
 
         //rss memory
-        let rss_memory = self.rss_memory.iter().map(|it| (it.0, it.1)).collect::<Vec<(f64, f64)>>();
+        let used_rss_memory = self.used_rss_memory.iter().map(|it| (it.0, it.1)).collect::<Vec<(f64, f64)>>();
 
         let rss_memory_dataset = Dataset::default()
             .marker(Marker::Braille)
             .graph_type(GraphType::Line)
             .style(self.color_scheme.memory_rss_memory_dataset)
-            .data(&rss_memory);
+            .data(&used_rss_memory);
 
         //chart
         Chart::new(vec![max_memory_dataset, used_memory_dataset, rss_memory_dataset])
@@ -131,19 +131,19 @@ impl<'a> Updatable<&Message> for Memory<'a> {
         self.used_memory.push_front((self.update_count as f64, (used_memory as f64).log2()));
 
         //used memory
-        let rss_memory = if let Some(rss_memory) = message.info.0.get("used_memory_rss") {
-            rss_memory.parse::<u64>().unwrap_or(0)
+        let used_rss_memory = if let Some(used_rss_memory) = message.info.0.get("used_memory_rss") {
+            used_rss_memory.parse::<u64>().unwrap_or(0)
         } else {
             0
         };
 
-        self.last_rss_memory = rss_memory;
+        self.last_rss_memory = used_rss_memory;
 
-        if self.rss_memory.len() >= self.max_elements {
-            self.rss_memory.pop_back();
+        if self.used_rss_memory.len() >= self.max_elements {
+            self.used_rss_memory.pop_back();
         }
 
-        self.rss_memory.push_front((self.update_count as f64, (rss_memory as f64).log2()));
+        self.used_rss_memory.push_front((self.update_count as f64, (used_rss_memory as f64).log2()));
 
         // max memory
         let max_memory = if let Some(max_memory) = message.info.0.get("maxmemory") {

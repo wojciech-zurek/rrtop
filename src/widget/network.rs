@@ -26,7 +26,7 @@ impl<'a> Network<'a> {
     pub fn new(color_scheme: &'a ColorScheme) -> Self {
         let max_elements = 250;
         Network {
-            title: "Network usage".to_owned(),
+            title: "network".to_owned(),
             input: VecDeque::with_capacity(max_elements),
             output: VecDeque::with_capacity(max_elements),
             total_input: 0,

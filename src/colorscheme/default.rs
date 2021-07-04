@@ -42,6 +42,12 @@ pub fn new() -> ColorHolder {
         network_tx_total_text_fg: Color::Reset,
         network_tx_s_text_fg: Color::Reset,
         network_tx_sparkline_fg: Color::Reset,
-        network_tx_sparkline_baseline_fg: Color::Reset
+        network_tx_sparkline_baseline_fg: Color::Reset,
+        stat_title_fg: Color::Reset,
+        stat_border_fg: Color::Reset,
+        stat_table_header_fg: Color::Reset,
+        stat_table_row_top_fg: Color::Reset,
+        stat_table_row_middle_fg: Color::Reset,
+        stat_table_row_bottom_fg: Color::Reset
     }
 }

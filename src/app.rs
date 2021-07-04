@@ -5,7 +5,9 @@ use crate::widget::network::Network;
 use crate::widget::throughput::Throughput;
 use crate::widget::cpu::Cpu;
 use crate::widget::memory::Memory;
+use crate::widget::stat::Stat;
 use tui::style::Style;
+use tui::widgets::TableState;
 
 pub struct App<'a> {
     pub menu: Menu<'a>,
@@ -14,6 +16,8 @@ pub struct App<'a> {
     pub throughput: Throughput<'a>,
     pub cpu: Cpu<'a>,
     pub memory: Memory<'a>,
+    pub stat: Stat<'a>,
+    pub stat_table_state: TableState,
     pub selected_tab: usize,
     pub draw_background: Option<Style>,
 }
@@ -27,6 +31,8 @@ impl<'a> App<'a> {
             throughput: Throughput::new(color_scheme),
             cpu: Cpu::new(color_scheme, tick_rate),
             memory: Memory::new(color_scheme, tick_rate),
+            stat: Stat::new(color_scheme, tick_rate),
+            stat_table_state: TableState::default(),
             selected_tab: 0,
             draw_background,
         }

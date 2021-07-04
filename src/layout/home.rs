@@ -3,18 +3,13 @@ use tui::layout::{Layout, Direction, Constraint, Rect};
 use tui::Frame;
 use crate::app::App;
 
-pub fn draw(f: &mut Frame<Backend>, area: Rect, app: &App) {
+pub fn draw(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
             [
                 Constraint::Length(12),
-                Constraint::Length(12),
-                Constraint::Length(7),
-                Constraint::Min(0)
-                // Constraint::Ratio(4, 10),
-                // Constraint::Min(5),
-                // Constraint::Length(1),
+                Constraint::Min(12),
             ]
                 .as_ref(),
         )
@@ -22,10 +17,6 @@ pub fn draw(f: &mut Frame<Backend>, area: Rect, app: &App) {
 
     draw_top(f, chunks[0], app);
     draw_middle(f, chunks[1], app);
-    draw_bottom(f, chunks[2], app);
-    // draw_middle(f, app, chunks[1]);
-    // draw_bottom(f, app, chunks[2]);
-    // draw_menu(f, chunks[3], app);
 }
 
 fn draw_top(f: &mut Frame<Backend>, area: Rect, app: &App) {
@@ -34,7 +25,7 @@ fn draw_top(f: &mut Frame<Backend>, area: Rect, app: &App) {
         .constraints(
             [
                 Constraint::Percentage(50),
-                Constraint::Percentage(12),
+                Constraint::Percentage(50),
             ]
                 .as_ref(),
         )
@@ -44,13 +35,38 @@ fn draw_top(f: &mut Frame<Backend>, area: Rect, app: &App) {
     f.render_widget(&app.memory, chunks[1]);
 }
 
-fn draw_middle(f: &mut Frame<Backend>, area: Rect, app: &App) {
-    f.render_widget(&app.network, area);
+fn draw_middle(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(30),
+                Constraint::Percentage(70),
+            ]
+                .as_ref(),
+        )
+        .split(area);
+
+    draw_part_middle_left(f, chunks[0], app);
+    draw_part_middle_right(f, chunks[1], app);
 }
 
-fn draw_bottom(f: &mut Frame<Backend>, area: Rect, app: &App) {
-    f.render_widget(&app.throughput, area);
+fn draw_part_middle_left(f: &mut Frame<Backend>, area: Rect, app: &App) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Length(12),
+                Constraint::Length(7),
+                Constraint::Min(0),
+            ]
+                .as_ref(),
+        )
+        .split(area);
+    f.render_widget(&app.network, chunks[0]);
+    f.render_widget(&app.throughput, chunks[1]);
 }
-// fn draw_menu(f: &mut Frame<Backend>, area: Rect, app: &App) {
-//     f.render_widget(&app.menu, area);
-// }
+
+fn draw_part_middle_right(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
+    f.render_stateful_widget(&app.stat, area, &mut app.stat_table_state);
+}

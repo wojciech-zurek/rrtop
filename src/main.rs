@@ -31,7 +31,7 @@ fn main() -> Result<(), RRTopError> {
     let mut app = App::new(&config.color_scheme, config.tick_rate, config.draw_background);
 
     loop {
-        layout::draw(&mut terminal, &app)?;
+        layout::draw(&mut terminal, &mut app)?;
         match events.next()? {
             AppEvent::Terminal(event) => {
                 match event {
@@ -42,7 +42,7 @@ fn main() -> Result<(), RRTopError> {
                         }
                     }
                     Event::Mouse(_) => {}
-                    Event::Resize(_, _) => { layout::draw(&mut terminal, &app)?; }
+                    Event::Resize(_, _) => { layout::draw(&mut terminal, &mut app)?; }
                 }
             }
             AppEvent::Tick => {
@@ -58,6 +58,7 @@ fn main() -> Result<(), RRTopError> {
                 &app.throughput.update(&message);
                 &app.cpu.update(&message);
                 &app.memory.update(&message);
+                &app.stat.update(&message);
             }
             _ => {}
         }

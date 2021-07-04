@@ -48,5 +48,12 @@ pub fn new() -> ColorHolder {
         network_tx_s_text_fg: Color::Rgb(163, 190, 140),
         network_tx_sparkline_fg: Color::Rgb(163, 190, 140),
         network_tx_sparkline_baseline_fg: Color::Rgb(76, 86, 106),
+
+        stat_title_fg: Color::Rgb(143, 188, 187),
+        stat_border_fg: Color::Rgb(76, 86, 106),
+        stat_table_header_fg: Color::Rgb(143, 188, 187),
+        stat_table_row_top_fg: Color::Rgb(129, 161, 193),
+        stat_table_row_middle_fg: Color::Rgb(129, 161, 193),
+        stat_table_row_bottom_fg: Color::Rgb(76, 86, 106)
     }
 }
