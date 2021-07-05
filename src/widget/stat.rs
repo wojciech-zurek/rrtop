@@ -9,7 +9,7 @@ use tui::text::Span;
 use size::Size;
 use crate::widget::title_span;
 use std::time::Instant;
-use chrono::Duration;
+use chrono::{Duration, Local, DateTime, Utc};
 
 pub struct Stat<'a> {
     title: String,
@@ -25,7 +25,7 @@ impl<'a> Stat<'a> {
         let max_elements = 50;
         Stat {
             title: "stat".to_owned(),
-            headers: vec!["time".to_owned(), "ops".to_owned(), "user".to_owned(), "sys".to_owned(), "memUsed".to_owned(), "memRss".to_owned(), "fRatio".to_owned()],
+            headers: vec![" time".to_owned(), "ops".to_owned(), "user".to_owned(), "sys".to_owned(), "memUsed".to_owned(), "memRss".to_owned(), "fRatio".to_owned()],
             time_slices: VecDeque::with_capacity(max_elements),
             color_scheme,
             max_elements,
@@ -35,7 +35,7 @@ impl<'a> Stat<'a> {
 }
 
 struct TimeSlice {
-    time: Instant,
+    time: chrono::DateTime<Local>,
     cpu_user_time: f64,
     cpu_sys_time: f64,
     used_memory: u64,
@@ -46,9 +46,8 @@ struct TimeSlice {
 
 impl TimeSlice {
     fn new(cpu_user_time: f64, cpu_sys_time: f64, used_memory: u64, used_rss_memory: u64, memory_fragmentation_ratio: f32, ops_per_sec: u64) -> Self {
-        let time = Instant::now();
         TimeSlice {
-            time,
+            time: Local::now(),
             cpu_user_time,
             cpu_sys_time,
             used_memory,
@@ -71,16 +70,17 @@ impl<'a> StatefulWidget for &Stat<'a> {
             .bottom_margin(0);
 
         let rows = self.time_slices.iter().enumerate().map(|it| {
-            let style = self.color_scheme.color_table_cell(it.0 as u8, area.height - 1);
+            let style1 = ColorScheme::color_table_cell(self.color_scheme.stat_table_row_top_1, self.color_scheme.stat_table_row_bottom, it.0 as u8, area.height - 1);
+            let style2 = ColorScheme::color_table_cell(self.color_scheme.stat_table_row_top_2, self.color_scheme.stat_table_row_bottom, it.0 as u8, area.height - 1);
 
             vec![
-                Cell::from(Span::styled(format!("{}:{:02}", (it.1.time.elapsed().as_secs() as f64 / 60.0).round(), it.1.time.elapsed().as_secs()), style)),
-                Cell::from(Span::styled(format!("{}", it.1.ops_per_sec), style)),
-                Cell::from(Span::styled(format!("{}", it.1.cpu_user_time), style)),
-                Cell::from(Span::styled(format!("{}", it.1.cpu_sys_time), style)),
-                Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_memory)), style)),
-                Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_rss_memory)), style)),
-                Cell::from(Span::styled(format!("{}", it.1.memory_fragmentation_ratio), style)),
+                Cell::from(Span::styled(format!("{}", it.1.time.format(" %H:%M:%S")), style1)),
+                Cell::from(Span::styled(format!("{}", it.1.ops_per_sec), style2)),
+                Cell::from(Span::styled(format!("{}", it.1.cpu_user_time), style2)),
+                Cell::from(Span::styled(format!("{}", it.1.cpu_sys_time), style2)),
+                Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_memory)), style1)),
+                Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_rss_memory)), style1)),
+                Cell::from(Span::styled(format!("{}", it.1.memory_fragmentation_ratio), style2)),
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 
@@ -92,7 +92,7 @@ impl<'a> StatefulWidget for &Stat<'a> {
                 .title(title_span(&self.title, self.color_scheme.stat_title, self.color_scheme.stat_border))
             )
             .widths(&[
-                Constraint::Ratio(2, 20),
+                Constraint::Ratio(3, 20),
                 Constraint::Ratio(2, 20),
                 Constraint::Ratio(3, 20),
                 Constraint::Ratio(3, 20),

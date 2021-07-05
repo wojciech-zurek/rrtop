@@ -53,8 +53,8 @@ pub struct ColorHolder {
     stat_title_fg: Color,
     stat_border_fg: Color,
     stat_table_header_fg: Color,
-    stat_table_row_top_fg: Color,
-    stat_table_row_middle_fg: Color,
+    stat_table_row_top_1_fg: Color,
+    stat_table_row_top_2_fg: Color,
     stat_table_row_bottom_fg: Color,
 }
 
@@ -116,8 +116,8 @@ pub struct ColorScheme {
     pub stat_title: Style,
     pub stat_border: Style,
     pub stat_table_header: Style,
-    pub stat_table_row_top: Style,
-    pub stat_table_row_middle: Style,
+    pub stat_table_row_top_1: Style,
+    pub stat_table_row_top_2: Style,
     pub stat_table_row_bottom: Style,
 
 }
@@ -198,8 +198,8 @@ impl ColorScheme {
             stat_table_header: Style::default()
                 .fg(ch.stat_table_header_fg)
                 .add_modifier(Modifier::BOLD),
-            stat_table_row_top: Style::default().fg(ch.stat_table_row_top_fg),
-            stat_table_row_middle: Style::default().fg(ch.stat_table_row_middle_fg),
+            stat_table_row_top_1: Style::default().fg(ch.stat_table_row_top_1_fg),
+            stat_table_row_top_2: Style::default().fg(ch.stat_table_row_top_2_fg),
             stat_table_row_bottom: Style::default().fg(ch.stat_table_row_bottom_fg),
         }
     }
@@ -213,8 +213,8 @@ impl From<&str> for ColorScheme {
 }
 
 impl ColorScheme {
-    pub fn color_table_cell(&self, index: u8, size: u16) -> Style {
-        let start_color = self.stat_table_row_top.fg.unwrap_or(Color::Rgb(255, 255, 255));
+    pub fn color_table_cell(style_start: Style, style_stop: Style, index: u8, size: u16) -> Style {
+        let start_color = style_start.fg.unwrap_or(Color::Rgb(255, 255, 255));
         let mut start_r: f32;
         let mut start_g: f32;
         let mut start_b: f32;
@@ -230,7 +230,7 @@ impl ColorScheme {
 
         let min = start_r.min(start_g).min(start_b) as u8;
 
-        let stop_color = self.stat_table_row_bottom.fg.unwrap_or(Color::Rgb(min, min, min));
+        let stop_color = style_stop.fg.unwrap_or(Color::Rgb(min, min, min));
 
         let mut stop_r: f32;
         let mut stop_g: f32;

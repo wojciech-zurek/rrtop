@@ -52,8 +52,8 @@ pub fn new() -> ColorHolder {
         stat_title_fg: Color::Rgb(143, 188, 187),
         stat_border_fg: Color::Rgb(76, 86, 106),
         stat_table_header_fg: Color::Rgb(143, 188, 187),
-        stat_table_row_top_fg: Color::Rgb(129, 161, 193),
-        stat_table_row_middle_fg: Color::Rgb(129, 161, 193),
-        stat_table_row_bottom_fg: Color::Rgb(76, 86, 106)
+        stat_table_row_top_1_fg: Color::Rgb(255, 255, 255),
+        stat_table_row_top_2_fg: Color::Rgb(129, 161, 193),
+        stat_table_row_bottom_fg: Color::Rgb(76, 86, 106),
     }
 }
