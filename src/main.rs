@@ -11,7 +11,7 @@ mod colorscheme;
 mod app;
 mod update;
 
-use redis::Client;
+use redis::{Client, ConnectionLike};
 use error::RRTopError;
 use std::time::Duration;
 use crate::config::Config;
@@ -20,15 +20,16 @@ use crate::event::{Events, AppEvent};
 use crossterm::event::{Event, KeyCode};
 use crate::app::App;
 use crate::update::Updatable;
+use r2d2::{ManageConnection, Pool};
 
 fn main() -> Result<(), RRTopError> {
     let config = config::Config::parse(cli())?;
-    let client = connect(&config)?;
+    let pool = connect(&config)?;
 
     let mut terminal = terminal::create()?;
 
-    let mut events = Events::with_config(&config, client)?;
-    let mut app = App::new(&config.color_scheme, config.tick_rate, config.draw_background);
+    let mut events = Events::from_config(&config, pool)?;
+    let mut app = App::new(&config.theme, config.tick_rate, config.draw_background);
 
     loop {
         layout::draw(&mut terminal, &mut app)?;
@@ -71,16 +72,15 @@ fn main() -> Result<(), RRTopError> {
     Ok(())
 }
 
-fn connect(config: &Config) -> Result<Client, RRTopError> {
+fn connect(config: &Config) -> Result<Pool<Client>, RRTopError> {
     let client = Client::open(&*config.url)?;
-    let mut con = client.get_connection_with_timeout(Duration::from_secs(config.timeout))?;
 
-    let result: String = redis::cmd("PING").query(&mut con)?;
-    if result != "PONG" {
-        return Err(RRTopError::UnknownQueryRedisError("No PONG response from server!".to_owned()));
-    };
+    let pool = r2d2::Pool::builder()
+        .connection_timeout(Duration::from_secs(config.timeout))
+        .min_idle(Some(config.worker_number as u32))
+        .max_size(config.worker_number as u32).build(client)?;
 
-    Ok(client)
+    Ok(pool)
 }
 
 

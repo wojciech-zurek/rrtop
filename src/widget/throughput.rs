@@ -1,4 +1,4 @@
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use tui::widgets::{Widget, Block, Borders, Paragraph};
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
@@ -15,18 +15,18 @@ pub struct Throughput<'a> {
     title: String,
     ops_per_sec: VecDeque<u64>,
     total_commands: u128,
-    color_scheme: &'a ColorScheme,
+    theme: &'a Theme,
     max_elements: usize,
 }
 
 impl<'a> Throughput<'a> {
-    pub fn new(color_scheme: &'a ColorScheme) -> Self {
+    pub fn new(theme: &'a Theme) -> Self {
         let max_elements = 250;
         Throughput {
             title: "throughput".to_owned(),
             ops_per_sec: VecDeque::with_capacity(max_elements),
             total_commands: 0,
-            color_scheme,
+            theme,
             max_elements,
         }
     }
@@ -36,8 +36,8 @@ impl<'a> Widget for &Throughput<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         Block::default()
             .borders(Borders::ALL)
-            .border_style(self.color_scheme.throughput_border)
-            .title(title_span(&self.title, self.color_scheme.throughput_title, self.color_scheme.throughput_border))
+            .border_style(self.theme.throughput_border)
+            .title(title_span(&self.title, self.theme.throughput_title, self.theme.throughput_border))
             .render(area, buf);
 
         let chunks = Layout::default()
@@ -55,8 +55,8 @@ impl<'a> Widget for &Throughput<'a> {
             .split(area);
 
         let spans = vec![
-            Spans::from(Span::styled(format!("Total commands: {}", self.total_commands), self.color_scheme.throughput_total_commands_text)),
-            Spans::from(Span::styled(format!("         Ops/s: {} ops/s", self.ops_per_sec.front().unwrap_or(&0).to_owned()), self.color_scheme.throughput_ops_text))
+            Spans::from(Span::styled(format!("Total commands: {}", self.total_commands), self.theme.throughput_total_commands_text)),
+            Spans::from(Span::styled(format!("         Ops/s: {} ops/s", self.ops_per_sec.front().unwrap_or(&0).to_owned()), self.theme.throughput_ops_text))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
 
@@ -65,8 +65,8 @@ impl<'a> Widget for &Throughput<'a> {
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
-            .style(self.color_scheme.throughput_sparkline)
-            .baseline_style(self.color_scheme.throughput_sparkline_baseline)
+            .style(self.theme.throughput_sparkline)
+            .baseline_style(self.theme.throughput_sparkline_baseline)
             .render(chunks[2], buf);
     }
 }

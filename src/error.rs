@@ -8,6 +8,7 @@ use std::str::ParseBoolError;
 #[derive(Debug)]
 pub enum RRTopError {
     RedisError(RedisError),
+    RedisPoolError(r2d2::Error),
     UnknownQueryRedisError(String),
     ParseIntError(std::num::ParseIntError),
     ParseBoolError(std::str::ParseBoolError),
@@ -21,12 +22,13 @@ impl fmt::Display for RRTopError {
         write!(f, "Error: {}", self)?;
         match self {
             RRTopError::RedisError(e) => write!(f, "{}", e),
+            RRTopError::RedisPoolError(e) => { write!(f, "{}", e) }
             RRTopError::ParseIntError(e) => write!(f, "{}", e),
             RRTopError::ParseBoolError(e) => write!(f, "{}", e),
             RRTopError::UnknownQueryRedisError(e) => write!(f, "{}", e),
             RRTopError::IoError(e) => write!(f, "{}", e),
             RRTopError::RecvError(e) => write!(f, "{}", e),
-            RRTopError::SendError(e) => write!(f, "{}", e)
+            RRTopError::SendError(e) => write!(f, "{}", e),
         }
     }
 }
@@ -48,6 +50,12 @@ impl From<ParseBoolError> for RRTopError {
 impl From<RedisError> for RRTopError {
     fn from(e: RedisError) -> Self {
         RRTopError::RedisError(e)
+    }
+}
+
+impl From<r2d2::Error> for RRTopError {
+    fn from(e: r2d2::Error) -> Self {
+        RRTopError::RedisPoolError(e)
     }
 }
 

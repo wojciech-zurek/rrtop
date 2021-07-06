@@ -1,4 +1,4 @@
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use tui::widgets::{Widget, Block, Borders, Paragraph};
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
@@ -18,12 +18,12 @@ pub struct Network<'a> {
     output: VecDeque<u64>,
     total_input: i64,
     total_output: i64,
-    color_scheme: &'a ColorScheme,
+    theme: &'a Theme,
     max_elements: usize,
 }
 
 impl<'a> Network<'a> {
-    pub fn new(color_scheme: &'a ColorScheme) -> Self {
+    pub fn new(theme: &'a Theme) -> Self {
         let max_elements = 250;
         Network {
             title: "network".to_owned(),
@@ -31,7 +31,7 @@ impl<'a> Network<'a> {
             output: VecDeque::with_capacity(max_elements),
             total_input: 0,
             total_output: 0,
-            color_scheme,
+            theme: theme,
             max_elements,
         }
     }
@@ -41,8 +41,8 @@ impl<'a> Widget for &Network<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         Block::default()
             .borders(Borders::ALL)
-            .border_style(self.color_scheme.network_border)
-            .title(title_span(&self.title, self.color_scheme.network_title, self.color_scheme.network_border))
+            .border_style(self.theme.network_border)
+            .title(title_span(&self.title, self.theme.network_title, self.theme.network_border))
             .render(area, buf);
 
 
@@ -64,8 +64,8 @@ impl<'a> Widget for &Network<'a> {
             .split(area);
         //rx
         let spans = vec![
-            Spans::from(Span::styled(format!("Total rx: {}", Size::Bytes(self.total_input)), self.color_scheme.network_rx_total_text)),
-            Spans::from(Span::styled(format!("    Rx/s: {}/s", Size::Bytes(self.input.front().unwrap_or(&0).to_owned())), self.color_scheme.network_rx_s_text))
+            Spans::from(Span::styled(format!("Total rx: {}", Size::Bytes(self.total_input)), self.theme.network_rx_total_text)),
+            Spans::from(Span::styled(format!("    Rx/s: {}/s", Size::Bytes(self.input.front().unwrap_or(&0).to_owned())), self.theme.network_rx_s_text))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
         Sparkline::default()
@@ -73,14 +73,14 @@ impl<'a> Widget for &Network<'a> {
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
-            .style(self.color_scheme.network_rx_sparkline)
-            .baseline_style(self.color_scheme.network_rx_sparkline_baseline)
+            .style(self.theme.network_rx_sparkline)
+            .baseline_style(self.theme.network_rx_sparkline_baseline)
             .render(chunks[2], buf);
 
         //tx
         let spans = vec![
-            Spans::from(Span::styled(format!("Total tx: {}", Size::Bytes(self.total_output)), self.color_scheme.network_tx_total_text)),
-            Spans::from(Span::styled(format!("    Tx/s: {}/s", Size::Bytes(self.output.front().unwrap_or(&0).to_owned())), self.color_scheme.network_tx_s_text))
+            Spans::from(Span::styled(format!("Total tx: {}", Size::Bytes(self.total_output)), self.theme.network_tx_total_text)),
+            Spans::from(Span::styled(format!("    Tx/s: {}/s", Size::Bytes(self.output.front().unwrap_or(&0).to_owned())), self.theme.network_tx_s_text))
         ];
         Paragraph::new(spans).render(chunks[4], buf);
         Sparkline::default()
@@ -88,8 +88,8 @@ impl<'a> Widget for &Network<'a> {
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
-            .style(self.color_scheme.network_tx_sparkline)
-            .baseline_style(self.color_scheme.network_rx_sparkline_baseline)
+            .style(self.theme.network_tx_sparkline)
+            .baseline_style(self.theme.network_rx_sparkline_baseline)
             .render(chunks[5], buf);
     }
 }

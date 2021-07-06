@@ -1,5 +1,5 @@
 use std::collections::VecDeque;
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
 use crate::event::Message;
 use tui::layout::{Rect, Layout, Direction, Constraint};
@@ -19,14 +19,14 @@ pub struct Memory<'a> {
     last_used_memory: u64,
     last_rss_memory: u64,
     last_max_memory: u64,
-    color_scheme: &'a ColorScheme,
+    theme: &'a Theme,
     max_elements: usize,
     update_count: u64,
     tick_rate: f64,
 }
 
 impl<'a> Memory<'a> {
-    pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
+    pub fn new(theme: &'a Theme, tick_rate: u64) -> Self {
         let max_elements = 250;
         Memory {
             title: "memory".to_owned(),
@@ -36,7 +36,7 @@ impl<'a> Memory<'a> {
             last_used_memory: 0,
             last_rss_memory: 0,
             last_max_memory: 0,
-            color_scheme,
+            theme,
             max_elements,
             update_count: 0,
             tick_rate: tick_rate as f64,
@@ -53,7 +53,7 @@ impl<'a> Widget for &Memory<'a> {
         let max_memory_dataset = Dataset::default()
             .marker(Marker::Braille)
             .graph_type(GraphType::Line)
-            .style(self.color_scheme.memory_max_memory_dataset)
+            .style(self.theme.memory_max_memory_dataset)
             .data(&max_memory);
 
         //used memory
@@ -62,7 +62,7 @@ impl<'a> Widget for &Memory<'a> {
         let used_memory_dataset = Dataset::default()
             .marker(Marker::Braille)
             .graph_type(GraphType::Line)
-            .style(self.color_scheme.memory_used_memory_dataset)
+            .style(self.theme.memory_used_memory_dataset)
             .data(&used_memory);
 
         //rss memory
@@ -71,17 +71,17 @@ impl<'a> Widget for &Memory<'a> {
         let rss_memory_dataset = Dataset::default()
             .marker(Marker::Braille)
             .graph_type(GraphType::Line)
-            .style(self.color_scheme.memory_rss_memory_dataset)
+            .style(self.theme.memory_rss_memory_dataset)
             .data(&used_rss_memory);
 
         //chart
         Chart::new(vec![max_memory_dataset, used_memory_dataset, rss_memory_dataset])
             .block(Block::default()
                 .borders(Borders::ALL)
-                .border_style(self.color_scheme.memory_border)
-                .title(title_span(&self.title, self.color_scheme.memory_title, self.color_scheme.memory_border))
+                .border_style(self.theme.memory_border)
+                .title(title_span(&self.title, self.theme.memory_title, self.theme.memory_border))
             )
-            .style(self.color_scheme.memory_chart)
+            .style(self.theme.memory_chart)
             .y_axis(Axis::default().bounds([24.2, (self.last_max_memory as f64).log2()]))
             .x_axis(Axis::default()
                 .bounds([self.update_count as f64 - area.width as f64, self.update_count as f64 + 1.0])
@@ -92,21 +92,21 @@ impl<'a> Widget for &Memory<'a> {
             area.x + 3,
             area.y + 2,
             format!(" Max memory: {}", Size::Bytes(self.last_max_memory)),
-            self.color_scheme.memory_max_memory_text,
+            self.theme.memory_max_memory_text,
         );
 
         buf.set_string(
             area.x + 3,
             area.y + 9,
             format!("RSS memory: {}", Size::Bytes(self.last_rss_memory)),
-            self.color_scheme.memory_rss_memory_text,
+            self.theme.memory_rss_memory_text,
         );
 
         buf.set_string(
             area.x + 3,
             area.y + 10,
             format!("Used memory: {}", Size::Bytes(self.last_used_memory)),
-            self.color_scheme.memory_used_memory_text,
+            self.theme.memory_used_memory_text,
         );
     }
 }

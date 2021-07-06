@@ -1,6 +1,6 @@
 use clap::ArgMatches;
 use crate::error::RRTopError;
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use tui::style::Style;
 
 pub struct Config {
@@ -8,7 +8,7 @@ pub struct Config {
     pub url: String,
     pub worker_number: usize,
     pub tick_rate: u64,
-    pub color_scheme: ColorScheme,
+    pub theme: Theme,
     pub draw_background: Option<Style>,
 }
 
@@ -25,10 +25,10 @@ impl Config {
             format!("redis://{}:{}/", host, port)
         };
 
-        let color_scheme: ColorScheme = matches.value_of("color-scheme").unwrap().into();
+        let theme: Theme = matches.value_of("color-scheme").unwrap().into();
 
         let draw_background = match matches.value_of("draw-background").unwrap().parse::<bool>()? {
-            true => { Some(color_scheme.main) }
+            true => { Some(theme.main) }
             false => { None }
         };
 
@@ -37,7 +37,7 @@ impl Config {
             url,
             worker_number,
             tick_rate,
-            color_scheme,
+            theme,
             draw_background,
         })
     }

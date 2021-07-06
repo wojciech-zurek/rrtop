@@ -1,5 +1,5 @@
 use std::collections::VecDeque;
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
 use crate::event::Message;
 use tui::widgets::{StatefulWidget, TableState, Cell, Row, Table, Block, Borders};
@@ -15,19 +15,19 @@ pub struct Stat<'a> {
     title: String,
     headers: Vec<String>,
     time_slices: VecDeque<TimeSlice>,
-    color_scheme: &'a ColorScheme,
+    theme: &'a Theme,
     max_elements: usize,
     tick_rate: f64,
 }
 
 impl<'a> Stat<'a> {
-    pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
+    pub fn new(theme: &'a Theme, tick_rate: u64) -> Self {
         let max_elements = 50;
         Stat {
             title: "stat".to_owned(),
             headers: vec![" time".to_owned(), "ops".to_owned(), "user".to_owned(), "sys".to_owned(), "memUsed".to_owned(), "memRss".to_owned(), "fRatio".to_owned()],
             time_slices: VecDeque::with_capacity(max_elements),
-            color_scheme,
+            theme,
             max_elements,
             tick_rate: tick_rate as f64,
         }
@@ -64,14 +64,14 @@ impl<'a> StatefulWidget for &Stat<'a> {
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
         let header_cells = self.headers
             .iter()
-            .map(|h| Cell::from(h.to_owned()).style(self.color_scheme.stat_table_header));
+            .map(|h| Cell::from(h.to_owned()).style(self.theme.stat_table_header));
         let header = Row::new(header_cells)
             .height(1)
             .bottom_margin(0);
 
         let rows = self.time_slices.iter().enumerate().map(|it| {
-            let style1 = ColorScheme::color_table_cell(self.color_scheme.stat_table_row_top_1, self.color_scheme.stat_table_row_bottom, it.0 as u8, area.height - 1);
-            let style2 = ColorScheme::color_table_cell(self.color_scheme.stat_table_row_top_2, self.color_scheme.stat_table_row_bottom, it.0 as u8, area.height - 1);
+            let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height - 1);
+            let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height - 1);
 
             vec![
                 Cell::from(Span::styled(format!("{}", it.1.time.format(" %H:%M:%S")), style1)),
@@ -88,8 +88,8 @@ impl<'a> StatefulWidget for &Stat<'a> {
             .header(header)
             .block(Block::default()
                 .borders(Borders::ALL)
-                .border_style(self.color_scheme.stat_border)
-                .title(title_span(&self.title, self.color_scheme.stat_title, self.color_scheme.stat_border))
+                .border_style(self.theme.stat_border)
+                .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
             )
             .widths(&[
                 Constraint::Ratio(3, 20),

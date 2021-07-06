@@ -8,9 +8,10 @@ edition = "2018"
 
 [dependencies]
 clap = "3.0.0-beta.2"
-redis = "0.20.2"
+redis = { version = "0.20", features = ["r2d2"] }
 crossterm = "0.20"
 tui = { version = "0.15", default-features = false, features = ['crossterm'] }
 flume = "0.10"
 chrono = "0.4"
 size = "0.1"
+r2d2 = "0.8"

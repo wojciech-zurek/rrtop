@@ -7,6 +7,7 @@ use redis::Client;
 use crate::config::Config;
 use crate::response::Info;
 use crate::workers::{setup_terminal_worker, setup_tick_worker, setup_redis_workers};
+use r2d2::Pool;
 
 pub enum AppEvent {
     Terminal(Event),
@@ -39,13 +40,13 @@ pub struct Events {
 }
 
 impl Events {
-    pub fn with_config(config: &Config, client: Client) -> io::Result<Events> {
+    pub fn from_config(config: &Config, pool: Pool<Client>) -> io::Result<Events> {
         let (tx, rx) = flume::unbounded();
         let terminal_worker = setup_terminal_worker(tx.clone())?;
         let tick_worker = setup_tick_worker(tx.clone(), Duration::from_secs(config.tick_rate))?;
 
         let (redis_tx, redis_rx) = flume::unbounded();
-        let redis_workers = setup_redis_workers(tx, redis_rx, config.worker_number, client)?;
+        let redis_workers = setup_redis_workers(tx, redis_rx, config.worker_number, pool)?;
 
         Ok(Events {
             rx,

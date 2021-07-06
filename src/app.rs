@@ -1,4 +1,4 @@
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use crate::widget::menu::Menu;
 use crate::widget::status_bar::StatusBar;
 use crate::widget::network::Network;
@@ -23,15 +23,15 @@ pub struct App<'a> {
 }
 
 impl<'a> App<'a> {
-    pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64, draw_background: Option<Style>) -> Self {
+    pub fn new(theme: &'a Theme, tick_rate: u64, draw_background: Option<Style>) -> Self {
         App {
-            menu: Menu::new(color_scheme),
-            status_bar: StatusBar::new(color_scheme),
-            network: Network::new(color_scheme),
-            throughput: Throughput::new(color_scheme),
-            cpu: Cpu::new(color_scheme, tick_rate),
-            memory: Memory::new(color_scheme, tick_rate),
-            stat: Stat::new(color_scheme, tick_rate),
+            menu: Menu::new(theme),
+            status_bar: StatusBar::new(theme),
+            network: Network::new(theme),
+            throughput: Throughput::new(theme),
+            cpu: Cpu::new(theme, tick_rate),
+            memory: Memory::new(theme, tick_rate),
+            stat: Stat::new(theme, tick_rate),
             stat_table_state: TableState::default(),
             selected_tab: 0,
             draw_background,

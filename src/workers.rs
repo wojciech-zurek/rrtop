@@ -8,6 +8,8 @@ use crossterm::event;
 use std::time::Duration;
 use redis::Client;
 use crate::response::Info;
+use r2d2::{Pool, PooledConnection, Error};
+use std::ops::DerefMut;
 
 pub fn setup_terminal_worker(tx: Sender<AppEvent>) -> io::Result<JoinHandle<()>> {
     thread::Builder::new().name("terminal-events".into()).spawn(move || loop {
@@ -39,13 +41,13 @@ pub fn setup_tick_worker(tx: Sender<AppEvent>, tick_rate: Duration) -> io::Resul
     })
 }
 
-pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_number: usize, client: Client) -> io::Result<Vec<JoinHandle<()>>> {
+pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_number: usize, pool: Pool<Client>) -> io::Result<Vec<JoinHandle<()>>> {
     let mut workers = Vec::with_capacity(worker_number);
 
     for i in 0..worker_number {
         let rx = rx.clone();
         let tx = tx.clone();
-        let mut client = client.clone();
+        let mut pool = pool.clone();
         let name = format!("redis-worker-{}", i);
         let worker = thread::Builder::new().name(name).spawn(move || {
             //  println!("created {:?}", thread::current().name());
@@ -53,14 +55,24 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                 let event = rx.recv().unwrap_or(AppEvent::Terminate);
                 match event {
                     AppEvent::Command => {
+                        let p = &mut pool.get();
+                        let client = match p {
+                            Ok(c) => c.deref_mut(),
+                            Err(e) => {
+                                eprintln!("{}", e);//todo: log error
+                                continue;// or break?
+                            }
+                        };
+
                         let start = time::Instant::now();
-                        match redis::cmd("INFO").query::<Info>(&mut client) {
+
+                        match redis::cmd("INFO").query::<Info>(client) {
                             Ok(info) => {
                                 if let Err(e) = tx.send(
                                     AppEvent::Result(Message::new(info, start.elapsed().as_millis()))
                                 ) {
                                     eprintln!("{}", e);//todo: log error
-                                    break;
+                                    // break;
                                 }
                             }
                             Err(e) => {

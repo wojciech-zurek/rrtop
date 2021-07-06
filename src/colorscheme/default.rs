@@ -1,9 +1,10 @@
-use crate::colorscheme::{ColorScheme, ColorHolder};
-use tui::style::{Style, Modifier, Color};
+use tui::style::{Color, Modifier, Style};
 
+use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 
-pub fn new() -> ColorHolder {
-    ColorHolder {
+pub fn new() -> ColorScheme {
+    ColorScheme {
         main_bg: Color::Reset,
         main_fg: Color::Reset,
         menu_bg: Color::Reset,
@@ -48,6 +49,6 @@ pub fn new() -> ColorHolder {
         stat_table_header_fg: Color::Reset,
         stat_table_row_top_1_fg: Color::Reset,
         stat_table_row_top_2_fg: Color::Reset,
-        stat_table_row_bottom_fg: Color::Reset
+        stat_table_row_bottom_fg: Color::Reset,
     }
 }

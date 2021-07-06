@@ -3,21 +3,21 @@ use tui::layout::Rect;
 use tui::buffer::Buffer;
 use tui::text::{Span, Spans};
 use tui::style::{Style, Modifier};
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use tui::symbols;
 
 pub struct Menu<'a> {
     pub titles: Vec<String>,
     selected_tab: usize,
-    color_scheme: &'a ColorScheme,
+    theme: &'a Theme,
 }
 
 impl<'a> Menu<'a> {
-    pub fn new(color_scheme: &'a ColorScheme) -> Self {
+    pub fn new(theme: &'a Theme) -> Self {
         Menu {
             titles: vec!["Main".to_owned(), "Other".to_owned()],
             selected_tab: 0,
-            color_scheme,
+            theme,
         }
     }
 
@@ -32,14 +32,14 @@ impl<'a> Widget for &Menu<'a> {
             .titles
             .iter()
             .map(|it| {
-                Spans::from(Span::styled(it, self.color_scheme.menu))
+                Spans::from(Span::styled(it, self.theme.menu))
             })
             .collect();
 
         let tabs = Tabs::new(titles)
             .select(self.selected_tab)
-            .divider(Span::styled(symbols::line::VERTICAL, self.color_scheme.menu_divider))
-            .highlight_style(self.color_scheme.menu_highlight);
+            .divider(Span::styled(symbols::line::VERTICAL, self.theme.menu_divider))
+            .highlight_style(self.theme.menu_highlight);
 
         tabs.render(area, buf);
     }

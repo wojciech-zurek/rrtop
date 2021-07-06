@@ -1,4 +1,4 @@
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use tui::layout::{Rect, Alignment};
 use tui::buffer::Buffer;
 use tui::widgets::{Widget, Borders, Block, Paragraph};
@@ -12,18 +12,18 @@ pub struct StatusBar<'a> {
     latency: u128,
     version: String,
     role: String,
-    color_scheme: &'a ColorScheme,
+    theme: &'a Theme,
 }
 
 impl<'a> StatusBar<'a> {
-    pub fn new(color_scheme: &'a ColorScheme) -> Self {
+    pub fn new(theme: &'a Theme) -> Self {
         StatusBar {
             uptime: 0,
             process_id: 0,
             latency: 0,
             version: "".to_owned(),
             role: "".to_owned(),
-            color_scheme,
+            theme,
         }
     }
 }
@@ -38,7 +38,7 @@ impl<'a> Widget for &StatusBar<'a> {
 
         Paragraph::new(s)
             .alignment(Alignment::Right)
-            .style(self.color_scheme.status_bar)
+            .style(self.theme.status_bar)
             .render(area, buf);
     }
 }

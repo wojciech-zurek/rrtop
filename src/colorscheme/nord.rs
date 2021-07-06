@@ -1,8 +1,10 @@
-use crate::colorscheme::{ColorScheme, ColorHolder};
-use tui::style::{Style, Modifier, Color};
+use tui::style::{Color, Modifier, Style};
 
-pub fn new() -> ColorHolder {
-    ColorHolder {
+use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
+
+pub fn new() -> ColorScheme {
+    ColorScheme {
         main_bg: Color::Rgb(46, 52, 64),
         main_fg: Color::Rgb(216, 222, 233),
 

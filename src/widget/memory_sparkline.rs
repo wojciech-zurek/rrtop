@@ -1,5 +1,5 @@
 use std::collections::VecDeque;
-use crate::colorscheme::ColorScheme;
+use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
 use crate::event::Message;
 use tui::layout::{Rect, Layout, Direction, Constraint};
@@ -18,14 +18,14 @@ pub struct Memory<'a> {
     used_memory: VecDeque<u64>,
     last_used_memory: u64,
     last_max_memory: u64,
-    color_scheme: &'a ColorScheme,
+    color_scheme: &'a Theme,
     max_elements: usize,
     update_count: u64,
     tick_rate: f64,
 }
 
 impl<'a> Memory<'a> {
-    pub fn new(color_scheme: &'a ColorScheme, tick_rate: u64) -> Self {
+    pub fn new(color_scheme: &'a Theme, tick_rate: u64) -> Self {
         let max_elements = 250;
         Memory {
             title: title("Memory usage"),
