@@ -1,7 +1,6 @@
 use std::collections::VecDeque;
 use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
-use crate::event::Message;
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
 use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders};
@@ -10,6 +9,7 @@ use tui::style::{Style, Color, Modifier};
 use tui::text::Span;
 use size::Size;
 use crate::widget::{title, title_span};
+use crate::metric::Metric;
 
 pub struct Memory<'a> {
     title: String,
@@ -90,82 +90,52 @@ impl<'a> Widget for &Memory<'a> {
 
         buf.set_string(
             area.x + 3,
-            area.y + 2,
+            area.y + 1,
             format!(" Max memory: {}", Size::Bytes(self.last_max_memory)),
             self.theme.memory_max_memory_text,
         );
 
         buf.set_string(
             area.x + 3,
-            area.y + 9,
-            format!("RSS memory: {}", Size::Bytes(self.last_rss_memory)),
+            area.y + 2,
+            format!(" RSS memory: {}", Size::Bytes(self.last_rss_memory)),
             self.theme.memory_rss_memory_text,
         );
 
         buf.set_string(
             area.x + 3,
-            area.y + 10,
+            area.y + 3,
             format!("Used memory: {}", Size::Bytes(self.last_used_memory)),
             self.theme.memory_used_memory_text,
         );
     }
 }
 
-impl<'a> Updatable<&Message> for Memory<'a> {
-    fn update(&mut self, message: &Message) {
+impl<'a> Updatable<&Metric> for Memory<'a> {
+    fn update(&mut self, metric: &Metric) {
         self.update_count += 1;
 
-        //used memory
-        let used_memory = if let Some(used_memory) = message.info.0.get("used_memory") {
-            used_memory.parse::<u64>().unwrap_or(0)
-        } else {
-            0
-        };
-
-        self.last_used_memory = used_memory;
+        self.last_used_memory = metric.memory.used_memory;
 
         if self.used_memory.len() >= self.max_elements {
             self.used_memory.pop_back();
         }
 
-        self.used_memory.push_front((self.update_count as f64, (used_memory as f64).log2()));
+        self.used_memory.push_front((self.update_count as f64, (metric.memory.used_memory as f64).log2()));
 
-        //used memory
-        let used_rss_memory = if let Some(used_rss_memory) = message.info.0.get("used_memory_rss") {
-            used_rss_memory.parse::<u64>().unwrap_or(0)
-        } else {
-            0
-        };
-
-        self.last_rss_memory = used_rss_memory;
+        self.last_rss_memory = metric.memory.used_memory_rss;
 
         if self.used_rss_memory.len() >= self.max_elements {
             self.used_rss_memory.pop_back();
         }
 
-        self.used_rss_memory.push_front((self.update_count as f64, (used_rss_memory as f64).log2()));
+        self.used_rss_memory.push_front((self.update_count as f64, (metric.memory.used_memory_rss as f64).log2()));
 
-        // max memory
-        let max_memory = if let Some(max_memory) = message.info.0.get("maxmemory") {
-            let max_memory = max_memory.parse::<u64>().unwrap_or(0);
-            if max_memory == 0 {
-                if let Some(max_memory) = message.info.0.get("total_system_memory") {
-                    max_memory.parse::<u64>().unwrap_or(0)
-                } else {
-                    0
-                }
-            } else {
-                max_memory
-            }
-        } else {
-            0
-        };
-
-        self.last_max_memory = max_memory;
+        self.last_max_memory = metric.memory.max_memory;
 
         if self.max_memory.len() >= self.max_elements {
             self.max_memory.pop_back();
         }
-        self.max_memory.push_front((self.update_count as f64, (max_memory as f64).log2()));
+        self.max_memory.push_front((self.update_count as f64, (metric.memory.max_memory as f64).log2()));
     }
 }

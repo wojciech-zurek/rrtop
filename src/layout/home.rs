@@ -20,19 +20,18 @@ pub fn draw(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
 }
 
 fn draw_top(f: &mut Frame<Backend>, area: Rect, app: &App) {
-    let chunks = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints(
-            [
-                Constraint::Percentage(50),
-                Constraint::Percentage(50),
-            ]
-                .as_ref(),
-        )
-        .split(area);
+    // let chunks = Layout::default()
+    //     .direction(Direction::Horizontal)
+    //     .constraints(
+    //         [
+    //             Constraint::Percentage(50),
+    //             Constraint::Percentage(50),
+    //         ]
+    //             .as_ref(),
+    //     )
+    //     .split(area);
 
-    f.render_widget(&app.cpu, chunks[0]);
-    f.render_widget(&app.memory, chunks[1]);
+    f.render_widget(&app.cpu, area);
 }
 
 fn draw_middle(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
@@ -58,13 +57,15 @@ fn draw_part_middle_left(f: &mut Frame<Backend>, area: Rect, app: &App) {
             [
                 Constraint::Length(12),
                 Constraint::Length(7),
-                Constraint::Min(0),
+                Constraint::Length(12),
             ]
                 .as_ref(),
         )
         .split(area);
     f.render_widget(&app.network, chunks[0]);
     f.render_widget(&app.throughput, chunks[1]);
+    f.render_widget(&app.memory, chunks[2]);
+
 }
 
 fn draw_part_middle_right(f: &mut Frame<Backend>, area: Rect, app: &mut App) {

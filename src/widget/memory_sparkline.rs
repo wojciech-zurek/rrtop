@@ -1,7 +1,6 @@
 use std::collections::VecDeque;
 use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
-use crate::event::Message;
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
 use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders, Paragraph};
@@ -12,6 +11,7 @@ use tui::text::Spans;
 use size::Size;
 use crate::widget::sparkline::{RenderDirection, Sparkline};
 use crate::widget::title;
+use crate::metric::Metric;
 
 pub struct Memory<'a> {
     title: String,
@@ -77,41 +77,19 @@ impl<'a> Widget for &Memory<'a> {
     }
 }
 
-impl<'a> Updatable<&Message> for Memory<'a> {
-    fn update(&mut self, message: &Message) {
+impl<'a> Updatable<&Metric> for Memory<'a> {
+    fn update(&mut self, metric: &Metric) {
         self.update_count += 1;
 
         //used memory
-        let used_memory = if let Some(used_memory) = message.info.0.get("used_memory") {
-            used_memory.parse::<u64>().unwrap_or(0)
-        } else {
-            0
-        };
-
-        self.last_used_memory = used_memory;
+        self.last_used_memory = metric.memory.used_memory;
 
         if self.used_memory.len() >= self.max_elements {
             self.used_memory.pop_back();
         }
 
-        self.used_memory.push_front(used_memory);
+        self.used_memory.push_front(metric.memory.used_memory);
 
-        // max memory
-        let max_memory = if let Some(max_memory) = message.info.0.get("maxmemory") {
-            let max_memory = max_memory.parse::<u64>().unwrap_or(0);
-            if max_memory == 0 {
-                if let Some(max_memory) = message.info.0.get("total_system_memory") {
-                    max_memory.parse::<u64>().unwrap_or(0)
-                } else {
-                    0
-                }
-            } else {
-                max_memory
-            }
-        } else {
-            0
-        };
-
-        self.last_max_memory = max_memory;
+        self.last_max_memory = metric.memory.max_memory;
     }
 }

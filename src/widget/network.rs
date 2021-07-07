@@ -2,7 +2,6 @@ use crate::colorscheme::theme::Theme;
 use tui::widgets::{Widget, Block, Borders, Paragraph};
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
-use crate::event::Message;
 use crate::update::Updatable;
 use tui::style::{Modifier, Style, Color};
 use size::Size;
@@ -11,6 +10,7 @@ use tui::text::Spans;
 use crate::widget::sparkline::{Sparkline, RenderDirection};
 use std::collections::VecDeque;
 use crate::widget::{title, title_span};
+use crate::metric::Metric;
 
 pub struct Network<'a> {
     title: String,
@@ -31,7 +31,7 @@ impl<'a> Network<'a> {
             output: VecDeque::with_capacity(max_elements),
             total_input: 0,
             total_output: 0,
-            theme: theme,
+            theme,
             max_elements,
         }
     }
@@ -94,39 +94,19 @@ impl<'a> Widget for &Network<'a> {
     }
 }
 
-impl<'a> Updatable<&Message> for Network<'a> {
-    fn update(&mut self, message: &Message) {
-        if let Some(total_input) = message.info.0.get("total_net_input_bytes") {
-            self.total_input = total_input.parse::<i64>().unwrap_or(0);
-        } else {
-            self.total_input = 0;
-        }
-
-        if let Some(total_output) = message.info.0.get("total_net_output_bytes") {
-            self.total_output = total_output.parse::<i64>().unwrap_or(0);
-        } else {
-            self.total_output = 0;
-        }
+impl<'a> Updatable<&Metric> for Network<'a> {
+    fn update(&mut self, metric: &Metric) {
+        self.total_input = metric.network.total_net_input_bytes;
+        self.total_output = metric.network.total_net_output_bytes;
 
         if self.input.len() >= self.max_elements {
             self.input.pop_back();
         }
-        if let Some(input) = message.info.0.get("instantaneous_input_kbps") {
-            let i = input.parse::<f64>().unwrap_or(0.0);
-            self.input.push_front((i * 1000.0) as u64);
-        } else {
-            self.input.push_front(0);
-        }
+        self.input.push_front(metric.network.instantaneous_input_kbps);
 
         if self.output.len() >= self.max_elements {
             self.output.pop_back();
         }
-
-        if let Some(output) = message.info.0.get("instantaneous_output_kbps") {
-            let o = output.parse::<f64>().unwrap_or(0.0);
-            self.output.push_front((o * 1000.0) as u64);
-        } else {
-            self.output.push_front(0);
-        }
+        self.output.push_front(metric.network.instantaneous_output_kbps);
     }
 }

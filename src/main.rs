@@ -10,6 +10,7 @@ mod widget;
 mod colorscheme;
 mod app;
 mod update;
+mod metric;
 
 use redis::{Client, ConnectionLike};
 use error::RRTopError;
@@ -21,6 +22,7 @@ use crossterm::event::{Event, KeyCode};
 use crate::app::App;
 use crate::update::Updatable;
 use r2d2::{ManageConnection, Pool};
+use crate::metric::Metric;
 
 fn main() -> Result<(), RRTopError> {
     let config = config::Config::parse(cli())?;
@@ -31,6 +33,7 @@ fn main() -> Result<(), RRTopError> {
     let mut events = Events::from_config(&config, pool)?;
     let mut app = App::new(&config.theme, config.tick_rate, config.draw_background);
 
+    let mut metric = Metric::default();
     loop {
         layout::draw(&mut terminal, &mut app)?;
         match events.next()? {
@@ -53,20 +56,18 @@ fn main() -> Result<(), RRTopError> {
                 events.terminate();
                 break;
             }
-            AppEvent::Result(message) => {
-                &app.status_bar.update(&message);
-                &app.network.update(&message);
-                &app.throughput.update(&message);
-                &app.cpu.update(&message);
-                &app.memory.update(&message);
-                &app.stat.update(&message);
+            AppEvent::Result(m) => {
+                metric = m.calc_delta(metric, config.tick_rate as f64);
+                &app.status_bar.update(&metric);
+                &app.network.update(&metric);
+                &app.throughput.update(&metric);
+                &app.cpu.update(&metric);
+                &app.memory.update(&metric);
+                &app.stat.update(&metric);
             }
             _ => {}
         }
     }
-
-    // let result: Info = redis::cmd("INFO").query(&mut client)?;
-    // println!("{:?}", result);
 
     terminal::clean(terminal)?;
     Ok(())

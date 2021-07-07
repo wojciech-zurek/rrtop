@@ -8,28 +8,16 @@ use crate::config::Config;
 use crate::response::Info;
 use crate::workers::{setup_terminal_worker, setup_tick_worker, setup_redis_workers};
 use r2d2::Pool;
+use crate::metric::Metric;
 
 pub enum AppEvent {
     Terminal(Event),
     Tick,
     Terminate,
     Command,
-    Result(Message),
+    Result(Metric),
 }
 
-pub struct Message {
-    pub info: Info,
-    pub latency: u128,
-}
-
-impl Message {
-    pub fn new(info: Info, latency: u128) -> Self {
-        Message {
-            info,
-            latency,
-        }
-    }
-}
 
 pub struct Events {
     rx: flume::Receiver<AppEvent>,

@@ -1,7 +1,6 @@
 use std::collections::VecDeque;
 use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
-use crate::event::Message;
 use tui::widgets::{StatefulWidget, TableState, Cell, Row, Table, Block, Borders};
 use tui::buffer::{Buffer};
 use tui::layout::{Rect, Constraint};
@@ -10,6 +9,7 @@ use size::Size;
 use crate::widget::title_span;
 use std::time::Instant;
 use chrono::{Duration, Local, DateTime, Utc};
+use crate::metric::Metric;
 
 pub struct Stat<'a> {
     title: String,
@@ -76,8 +76,8 @@ impl<'a> StatefulWidget for &Stat<'a> {
             vec![
                 Cell::from(Span::styled(format!("{}", it.1.time.format(" %H:%M:%S")), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.ops_per_sec), style2)),
-                Cell::from(Span::styled(format!("{}", it.1.cpu_user_time), style2)),
-                Cell::from(Span::styled(format!("{}", it.1.cpu_sys_time), style2)),
+                Cell::from(Span::styled(format!("{:.02}%", it.1.cpu_user_time), style2)),
+                Cell::from(Span::styled(format!("{:.02}%", it.1.cpu_sys_time), style2)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_rss_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.memory_fragmentation_ratio), style2)),
@@ -103,47 +103,23 @@ impl<'a> StatefulWidget for &Stat<'a> {
     }
 }
 
-impl<'a> Updatable<&Message> for Stat<'a> {
-    fn update(&mut self, message: &Message) {
+impl<'a> Updatable<&Metric> for Stat<'a> {
+    fn update(&mut self, metric: &Metric) {
         if self.time_slices.len() >= self.max_elements {
             self.time_slices.pop_back();
         }
 
-        let cpu_user_time = if let Some(cpu_user_time) = message.info.0.get("used_cpu_user") {
-            cpu_user_time.parse::<f64>().unwrap_or(0.0)
-        } else {
-            0.0
-        };
+        let cpu_user_time = metric.cpu.last_delta_cpu_user;
 
-        let cpu_sys_time = if let Some(cpu_sys_time) = message.info.0.get("used_cpu_sys") {
-            cpu_sys_time.parse::<f64>().unwrap_or(0.0)
-        } else {
-            0.0
-        };
+        let cpu_sys_time = metric.cpu.last_delta_cpu_sys;
 
-        let used_memory = if let Some(used_memory) = message.info.0.get("used_memory") {
-            used_memory.parse::<u64>().unwrap_or(0)
-        } else {
-            0
-        };
+        let used_memory = metric.memory.used_memory;
 
-        let used_rss_memory = if let Some(used_rss_memory) = message.info.0.get("used_memory_rss") {
-            used_rss_memory.parse::<u64>().unwrap_or(0)
-        } else {
-            0
-        };
+        let used_rss_memory = metric.memory.used_memory_rss;
 
-        let memory_fragmentation_ratio = if let Some(memory_fragmentation_ratio) = message.info.0.get("mem_fragmentation_ratio") {
-            memory_fragmentation_ratio.parse::<f32>().unwrap_or(0.0)
-        } else {
-            0.0
-        };
+        let memory_fragmentation_ratio = metric.memory.mem_fragmentation_ratio;
 
-        let ops_per_sec = if let Some(ops_per_sec) = message.info.0.get("instantaneous_ops_per_sec") {
-            ops_per_sec.parse::<u64>().unwrap_or(0)
-        } else {
-            0
-        };
+        let ops_per_sec = metric.throughput.instantaneous_ops_per_sec;
 
         self.time_slices.push_front(TimeSlice::new(
             cpu_user_time,

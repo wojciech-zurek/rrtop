@@ -2,7 +2,6 @@ use crate::colorscheme::theme::Theme;
 use tui::widgets::{Widget, Block, Borders, Paragraph};
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
-use crate::event::Message;
 use crate::update::Updatable;
 use tui::style::{Modifier, Style, Color};
 use tui::text::Span;
@@ -10,11 +9,12 @@ use tui::text::Spans;
 use crate::widget::sparkline::{Sparkline, RenderDirection};
 use std::collections::VecDeque;
 use crate::widget::{title, title_span};
+use crate::metric::Metric;
 
 pub struct Throughput<'a> {
     title: String,
     ops_per_sec: VecDeque<u64>,
-    total_commands: u128,
+    total_commands: u64,
     theme: &'a Theme,
     max_elements: usize,
 }
@@ -71,24 +71,14 @@ impl<'a> Widget for &Throughput<'a> {
     }
 }
 
-impl<'a> Updatable<&Message> for Throughput<'a> {
-    fn update(&mut self, message: &Message) {
-        self.total_commands = if let Some(total_commands) = message.info.0.get("total_commands_processed") {
-            total_commands.parse::<u128>().unwrap_or(0)
-        } else {
-            0
-        };
+impl<'a> Updatable<&Metric> for Throughput<'a> {
+    fn update(&mut self, metric: &Metric) {
+        self.total_commands = metric.throughput.total_commands_processed;
 
         if self.ops_per_sec.len() >= self.max_elements {
             self.ops_per_sec.pop_back();
         }
 
-        let ops_per_sec = if let Some(ops_per_sec) = message.info.0.get("instantaneous_ops_per_sec") {
-            ops_per_sec.parse::<u64>().unwrap_or(0)
-        } else {
-            0
-        };
-
-        self.ops_per_sec.push_front(ops_per_sec);
+        self.ops_per_sec.push_front(metric.throughput.instantaneous_ops_per_sec);
     }
 }

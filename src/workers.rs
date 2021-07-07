@@ -1,6 +1,6 @@
 use crossterm::event::{KeyCode, KeyModifiers};
 use flume::{Sender, Receiver};
-use crate::event::{AppEvent, Message};
+use crate::event::{AppEvent};
 use std::{io, thread, time};
 use std::thread::JoinHandle;
 use crossterm::event::Event::Key;
@@ -10,6 +10,7 @@ use redis::Client;
 use crate::response::Info;
 use r2d2::{Pool, PooledConnection, Error};
 use std::ops::DerefMut;
+use crate::metric::Metric;
 
 pub fn setup_terminal_worker(tx: Sender<AppEvent>) -> io::Result<JoinHandle<()>> {
     thread::Builder::new().name("terminal-events".into()).spawn(move || loop {
@@ -69,7 +70,7 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                         match redis::cmd("INFO").query::<Info>(client) {
                             Ok(info) => {
                                 if let Err(e) = tx.send(
-                                    AppEvent::Result(Message::new(info, start.elapsed().as_millis()))
+                                    AppEvent::Result(Metric::from(info).latency(start.elapsed().as_millis()))
                                 ) {
                                     eprintln!("{}", e);//todo: log error
                                     // break;

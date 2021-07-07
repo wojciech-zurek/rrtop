@@ -4,7 +4,7 @@ use tui::buffer::Buffer;
 use tui::widgets::{Widget, Borders, Block, Paragraph};
 use tui::text::Span;
 use crate::update::Updatable;
-use crate::event::Message;
+use crate::metric::Metric;
 
 pub struct StatusBar<'a> {
     uptime: i64,
@@ -43,24 +43,14 @@ impl<'a> Widget for &StatusBar<'a> {
     }
 }
 
-impl<'a> Updatable<&Message> for StatusBar<'a> {
-    fn update(&mut self, message: &Message) {
-        if let Some(rv) = message.info.0.get("redis_version") {
-            self.version = rv.to_owned();
-        }
+impl<'a> Updatable<&Metric> for StatusBar<'a> {
+    fn update(&mut self, metric: &Metric) {
+        self.version = metric.status.version.to_owned();
+        self.uptime = metric.status.uptime;
 
-        if let Some(u) = message.info.0.get("uptime_in_seconds") {
-            self.uptime = u.parse::<i64>().unwrap_or(0);
-        }
+        self.process_id = metric.status.process_id;
 
-        if let Some(pid) = message.info.0.get("process_id") {
-            self.process_id = pid.parse::<i64>().unwrap_or(0);
-        }
-
-        if let Some(r) = message.info.0.get("role") {
-            self.role = r.to_owned();
-        }
-
-        self.latency = message.latency;
+        self.role = metric.status.role.to_owned();
+        self.latency = metric.status.latency;
     }
 }
