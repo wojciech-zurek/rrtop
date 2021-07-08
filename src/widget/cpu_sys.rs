@@ -15,11 +15,10 @@ pub struct CpuSys<'a> {
     theme: &'a Theme,
     max_elements: usize,
     update_count: u64,
-    tick_rate: f64,
 }
 
 impl<'a> CpuSys<'a> {
-    pub fn new(theme: &'a Theme, tick_rate: f64, max_elements: usize) -> Self {
+    pub fn new(theme: &'a Theme, max_elements: usize) -> Self {
         CpuSys {
             cpu_sys: VecDeque::with_capacity(max_elements),
             last_cpu_sys: 0.0,
@@ -27,7 +26,6 @@ impl<'a> CpuSys<'a> {
             theme,
             max_elements,
             update_count: 0,
-            tick_rate,
         }
     }
 
@@ -60,7 +58,23 @@ impl<'a> Widget for &CpuSys<'a> {
                 .bounds([self.update_count as f64 - area.width as f64, self.update_count as f64 + 1.0])
             )
             .style(self.theme.cpu_chart)
-            .render(area, buf);
+            .render(Rect::new(area.x + 2, area.y, area.width - 8, area.height), buf);
+
+        let label = format!("{:.02}", max_cpu_sys);
+        buf.set_string(
+            area.width - 1 - label.len() as u16,
+            area.y,
+            label,
+            self.theme.cpu_border,
+        );
+
+        let label = format!("{:.02}", min_cpu_sys);
+        buf.set_string(
+            area.width - 1 - label.len() as u16,
+            area.y + 4,
+            label,
+            self.theme.cpu_border,
+        );
     }
 }
 

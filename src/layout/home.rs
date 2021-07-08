@@ -8,7 +8,7 @@ pub fn draw(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
         .direction(Direction::Vertical)
         .constraints(
             [
-                Constraint::Length(12),
+                Constraint::Length(13),
                 Constraint::Min(12),
             ]
                 .as_ref(),
@@ -56,15 +56,13 @@ fn draw_part_middle_left(f: &mut Frame<Backend>, area: Rect, app: &App) {
         .constraints(
             [
                 Constraint::Length(12),
-                Constraint::Length(7),
                 Constraint::Length(12),
             ]
                 .as_ref(),
         )
         .split(area);
     f.render_widget(&app.network, chunks[0]);
-    f.render_widget(&app.throughput, chunks[1]);
-    f.render_widget(&app.memory, chunks[2]);
+    f.render_widget(&app.memory, chunks[1]);
 
 }
 

@@ -60,7 +60,6 @@ fn main() -> Result<(), RRTopError> {
                 metric = m.calc_delta(metric, config.tick_rate as f64);
                 &app.status_bar.update(&metric);
                 &app.network.update(&metric);
-                &app.throughput.update(&metric);
                 &app.cpu.update(&metric);
                 &app.memory.update(&metric);
                 &app.stat.update(&metric);

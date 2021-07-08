@@ -21,7 +21,7 @@ pub struct Throughput<'a> {
 
 impl<'a> Throughput<'a> {
     pub fn new(theme: &'a Theme) -> Self {
-        let max_elements = 250;
+        let max_elements = 125;
         Throughput {
             title: "throughput".to_owned(),
             ops_per_sec: VecDeque::with_capacity(max_elements),
@@ -34,6 +34,7 @@ impl<'a> Throughput<'a> {
 
 impl<'a> Widget for &Throughput<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
+        let area = Rect::new(area.x, area.y + 2, area.width - 1, area.height - 4);
         Block::default()
             .borders(Borders::ALL)
             .border_style(self.theme.throughput_border)

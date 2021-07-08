@@ -11,7 +11,8 @@ pub mod cpu;
 pub mod memory;
 pub mod memory_sparkline;
 pub mod stat;
-pub mod cpu_sys;
+mod cpu_sys;
+mod cpu_user;
 
 const DOT_SYMBOL: &str = ".";
 const MIN_DOT_SYMBOL: &str = "⡀";
