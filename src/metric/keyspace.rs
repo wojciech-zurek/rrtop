@@ -86,7 +86,7 @@ mod tests {
         let keyspace: Keyspace = info.borrow().into();
 
         assert_eq!(keyspace.space.len(), 4);
-        assert_eq!(keyspace.space[3].name, "db99999".to_owned());
+        assert_eq!(keyspace.space.iter().filter(|&it| it.name == "db99999".to_owned()).collect::<Vec<&Space>>().len(), 1 );
         assert_eq!(keyspace.total_keys, 200);
         assert_eq!(keyspace.total_expires, 26);
     }
