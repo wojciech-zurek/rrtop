@@ -3,8 +3,8 @@ use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
-use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders, Paragraph};
-use tui::symbols::Marker;
+use tui::widgets::{Widget, Block, Borders, Paragraph};
+
 use tui::style::{Style, Color, Modifier};
 use tui::text::Span;
 use tui::text::Spans;
@@ -18,24 +18,22 @@ pub struct Memory<'a> {
     used_memory: VecDeque<u64>,
     last_used_memory: u64,
     last_max_memory: u64,
-    color_scheme: &'a Theme,
+    _theme: &'a Theme,
     max_elements: usize,
     update_count: u64,
-    tick_rate: f64,
 }
 
 impl<'a> Memory<'a> {
-    pub fn new(color_scheme: &'a Theme, tick_rate: u64) -> Self {
+    pub fn new(theme: &'a Theme) -> Self {
         let max_elements = 250;
         Memory {
             title: title("Memory usage"),
             used_memory: VecDeque::new(),
             last_used_memory: 0,
             last_max_memory: 0,
-            color_scheme,
+            _theme: theme,
             max_elements,
             update_count: 0,
-            tick_rate: tick_rate as f64,
         }
     }
 }

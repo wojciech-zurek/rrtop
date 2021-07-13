@@ -1,7 +1,7 @@
-use tui::style::{Color, Modifier, Style};
+use tui::style::{Color};
 
 use crate::colorscheme::ColorScheme;
-use crate::colorscheme::theme::Theme;
+
 
 pub fn new() -> ColorScheme {
     ColorScheme {

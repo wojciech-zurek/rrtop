@@ -8,7 +8,7 @@ use crossterm::event;
 use std::time::Duration;
 use redis::Client;
 use crate::response::Info;
-use r2d2::{Pool, PooledConnection, Error};
+use r2d2::{Pool};
 use std::ops::DerefMut;
 use crate::metric::Metric;
 
@@ -48,7 +48,7 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
     for i in 0..worker_number {
         let rx = rx.clone();
         let tx = tx.clone();
-        let mut pool = pool.clone();
+        let pool = pool.clone();
         let name = format!("redis-worker-{}", i);
         let worker = thread::Builder::new().name(name).spawn(move || {
             //  println!("created {:?}", thread::current().name());

@@ -7,9 +7,8 @@ use tui::layout::{Rect, Constraint};
 use tui::text::Span;
 use size::Size;
 use crate::widget::title_span;
-use std::time::Instant;
-use chrono::{Duration, Local, DateTime, Utc};
 use crate::metric::Metric;
+use chrono::Local;
 
 pub struct Stat<'a> {
     title: String,

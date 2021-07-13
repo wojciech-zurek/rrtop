@@ -4,7 +4,6 @@ use tui::symbols;
 use tui::layout::Rect;
 use tui::buffer::Buffer;
 use std::cmp::min;
-use tui::symbols::bar;
 use crate::widget::LINE_SYMBOL;
 
 #[derive(Debug, Clone)]
@@ -52,51 +51,61 @@ impl<'a, 'b> Default for Sparkline<'a, 'b> {
 }
 
 impl<'a, 'b> Sparkline<'a, 'b> {
+    #[allow(dead_code)]
     pub fn block(mut self, block: Block<'a>) -> Sparkline<'a, 'b> {
         self.block = Some(block);
         self
     }
 
+    #[allow(dead_code)]
     pub fn style(mut self, style: Style) -> Sparkline<'a, 'b> {
         self.style = style;
         self
     }
 
+    #[allow(dead_code)]
     pub fn data(mut self, data: &'a [u64]) -> Sparkline<'a, 'b> {
         self.data = data;
         self
     }
 
+    #[allow(dead_code)]
     pub fn max(mut self, max: u64) -> Sparkline<'a, 'b> {
         self.max = Some(max);
         self
     }
 
+    #[allow(dead_code)]
     pub fn bar_set(mut self, bar_set: symbols::bar::Set) -> Sparkline<'a, 'b> {
         self.bar_set = bar_set;
         self
     }
 
+    #[allow(dead_code)]
     pub fn show_baseline(mut self, show_baseline: bool) -> Sparkline<'a, 'b> {
         self.show_baseline = show_baseline;
         self
     }
 
+    #[allow(dead_code)]
     pub fn baseline_style(mut self, style: Style) -> Sparkline<'a, 'b> {
         self.baseline_style = Some(style);
         self
     }
 
+    #[allow(dead_code)]
     pub fn baseline_symbol(mut self, symbol: &'b str) -> Sparkline<'a, 'b> {
         self.baseline_symbol = symbol;
         self
     }
 
+    #[allow(dead_code)]
     pub fn fill_baseline(mut self, fill_baseline: bool) -> Sparkline<'a, 'b> {
         self.fill_baseline = fill_baseline;
         self
     }
 
+    #[allow(dead_code)]
     pub fn direction(mut self, direction: RenderDirection) -> Sparkline<'a, 'b> {
         self.direction = direction;
         self

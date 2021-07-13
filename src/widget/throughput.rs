@@ -3,12 +3,12 @@ use tui::widgets::{Widget, Block, Borders, Paragraph};
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
 use crate::update::Updatable;
-use tui::style::{Modifier, Style, Color};
+
 use tui::text::Span;
 use tui::text::Spans;
 use crate::widget::sparkline::{Sparkline, RenderDirection};
 use std::collections::VecDeque;
-use crate::widget::{title, title_span};
+use crate::widget::{title_span};
 use crate::metric::Metric;
 
 pub struct Throughput<'a> {

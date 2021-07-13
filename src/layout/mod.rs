@@ -2,7 +2,7 @@ use tui::{Frame};
 use crate::app::App;
 use tui::layout::{Layout, Direction, Constraint, Rect};
 use crate::terminal::{Backend, Terminal};
-use tui::style::{Style, Color};
+
 
 pub mod home;
 

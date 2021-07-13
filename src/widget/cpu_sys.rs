@@ -10,7 +10,6 @@ use crate::metric::Metric;
 
 pub struct CpuSys<'a> {
     cpu_sys: VecDeque<(f64, f64)>,
-    last_cpu_sys: f64,
     last_delta_cpu_sys: f64,
     theme: &'a Theme,
     max_elements: usize,
@@ -21,7 +20,6 @@ impl<'a> CpuSys<'a> {
     pub fn new(theme: &'a Theme, max_elements: usize) -> Self {
         CpuSys {
             cpu_sys: VecDeque::with_capacity(max_elements),
-            last_cpu_sys: 0.0,
             last_delta_cpu_sys: 0.0,
             theme,
             max_elements,

@@ -1,4 +1,4 @@
-use tui::style::{Color, Modifier, Style};
+use tui::style::{Color};
 
 pub mod nord;
 pub mod default;

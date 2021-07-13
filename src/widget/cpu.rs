@@ -3,12 +3,12 @@ use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
 use tui::layout::{Rect, Layout, Direction, Constraint};
 use tui::buffer::Buffer;
-use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders, Paragraph};
-use tui::symbols::Marker;
+use tui::widgets::{Widget, Block, Borders, Paragraph};
+
 use tui::text::Span;
 use tui::text::Spans;
-use crate::widget::{title, title_span, MIN_DOT_SYMBOL};
-use tui::style::Color;
+use crate::widget::{title_span, MIN_DOT_SYMBOL};
+
 use std::cmp::Ordering;
 use crate::metric::Metric;
 use crate::widget::cpu_sys::CpuSys;

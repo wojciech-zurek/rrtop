@@ -150,9 +150,9 @@ impl From<&str> for Theme {
 impl Theme {
     pub fn color_table_cell(style_start: Style, style_stop: Style, index: u8, size: u16) -> Style {
         let start_color = style_start.fg.unwrap_or(Color::Rgb(255, 255, 255));
-        let mut start_r: f32;
-        let mut start_g: f32;
-        let mut start_b: f32;
+        let start_r: f32;
+        let start_g: f32;
+        let start_b: f32;
 
         match start_color {
             Color::Rgb(r, g, b) => {
@@ -167,9 +167,9 @@ impl Theme {
 
         let stop_color = style_stop.fg.unwrap_or(Color::Rgb(min, min, min));
 
-        let mut stop_r: f32;
-        let mut stop_g: f32;
-        let mut stop_b: f32;
+        let stop_r: f32;
+        let stop_g: f32;
+        let stop_b: f32;
 
         match stop_color {
             Color::Rgb(r, g, b) => {
@@ -182,7 +182,7 @@ impl Theme {
 
         let s = match size {
             0..=12 => 12,
-            12..=30 => size,
+            13..=30 => size,
             _ => 30
         } as f32;
 

@@ -1,7 +1,7 @@
 use crate::colorscheme::theme::Theme;
 use tui::layout::{Rect, Alignment};
 use tui::buffer::Buffer;
-use tui::widgets::{Widget, Borders, Block, Paragraph};
+use tui::widgets::{Widget, Paragraph};
 use tui::text::Span;
 use crate::update::Updatable;
 use crate::metric::Metric;

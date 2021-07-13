@@ -2,7 +2,7 @@ use crate::colorscheme::theme::Theme;
 use crate::widget::menu::Menu;
 use crate::widget::status_bar::StatusBar;
 use crate::widget::network::Network;
-use crate::widget::throughput::Throughput;
+
 use crate::widget::cpu::Cpu;
 use crate::widget::memory::Memory;
 use crate::widget::stat::Stat;

@@ -9,7 +9,6 @@ use std::str::ParseBoolError;
 pub enum RRTopError {
     RedisError(RedisError),
     RedisPoolError(r2d2::Error),
-    UnknownQueryRedisError(String),
     ParseIntError(std::num::ParseIntError),
     ParseFloatError(std::num::ParseFloatError),
     ParseBoolError(std::str::ParseBoolError),
@@ -28,7 +27,6 @@ impl fmt::Display for RRTopError {
             RRTopError::ParseIntError(e) => write!(f, "{}", e),
             RRTopError::ParseFloatError(e) => write!(f, "{}", e),
             RRTopError::ParseBoolError(e) => write!(f, "{}", e),
-            RRTopError::UnknownQueryRedisError(e) => write!(f, "{}", e),
             RRTopError::IoError(e) => write!(f, "{}", e),
             RRTopError::RecvError(e) => write!(f, "{}", e),
             RRTopError::SendError(e) => write!(f, "{}", e),

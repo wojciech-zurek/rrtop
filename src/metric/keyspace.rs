@@ -1,4 +1,4 @@
-use crate::metric::throughput::Throughput;
+
 use crate::response::Info;
 use regex::Regex;
 
@@ -10,10 +10,10 @@ pub struct Keyspace {
 }
 
 pub struct Space {
-    name: String,
+    _name: String,
     keys: u64,
     expires: u64,
-    avg_ttl: u64,
+    _avg_ttl: u64,
 }
 
 impl From<&Info> for Keyspace {
@@ -30,10 +30,10 @@ impl From<&Info> for Keyspace {
                 let avg_ttl = it.1.next().unwrap().name("value").map(|it| it.as_str()).unwrap_or("0");
 
                 Space {
-                    name: it.0.to_owned(),
+                    _name: it.0.to_owned(),
                     keys: keys.parse().unwrap_or(0),
                     expires: expires.parse().unwrap_or(0),
-                    avg_ttl: avg_ttl.parse().unwrap_or(0),
+                    _avg_ttl: avg_ttl.parse().unwrap_or(0),
                 }
             }).collect::<Vec<Space>>();
 
@@ -48,7 +48,7 @@ impl From<&Info> for Keyspace {
 
 #[cfg(test)]
 mod tests {
-    use regex::{Regex, Captures};
+    use regex::{Regex};
     use std::collections::HashMap;
     use std::borrow::Borrow;
     use crate::metric::keyspace::{Space, Keyspace};
@@ -56,7 +56,7 @@ mod tests {
 
     #[test]
     fn simple() {
-        let regex = Regex::new("^db[0-9]+$").unwrap();
+        let _regex = Regex::new("^db[0-9]+$").unwrap();
 
         let mut map = HashMap::new();
         map.insert("db0".to_owned(), "keys=3,expires=0,avg_ttl=0".to_owned());
@@ -86,7 +86,7 @@ mod tests {
         let keyspace: Keyspace = info.borrow().into();
 
         assert_eq!(keyspace.space.len(), 4);
-        assert_eq!(keyspace.space.iter().filter(|&it| it.name == "db99999".to_owned()).collect::<Vec<&Space>>().len(), 1 );
+        assert_eq!(keyspace.space.iter().filter(|&it| it._name == "db99999".to_owned()).collect::<Vec<&Space>>().len(), 1 );
         assert_eq!(keyspace.total_keys, 200);
         assert_eq!(keyspace.total_expires, 26);
     }

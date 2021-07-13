@@ -1,8 +1,8 @@
-use tui::widgets::{Widget, Tabs, Block, Borders};
+use tui::widgets::{Widget, Tabs};
 use tui::layout::Rect;
 use tui::buffer::Buffer;
 use tui::text::{Span, Spans};
-use tui::style::{Style, Modifier};
+
 use crate::colorscheme::theme::Theme;
 use tui::symbols;
 

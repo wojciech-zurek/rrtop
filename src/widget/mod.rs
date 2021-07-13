@@ -1,6 +1,6 @@
 use tui::text::{Span, Spans};
 use tui::style::Style;
-use tui::symbols::line::{VERTICAL_LEFT, ROUNDED_TOP_LEFT, VERTICAL_RIGHT, ROUNDED_TOP_RIGHT, BOTTOM_LEFT, TOP_RIGHT, TOP_LEFT};
+use tui::symbols::line::{VERTICAL_LEFT, VERTICAL_RIGHT, TOP_RIGHT, TOP_LEFT};
 
 pub mod menu;
 pub mod status_bar;
@@ -14,7 +14,6 @@ pub mod stat;
 mod cpu_sys;
 mod cpu_user;
 
-const DOT_SYMBOL: &str = ".";
 const MIN_DOT_SYMBOL: &str = "⡀";
 const LINE_SYMBOL: &str = "_";
 

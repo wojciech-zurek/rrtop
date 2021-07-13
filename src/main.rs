@@ -12,7 +12,7 @@ mod app;
 mod update;
 mod metric;
 
-use redis::{Client, ConnectionLike};
+use redis::{Client};
 use error::RRTopError;
 use std::time::Duration;
 use crate::config::Config;
@@ -21,7 +21,7 @@ use crate::event::{Events, AppEvent};
 use crossterm::event::{Event, KeyCode};
 use crate::app::App;
 use crate::update::Updatable;
-use r2d2::{ManageConnection, Pool};
+use r2d2::{Pool};
 use crate::metric::Metric;
 
 fn main() -> Result<(), RRTopError> {

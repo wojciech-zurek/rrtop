@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 use crate::colorscheme::theme::Theme;
 use crate::widget::cpu::Cpu;
 use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis};
-use crate::widget::cpu_sys::CpuSys;
+
 use tui::layout::Rect;
 use tui::buffer::Buffer;
 use tui::symbols::Marker;
@@ -11,7 +11,6 @@ use crate::metric::Metric;
 
 pub struct CpuUser<'a> {
     cpu_user: VecDeque<(f64, f64)>,
-    last_cpu_user: f64,
     last_delta_cpu_user: f64,
     theme: &'a Theme,
     max_elements: usize,
@@ -22,7 +21,6 @@ impl<'a> CpuUser<'a> {
     pub fn new(theme: &'a Theme, max_elements: usize) -> Self {
         CpuUser {
             cpu_user: VecDeque::with_capacity(max_elements),
-            last_cpu_user: 0.0,
             last_delta_cpu_user: 0.0,
             theme,
             max_elements,

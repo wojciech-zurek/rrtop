@@ -5,7 +5,7 @@ use std::time::Duration;
 use std::thread::JoinHandle;
 use redis::Client;
 use crate::config::Config;
-use crate::response::Info;
+
 use crate::workers::{setup_terminal_worker, setup_tick_worker, setup_redis_workers};
 use r2d2::Pool;
 use crate::metric::Metric;
@@ -22,8 +22,8 @@ pub enum AppEvent {
 pub struct Events {
     rx: flume::Receiver<AppEvent>,
     redis_tx: Sender<AppEvent>,
-    terminal_worker: JoinHandle<()>,
-    tick_worker: JoinHandle<()>,
+    _terminal_worker: JoinHandle<()>,
+    _tick_worker: JoinHandle<()>,
     redis_workers: Vec<JoinHandle<()>>,
 }
 
@@ -39,8 +39,8 @@ impl Events {
         Ok(Events {
             rx,
             redis_tx,
-            terminal_worker,
-            tick_worker,
+            _terminal_worker: terminal_worker,
+            _tick_worker: tick_worker,
             redis_workers,
         })
     }

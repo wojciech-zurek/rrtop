@@ -1,14 +1,14 @@
 use std::collections::VecDeque;
 use crate::colorscheme::theme::Theme;
 use crate::update::Updatable;
-use tui::layout::{Rect, Layout, Direction, Constraint};
+use tui::layout::{Rect};
 use tui::buffer::Buffer;
 use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis, Block, Borders};
 use tui::symbols::Marker;
-use tui::style::{Style, Color, Modifier};
-use tui::text::Span;
+
+
 use size::Size;
-use crate::widget::{title, title_span};
+use crate::widget::{title_span};
 use crate::metric::Metric;
 
 pub struct Memory<'a> {
