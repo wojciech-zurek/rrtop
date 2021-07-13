@@ -17,19 +17,24 @@ pub struct Stat<'a> {
     time_slices: VecDeque<TimeSlice>,
     theme: &'a Theme,
     max_elements: usize,
-    tick_rate: f64,
 }
 
 impl<'a> Stat<'a> {
-    pub fn new(theme: &'a Theme, tick_rate: u64) -> Self {
+    pub fn new(theme: &'a Theme) -> Self {
         let max_elements = 50;
         Stat {
             title: "stat".to_owned(),
-            headers: vec![" time".to_owned(), "ops".to_owned(), "user".to_owned(), "sys".to_owned(), "memUsed".to_owned(), "memRss".to_owned(), "fRatio".to_owned()],
+            headers: vec![" time".to_owned(),
+                          "ops".to_owned(),
+                          "user".to_owned(),
+                          "sys".to_owned(),
+                          "memUsed".to_owned(),
+                          "memRss".to_owned(),
+                          "fRatio".to_owned(),
+                          "keys".to_owned()],
             time_slices: VecDeque::with_capacity(max_elements),
             theme,
             max_elements,
-            tick_rate: tick_rate as f64,
         }
     }
 }
@@ -41,21 +46,8 @@ struct TimeSlice {
     used_memory: u64,
     used_rss_memory: u64,
     memory_fragmentation_ratio: f32,
-    ops_per_sec: u64,
-}
-
-impl TimeSlice {
-    fn new(cpu_user_time: f64, cpu_sys_time: f64, used_memory: u64, used_rss_memory: u64, memory_fragmentation_ratio: f32, ops_per_sec: u64) -> Self {
-        TimeSlice {
-            time: Local::now(),
-            cpu_user_time,
-            cpu_sys_time,
-            used_memory,
-            used_rss_memory,
-            memory_fragmentation_ratio,
-            ops_per_sec,
-        }
-    }
+    ops_per_sec: f64,
+    keys: u64,
 }
 
 impl<'a> StatefulWidget for &Stat<'a> {
@@ -75,12 +67,13 @@ impl<'a> StatefulWidget for &Stat<'a> {
 
             vec![
                 Cell::from(Span::styled(format!("{}", it.1.time.format(" %H:%M:%S")), style1)),
-                Cell::from(Span::styled(format!("{}", it.1.ops_per_sec), style2)),
+                Cell::from(Span::styled(format!("{:.1}", it.1.ops_per_sec), style2)),
                 Cell::from(Span::styled(format!("{:.02}%", it.1.cpu_user_time), style2)),
                 Cell::from(Span::styled(format!("{:.02}%", it.1.cpu_sys_time), style2)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_rss_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.memory_fragmentation_ratio), style2)),
+                Cell::from(Span::styled(format!("{}", it.1.keys), style2)),
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 
@@ -92,13 +85,14 @@ impl<'a> StatefulWidget for &Stat<'a> {
                 .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
             )
             .widths(&[
-                Constraint::Ratio(3, 20),
                 Constraint::Ratio(2, 20),
-                Constraint::Ratio(3, 20),
-                Constraint::Ratio(3, 20),
-                Constraint::Ratio(3, 20),
-                Constraint::Ratio(3, 20),
-                Constraint::Ratio(3, 20),
+                Constraint::Ratio(2, 20),
+                Constraint::Ratio(2, 20),
+                Constraint::Ratio(2, 20),
+                Constraint::Ratio(2, 20),
+                Constraint::Ratio(2, 20),
+                Constraint::Ratio(2, 20),
+                Constraint::Ratio(2, 20),
             ]).render(area, buf, state);
     }
 }
@@ -119,14 +113,19 @@ impl<'a> Updatable<&Metric> for Stat<'a> {
 
         let memory_fragmentation_ratio = metric.memory.mem_fragmentation_ratio;
 
-        let ops_per_sec = metric.throughput.instantaneous_ops_per_sec;
+        let ops_per_sec = metric.throughput.last_delta_ops;
 
-        self.time_slices.push_front(TimeSlice::new(
+        let keys = metric.keyspace.total_keys;
+
+        self.time_slices.push_front(TimeSlice {
+            time: Local::now(),
             cpu_user_time,
             cpu_sys_time,
             used_memory,
             used_rss_memory,
             memory_fragmentation_ratio,
-            ops_per_sec));
+            ops_per_sec,
+            keys,
+        });
     }
 }

@@ -66,8 +66,7 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                         };
 
                         let start = time::Instant::now();
-
-                        match redis::cmd("INFO").query::<Info>(client) {
+                        match redis::cmd("INFO").arg("all").query::<Info>(client) {
                             Ok(info) => {
                                 if let Err(e) = tx.send(
                                     AppEvent::Result(Metric::from(info).latency(start.elapsed().as_millis()))

@@ -31,7 +31,7 @@ impl Events {
     pub fn from_config(config: &Config, pool: Pool<Client>) -> io::Result<Events> {
         let (tx, rx) = flume::unbounded();
         let terminal_worker = setup_terminal_worker(tx.clone())?;
-        let tick_worker = setup_tick_worker(tx.clone(), Duration::from_secs(config.tick_rate))?;
+        let tick_worker = setup_tick_worker(tx.clone(), Duration::from_secs_f64(config.tick_rate))?;
 
         let (redis_tx, redis_rx) = flume::unbounded();
         let redis_workers = setup_redis_workers(tx, redis_rx, config.worker_number, pool)?;

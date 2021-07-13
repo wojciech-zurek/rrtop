@@ -1,5 +1,5 @@
 use std::fmt;
-use std::num::ParseIntError;
+use std::num::{ParseIntError, ParseFloatError};
 use redis::RedisError;
 use flume::{RecvError, SendError};
 use crate::event::AppEvent;
@@ -11,10 +11,12 @@ pub enum RRTopError {
     RedisPoolError(r2d2::Error),
     UnknownQueryRedisError(String),
     ParseIntError(std::num::ParseIntError),
+    ParseFloatError(std::num::ParseFloatError),
     ParseBoolError(std::str::ParseBoolError),
     IoError(std::io::Error),
     RecvError(RecvError),
     SendError(SendError<AppEvent>),
+    CliParseError(String)
 }
 
 impl fmt::Display for RRTopError {
@@ -24,11 +26,13 @@ impl fmt::Display for RRTopError {
             RRTopError::RedisError(e) => write!(f, "{}", e),
             RRTopError::RedisPoolError(e) => { write!(f, "{}", e) }
             RRTopError::ParseIntError(e) => write!(f, "{}", e),
+            RRTopError::ParseFloatError(e) => write!(f, "{}", e),
             RRTopError::ParseBoolError(e) => write!(f, "{}", e),
             RRTopError::UnknownQueryRedisError(e) => write!(f, "{}", e),
             RRTopError::IoError(e) => write!(f, "{}", e),
             RRTopError::RecvError(e) => write!(f, "{}", e),
             RRTopError::SendError(e) => write!(f, "{}", e),
+            RRTopError::CliParseError(e) => write!(f, "{}", e),
         }
     }
 }
@@ -38,6 +42,12 @@ impl std::error::Error for RRTopError {}
 impl From<ParseIntError> for RRTopError {
     fn from(e: ParseIntError) -> Self {
         RRTopError::ParseIntError(e)
+    }
+}
+
+impl From<ParseFloatError> for RRTopError {
+    fn from(e: ParseFloatError) -> Self {
+        RRTopError::ParseFloatError(e)
     }
 }
 

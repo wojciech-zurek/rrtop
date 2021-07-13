@@ -5,12 +5,14 @@ use crate::metric::cpu::Cpu;
 use crate::metric::memory::Memory;
 use crate::metric::throughput::Throughput;
 use crate::response::Info;
+use crate::metric::keyspace::Keyspace;
 
 pub mod status;
 pub mod network;
 pub mod cpu;
 pub mod memory;
 pub mod throughput;
+pub mod keyspace;
 
 #[derive(Default)]
 pub struct Metric {
@@ -19,6 +21,7 @@ pub struct Metric {
     pub cpu: Cpu,
     pub memory: Memory,
     pub throughput: Throughput,
+    pub keyspace: Keyspace,
 }
 
 impl Metric {
@@ -29,6 +32,8 @@ impl Metric {
 
     pub fn calc_delta(mut self, other: Self, tick_rate: f64) -> Self {
         self.cpu.calc_delta(&other.cpu, tick_rate);
+        self.throughput.calc_delta(&other.throughput, tick_rate);
+        self.network.calc_delta(&other.network, tick_rate);
         self
     }
 }
@@ -41,6 +46,7 @@ impl From<Info> for Metric {
             cpu: i.borrow().into(),
             memory: i.borrow().into(),
             throughput: i.borrow().into(),
+            keyspace: i.borrow().into(),
         }
     }
 }

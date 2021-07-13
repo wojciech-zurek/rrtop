@@ -22,11 +22,10 @@ pub struct Memory<'a> {
     theme: &'a Theme,
     max_elements: usize,
     update_count: u64,
-    tick_rate: f64,
 }
 
 impl<'a> Memory<'a> {
-    pub fn new(theme: &'a Theme, tick_rate: u64) -> Self {
+    pub fn new(theme: &'a Theme) -> Self {
         let max_elements = 250;
         Memory {
             title: "memory".to_owned(),
@@ -39,7 +38,6 @@ impl<'a> Memory<'a> {
             theme,
             max_elements,
             update_count: 0,
-            tick_rate: tick_rate as f64,
         }
     }
 }

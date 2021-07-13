@@ -15,6 +15,7 @@ pub struct Throughput<'a> {
     title: String,
     ops_per_sec: VecDeque<u64>,
     total_commands: u64,
+    last_delta_ops: f64,
     theme: &'a Theme,
     max_elements: usize,
 }
@@ -26,6 +27,7 @@ impl<'a> Throughput<'a> {
             title: "throughput".to_owned(),
             ops_per_sec: VecDeque::with_capacity(max_elements),
             total_commands: 0,
+            last_delta_ops: 0.0,
             theme,
             max_elements,
         }
@@ -57,7 +59,7 @@ impl<'a> Widget for &Throughput<'a> {
 
         let spans = vec![
             Spans::from(Span::styled(format!("Total commands: {}", self.total_commands), self.theme.throughput_total_commands_text)),
-            Spans::from(Span::styled(format!("         Ops/s: {} ops/s", self.ops_per_sec.front().unwrap_or(&0).to_owned()), self.theme.throughput_ops_text))
+            Spans::from(Span::styled(format!("         Ops/s: {:.1} ops/s", self.last_delta_ops), self.theme.throughput_ops_text))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
 
@@ -75,11 +77,12 @@ impl<'a> Widget for &Throughput<'a> {
 impl<'a> Updatable<&Metric> for Throughput<'a> {
     fn update(&mut self, metric: &Metric) {
         self.total_commands = metric.throughput.total_commands_processed;
+        self.last_delta_ops = metric.throughput.last_delta_ops;
 
         if self.ops_per_sec.len() >= self.max_elements {
             self.ops_per_sec.pop_back();
         }
 
-        self.ops_per_sec.push_front(metric.throughput.instantaneous_ops_per_sec);
+        self.ops_per_sec.push_front((metric.throughput.last_delta_ops * 100.0) as u64);
     }
 }

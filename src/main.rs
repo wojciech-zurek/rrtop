@@ -31,7 +31,7 @@ fn main() -> Result<(), RRTopError> {
     let mut terminal = terminal::create()?;
 
     let mut events = Events::from_config(&config, pool)?;
-    let mut app = App::new(&config.theme, config.tick_rate, config.draw_background);
+    let mut app = App::new(&config.theme, config.draw_background);
 
     let mut metric = Metric::default();
     loop {
@@ -57,7 +57,7 @@ fn main() -> Result<(), RRTopError> {
                 break;
             }
             AppEvent::Result(m) => {
-                metric = m.calc_delta(metric, config.tick_rate as f64);
+                metric = m.calc_delta(metric, config.tick_rate);
                 &app.status_bar.update(&metric);
                 &app.network.update(&metric);
                 &app.cpu.update(&metric);

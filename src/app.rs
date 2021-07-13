@@ -22,14 +22,14 @@ pub struct App<'a> {
 }
 
 impl<'a> App<'a> {
-    pub fn new(theme: &'a Theme, tick_rate: u64, draw_background: Option<Style>) -> Self {
+    pub fn new(theme: &'a Theme, draw_background: Option<Style>) -> Self {
         App {
             menu: Menu::new(theme),
             status_bar: StatusBar::new(theme),
             network: Network::new(theme),
             cpu: Cpu::new(theme),
-            memory: Memory::new(theme, tick_rate),
-            stat: Stat::new(theme, tick_rate),
+            memory: Memory::new(theme),
+            stat: Stat::new(theme),
             stat_table_state: TableState::default(),
             selected_tab: 0,
             draw_background,
