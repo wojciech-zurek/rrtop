@@ -3,6 +3,7 @@ use tui::widgets::TableState;
 
 use crate::colorscheme::theme::Theme;
 use crate::widget::area_warning::AreaWarning;
+use crate::widget::calls::Calls;
 use crate::widget::cpu::Cpu;
 use crate::widget::hit_rate::HitRate;
 use crate::widget::memory::Memory;
@@ -19,6 +20,7 @@ pub struct App<'a> {
     pub memory: Memory<'a>,
     pub hit_rate: HitRate<'a>,
     pub stat: Stat<'a>,
+    pub commands: Calls<'a>,
     pub area_warning: AreaWarning<'a>,
     pub stat_table_state: TableState,
     pub selected_tab: usize,
@@ -27,7 +29,7 @@ pub struct App<'a> {
     pub min_height: u16,
 }
 
-impl<'a> App<'a> {
+impl<'a, 'b> App<'a> {
     pub fn new(theme: &'a Theme, draw_background: Option<Style>, min_width: u16, min_height: u16) -> Self {
         App {
             menu: Menu::new(theme),
@@ -37,6 +39,7 @@ impl<'a> App<'a> {
             memory: Memory::new(theme),
             hit_rate: HitRate::new(theme),
             stat: Stat::new(theme),
+            commands: Calls::new(theme),
             area_warning: AreaWarning::new(theme, min_width, min_height),
             stat_table_state: TableState::default(),
             selected_tab: 0,

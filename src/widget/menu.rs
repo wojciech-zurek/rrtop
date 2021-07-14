@@ -1,10 +1,10 @@
-use tui::widgets::{Widget, Tabs};
-use tui::layout::Rect;
 use tui::buffer::Buffer;
+use tui::layout::Rect;
+use tui::symbols;
 use tui::text::{Span, Spans};
+use tui::widgets::{Tabs, Widget};
 
 use crate::colorscheme::theme::Theme;
-use tui::symbols;
 
 pub struct Menu<'a> {
     pub titles: Vec<String>,
@@ -15,7 +15,7 @@ pub struct Menu<'a> {
 impl<'a> Menu<'a> {
     pub fn new(theme: &'a Theme) -> Self {
         Menu {
-            titles: vec!["Main".to_owned(), "Other".to_owned()],
+            titles: vec!["Main".to_owned(), "Cmd".to_owned(), "Stat".to_owned()],
             selected_tab: 0,
             theme,
         }

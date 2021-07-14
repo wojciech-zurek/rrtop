@@ -67,6 +67,7 @@ fn main() -> Result<(), RRTopError> {
                 &app.memory.update(&metric);
                 &app.stat.update(&metric);
                 &app.hit_rate.update(&metric);
+                &app.commands.update(&metric);
             }
             _ => {}
         }

@@ -1,11 +1,13 @@
-use crate::metric::status::Status;
-use crate::metric::network::Network;
 use std::borrow::Borrow;
+
+use crate::metric::command::Command;
 use crate::metric::cpu::Cpu;
+use crate::metric::keyspace::Keyspace;
 use crate::metric::memory::Memory;
+use crate::metric::network::Network;
+use crate::metric::status::Status;
 use crate::metric::throughput::Throughput;
 use crate::response::Info;
-use crate::metric::keyspace::Keyspace;
 
 pub mod status;
 pub mod network;
@@ -13,6 +15,7 @@ pub mod cpu;
 pub mod memory;
 pub mod throughput;
 pub mod keyspace;
+pub mod command;
 
 #[derive(Default)]
 pub struct Metric {
@@ -22,6 +25,7 @@ pub struct Metric {
     pub memory: Memory,
     pub throughput: Throughput,
     pub keyspace: Keyspace,
+    pub command: Command,
 }
 
 impl Metric {
@@ -47,6 +51,7 @@ impl From<Info> for Metric {
             memory: i.borrow().into(),
             throughput: i.borrow().into(),
             keyspace: i.borrow().into(),
+            command: i.borrow().into(),
         }
     }
 }

@@ -14,6 +14,7 @@ mod cpu_sys;
 mod cpu_user;
 pub mod hit_rate;
 pub mod area_warning;
+pub mod calls;
 
 const MIN_DOT_SYMBOL: &str = "⡀";
 const LINE_SYMBOL: &str = "_";

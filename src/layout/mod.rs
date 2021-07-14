@@ -5,6 +5,8 @@ use crate::app::App;
 use crate::terminal::{Backend, Terminal};
 
 pub mod home;
+pub mod command;
+pub mod stat;
 
 pub fn draw(terminal: &mut Terminal, app: &mut App) -> std::io::Result<()> {
     if let Some(style) = app.draw_background {
@@ -30,6 +32,8 @@ pub fn draw(terminal: &mut Terminal, app: &mut App) -> std::io::Result<()> {
             .split(f.size());
         match app.selected_tab {
             0 => { home::draw(f, chunks[0], app) }
+            1 => { command::draw(f, chunks[0], app) }
+            2 => { stat::draw(f, chunks[0], app) }
             _ => {}
         }
 
@@ -44,8 +48,8 @@ fn draw_status_bar(f: &mut Frame<Backend>, area: Rect, app: &App) {
         .direction(Direction::Horizontal)
         .constraints(
             [
-                Constraint::Ratio(1, 6),
-                Constraint::Ratio(1, 6),
+                Constraint::Percentage(40),
+                Constraint::Percentage(60),
             ]
                 .as_ref(),
         )

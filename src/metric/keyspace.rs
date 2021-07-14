@@ -67,14 +67,11 @@ mod tests {
     use std::borrow::Borrow;
     use std::collections::HashMap;
 
-    use regex::Regex;
-
     use crate::metric::keyspace::{Keyspace, Space};
     use crate::response::Info;
 
     #[test]
     fn simple() {
-        let _regex = Regex::new("^db[0-9]+$").unwrap();
 
         let mut map = HashMap::new();
         map.insert("db0".to_owned(), "keys=3,expires=0,avg_ttl=0".to_owned());
