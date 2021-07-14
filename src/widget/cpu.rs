@@ -1,16 +1,16 @@
+use std::cmp::Ordering;
 use std::collections::VecDeque;
-use crate::colorscheme::theme::Theme;
-use crate::update::Updatable;
-use tui::layout::{Rect, Layout, Direction, Constraint};
-use tui::buffer::Buffer;
-use tui::widgets::{Widget, Block, Borders, Paragraph};
 
+use tui::buffer::Buffer;
+use tui::layout::{Constraint, Direction, Layout, Rect};
 use tui::text::Span;
 use tui::text::Spans;
-use crate::widget::{title_span, MIN_DOT_SYMBOL};
+use tui::widgets::{Block, Borders, Paragraph, Widget};
 
-use std::cmp::Ordering;
+use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
+use crate::update::Updatable;
+use crate::widget::{MIN_DOT_SYMBOL, title_span};
 use crate::widget::cpu_sys::CpuSys;
 use crate::widget::cpu_user::CpuUser;
 use crate::widget::throughput::Throughput;
@@ -81,8 +81,8 @@ impl<'a> Widget for &Cpu<'a> {
             .constraints(
                 [
                     Constraint::Length(1),
-                    Constraint::Length(5),
-                    Constraint::Length(5),
+                    Constraint::Max(5),
+                    Constraint::Max(5),
                     Constraint::Length(1),
                 ]
                     .as_ref(),
@@ -91,7 +91,7 @@ impl<'a> Widget for &Cpu<'a> {
             .vertical_margin(0)
             .split(main_chunk[0]);
 
-        for i in main_chunk[0].left() + 2..main_chunk[0].right() - 7 {
+        for i in main_chunk[0].left() + 2..main_chunk[0].right().wrapping_sub(7) {
             buf.get_mut(i, 5)
                 .set_style(self.theme.cpu_chart_line)
                 .set_symbol(MIN_DOT_SYMBOL);

@@ -1,9 +1,10 @@
+use regex::Regex;
 
 use crate::response::Info;
-use regex::Regex;
 
 #[derive(Default)]
 pub struct Keyspace {
+    pub keyspace_hit_rate: f64,
     pub total_keys: u64,
     pub total_expires: u64,
     pub space: Vec<Space>,
@@ -18,6 +19,21 @@ pub struct Space {
 
 impl From<&Info> for Keyspace {
     fn from(i: &Info) -> Self {
+        let keyspace_hits = if let Some(keyspace_hits) = i.0.get("keyspace_hits") {
+            keyspace_hits.parse::<f64>().unwrap_or(0.0)
+        } else {
+            0.0
+        };
+
+        let keyspace_misses = if let Some(keyspace_misses) = i.0.get("keyspace_misses") {
+            keyspace_misses.parse::<f64>().unwrap_or(0.0)
+        } else {
+            0.0
+        };
+
+        let keyspace_hit_rate = keyspace_hits / (keyspace_hits + keyspace_misses);
+        let keyspace_hit_rate = keyspace_hit_rate.max(0.0).min(100.0);
+
         let regex = Regex::new("^db[0-9]+$").unwrap();
         let regex_values = Regex::new("(?P<name>keys|expires|avg_ttl)=(?P<value>[0-9]+)").unwrap();
 
@@ -37,8 +53,8 @@ impl From<&Info> for Keyspace {
                 }
             }).collect::<Vec<Space>>();
 
-
         Keyspace {
+            keyspace_hit_rate,
             total_keys: space.iter().map(|it| it.keys).sum(),
             total_expires: space.iter().map(|it| it.expires).sum(),
             space,
@@ -48,10 +64,12 @@ impl From<&Info> for Keyspace {
 
 #[cfg(test)]
 mod tests {
-    use regex::{Regex};
-    use std::collections::HashMap;
     use std::borrow::Borrow;
-    use crate::metric::keyspace::{Space, Keyspace};
+    use std::collections::HashMap;
+
+    use regex::Regex;
+
+    use crate::metric::keyspace::{Keyspace, Space};
     use crate::response::Info;
 
     #[test]
@@ -86,7 +104,7 @@ mod tests {
         let keyspace: Keyspace = info.borrow().into();
 
         assert_eq!(keyspace.space.len(), 4);
-        assert_eq!(keyspace.space.iter().filter(|&it| it._name == "db99999".to_owned()).collect::<Vec<&Space>>().len(), 1 );
+        assert_eq!(keyspace.space.iter().filter(|&it| it._name == "db99999".to_owned()).collect::<Vec<&Space>>().len(), 1);
         assert_eq!(keyspace.total_keys, 200);
         assert_eq!(keyspace.total_expires, 26);
     }

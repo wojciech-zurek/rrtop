@@ -1,6 +1,6 @@
-use tui::text::{Span, Spans};
 use tui::style::Style;
-use tui::symbols::line::{VERTICAL_LEFT, VERTICAL_RIGHT, TOP_RIGHT, TOP_LEFT};
+use tui::symbols::line::{TOP_LEFT, TOP_RIGHT};
+use tui::text::{Span, Spans};
 
 pub mod menu;
 pub mod status_bar;
@@ -9,17 +9,14 @@ pub mod sparkline;
 pub mod throughput;
 pub mod cpu;
 pub mod memory;
-pub mod memory_sparkline;
 pub mod stat;
 mod cpu_sys;
 mod cpu_user;
+pub mod hit_rate;
+pub mod area_warning;
 
 const MIN_DOT_SYMBOL: &str = "⡀";
 const LINE_SYMBOL: &str = "_";
-
-fn title(title: &str) -> String {
-    format!("{} {} {}", VERTICAL_LEFT, title, VERTICAL_RIGHT)
-}
 
 fn title_span(title: &str, title_style: Style, border_style: Style) -> Spans {
     Spans::from(

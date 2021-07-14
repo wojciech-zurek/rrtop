@@ -1,13 +1,14 @@
 use std::collections::VecDeque;
-use crate::colorscheme::theme::Theme;
-use crate::widget::cpu::Cpu;
-use tui::widgets::{Widget, Dataset, GraphType, Chart, Axis};
 
-use tui::layout::Rect;
 use tui::buffer::Buffer;
+use tui::layout::Rect;
 use tui::symbols::Marker;
-use crate::update::Updatable;
+use tui::widgets::{Axis, Chart, Dataset, GraphType, Widget};
+
+use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
+use crate::update::Updatable;
+use crate::widget::cpu::Cpu;
 
 pub struct CpuUser<'a> {
     cpu_user: VecDeque<(f64, f64)>,
@@ -56,11 +57,11 @@ impl<'a> Widget for &CpuUser<'a> {
                 .bounds([self.update_count as f64 - area.width as f64, self.update_count as f64 + 1.0])
             )
             .style(self.theme.cpu_chart)
-            .render(Rect::new(area.x + 2, area.y, area.width - 8, area.height), buf);
+            .render(Rect::new(area.x + 2, area.y, area.width.wrapping_sub(8), area.height), buf);
 
         let label = format!("{:.02}", min_cpu_user);
         buf.set_string(
-            area.width - 1 - label.len() as u16,
+            area.width.wrapping_sub(1).wrapping_sub(label.len() as u16),
             area.y,
             label,
             self.theme.cpu_border,
@@ -68,7 +69,7 @@ impl<'a> Widget for &CpuUser<'a> {
 
         let label = format!("{:.02}", max_cpu_user);
         buf.set_string(
-            area.width - 1 - label.len() as u16,
+            area.width.wrapping_sub(1).wrapping_sub(label.len() as u16),
             area.y + 4,
             label,
             self.theme.cpu_border,

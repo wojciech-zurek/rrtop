@@ -1,14 +1,16 @@
 use std::collections::VecDeque;
-use crate::colorscheme::theme::Theme;
-use crate::update::Updatable;
-use tui::widgets::{StatefulWidget, TableState, Cell, Row, Table, Block, Borders};
-use tui::buffer::{Buffer};
-use tui::layout::{Rect, Constraint};
-use tui::text::Span;
-use size::Size;
-use crate::widget::title_span;
-use crate::metric::Metric;
+
 use chrono::Local;
+use size::Size;
+use tui::buffer::Buffer;
+use tui::layout::{Constraint, Rect};
+use tui::text::Span;
+use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState};
+
+use crate::colorscheme::theme::Theme;
+use crate::metric::Metric;
+use crate::update::Updatable;
+use crate::widget::title_span;
 
 pub struct Stat<'a> {
     title: String,
@@ -61,8 +63,8 @@ impl<'a> StatefulWidget for &Stat<'a> {
             .bottom_margin(0);
 
         let rows = self.time_slices.iter().enumerate().map(|it| {
-            let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height - 1);
-            let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height - 1);
+            let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
 
             vec![
                 Cell::from(Span::styled(format!("{}", it.1.time.format(" %H:%M:%S")), style1)),

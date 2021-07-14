@@ -1,8 +1,12 @@
 use clap::ArgMatches;
-use crate::error::RRTopError;
-use crate::colorscheme::theme::Theme;
 use tui::style::Style;
+
 use crate::cli::DEFAULT_MIN_TICK_RATE;
+use crate::colorscheme::theme::Theme;
+use crate::error::RRTopError;
+
+const MIN_WIDTH: u16 = 60;
+const MIN_HEIGHT: u16 = 13;
 
 pub struct Config {
     pub timeout: u64,
@@ -11,6 +15,8 @@ pub struct Config {
     pub tick_rate: f64,
     pub theme: Theme,
     pub draw_background: Option<Style>,
+    pub min_width: u16,
+    pub min_height: u16,
 }
 
 impl Config {
@@ -45,6 +51,8 @@ impl Config {
             tick_rate,
             theme,
             draw_background,
+            min_width: MIN_WIDTH,
+            min_height: MIN_HEIGHT,
         })
     }
 }

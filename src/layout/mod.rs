@@ -1,8 +1,8 @@
-use tui::{Frame};
-use crate::app::App;
-use tui::layout::{Layout, Direction, Constraint, Rect};
-use crate::terminal::{Backend, Terminal};
+use tui::Frame;
+use tui::layout::{Constraint, Direction, Layout, Rect};
 
+use crate::app::App;
+use crate::terminal::{Backend, Terminal};
 
 pub mod home;
 
@@ -13,6 +13,11 @@ pub fn draw(terminal: &mut Terminal, app: &mut App) -> std::io::Result<()> {
     }
 
     terminal.draw(|f| {
+        if f.size().width < app.min_width || f.size().height < app.min_height {
+            f.render_widget(&app.area_warning, f.size());
+            return;
+        }
+
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints(

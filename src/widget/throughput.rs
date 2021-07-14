@@ -1,15 +1,16 @@
-use crate::colorscheme::theme::Theme;
-use tui::widgets::{Widget, Block, Borders, Paragraph};
-use tui::layout::{Rect, Layout, Direction, Constraint};
-use tui::buffer::Buffer;
-use crate::update::Updatable;
+use std::collections::VecDeque;
 
+use tui::buffer::Buffer;
+use tui::layout::{Constraint, Direction, Layout, Rect};
 use tui::text::Span;
 use tui::text::Spans;
-use crate::widget::sparkline::{Sparkline, RenderDirection};
-use std::collections::VecDeque;
-use crate::widget::{title_span};
+use tui::widgets::{Block, Borders, Paragraph, Widget};
+
+use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
+use crate::update::Updatable;
+use crate::widget::title_span;
+use crate::widget::sparkline::{RenderDirection, Sparkline};
 
 pub struct Throughput<'a> {
     title: String,
@@ -59,7 +60,7 @@ impl<'a> Widget for &Throughput<'a> {
 
         let spans = vec![
             Spans::from(Span::styled(format!("Total commands: {}", self.total_commands), self.theme.throughput_total_commands_text)),
-            Spans::from(Span::styled(format!("         Ops/s: {:.1} ops/s", self.last_delta_ops), self.theme.throughput_ops_text))
+            Spans::from(Span::styled(format!("           Ops: {:.1} ops/s", self.last_delta_ops), self.theme.throughput_ops_text))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
 

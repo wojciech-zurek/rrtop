@@ -1,3 +1,18 @@
+use std::time::Duration;
+
+use crossterm::event::{Event, KeyCode};
+use r2d2::Pool;
+use redis::Client;
+
+use cli::cli;
+use error::RRTopError;
+
+use crate::app::App;
+use crate::config::Config;
+use crate::event::{AppEvent, Events};
+use crate::metric::Metric;
+use crate::update::Updatable;
+
 mod error;
 mod cli;
 mod response;
@@ -12,18 +27,6 @@ mod app;
 mod update;
 mod metric;
 
-use redis::{Client};
-use error::RRTopError;
-use std::time::Duration;
-use crate::config::Config;
-use cli::cli;
-use crate::event::{Events, AppEvent};
-use crossterm::event::{Event, KeyCode};
-use crate::app::App;
-use crate::update::Updatable;
-use r2d2::{Pool};
-use crate::metric::Metric;
-
 fn main() -> Result<(), RRTopError> {
     let config = config::Config::parse(cli())?;
     let pool = connect(&config)?;
@@ -31,7 +34,7 @@ fn main() -> Result<(), RRTopError> {
     let mut terminal = terminal::create()?;
 
     let mut events = Events::from_config(&config, pool)?;
-    let mut app = App::new(&config.theme, config.draw_background);
+    let mut app = App::new(&config.theme, config.draw_background, config.min_width, config.min_height);
 
     let mut metric = Metric::default();
     loop {
@@ -63,6 +66,7 @@ fn main() -> Result<(), RRTopError> {
                 &app.cpu.update(&metric);
                 &app.memory.update(&metric);
                 &app.stat.update(&metric);
+                &app.hit_rate.update(&metric);
             }
             _ => {}
         }
