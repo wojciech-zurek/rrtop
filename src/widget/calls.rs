@@ -2,14 +2,16 @@ use std::cmp::Ordering;
 
 use tui::buffer::Buffer;
 use tui::layout::{Constraint, Rect};
+use tui::style::Modifier;
 use tui::text::{Span, Spans};
-use tui::widgets::{Block, Borders, Cell, Row, Table, Widget};
+use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState, Widget};
 
 use crate::colorscheme::theme::Theme;
 use crate::metric::command::CmdStat;
 use crate::metric::Metric;
 use crate::update::Updatable;
 use crate::widget::linegauge::render_line_gauge;
+use crate::widget::navigation::Navigation;
 use crate::widget::title_span;
 
 pub struct Calls<'a> {
@@ -21,6 +23,39 @@ pub struct Calls<'a> {
     sum_usec: f64,
     sum_usec_per_call: f64,
     sort_by: Sort,
+    state: TableState,
+}
+
+impl<'a> Calls<'a> {
+    pub fn new(theme: &'a Theme) -> Self {
+        let sort_by = Sort::Calls;
+        Calls {
+            title: sort_by.title(),
+            theme,
+            headers: vec![" command".to_owned(),
+                          "calls".to_owned(),
+                          "usec".to_owned(),
+                          "usec per call".to_owned(),
+            ],
+            stats: Vec::new(),
+            sum_calls: 0.0,
+            sum_usec: 0.0,
+            sum_usec_per_call: 0.0,
+            sort_by,
+            state: TableState::default(),
+        }
+    }
+
+    pub fn sort_next(&mut self) {
+        let next = match self.sort_by {
+            Sort::Calls => { Sort::Usec }
+            Sort::Usec => { Sort::UsecPerCall }
+            Sort::UsecPerCall => { Sort::Calls }
+        };
+        self.title = next.title();
+        self.sort_by = next;
+        self.stats.sort_by(self.sort_by.sort());
+    }
 }
 
 enum Sort {
@@ -47,38 +82,7 @@ impl Sort {
     }
 }
 
-impl<'a> Calls<'a> {
-    pub fn new(theme: &'a Theme) -> Self {
-        let sort_by = Sort::Calls;
-        Calls {
-            title: sort_by.title(),
-            theme,
-            headers: vec![" command".to_owned(),
-                          "calls".to_owned(),
-                          "usec".to_owned(),
-                          "usec per call".to_owned(),
-            ],
-            stats: Vec::new(),
-            sum_calls: 0.0,
-            sum_usec: 0.0,
-            sum_usec_per_call: 0.0,
-            sort_by,
-        }
-    }
-
-    pub fn sort_next(&mut self) {
-        let next = match self.sort_by {
-            Sort::Calls => { Sort::Usec }
-            Sort::Usec => { Sort::UsecPerCall }
-            Sort::UsecPerCall => { Sort::Calls }
-        };
-        self.title = next.title();
-        self.sort_by = next;
-        self.stats.sort_by(self.sort_by.sort());
-    }
-}
-
-impl<'a> Widget for &Calls<'a> {
+impl<'a> Widget for &mut Calls<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let header_cells = self.headers
             .iter()
@@ -103,19 +107,22 @@ impl<'a> Widget for &Calls<'a> {
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 
-        Table::new(rows)
+        let table = Table::new(rows)
             .header(header)
             .block(Block::default()
                 .borders(Borders::ALL)
                 .border_style(self.theme.stat_border)
                 .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
             )
+            .highlight_style(self.theme.stat_table_row_top_1.add_modifier(Modifier::REVERSED))
             .widths(&[
                 Constraint::Ratio(2, 20),
                 Constraint::Ratio(6, 20),
                 Constraint::Ratio(6, 20),
                 Constraint::Ratio(6, 20),
-            ]).render(area, buf);
+            ]);
+
+        StatefulWidget::render(table, area, buf, &mut self.state);
     }
 }
 
@@ -131,6 +138,16 @@ impl<'a> Updatable<&Metric> for Calls<'a> {
         self.sum_calls = metric.command.sum_calls;
         self.sum_usec = metric.command.sum_usec;
         self.sum_usec_per_call = metric.command.sum_usec_per_call;
+    }
+}
+
+impl<'a> Navigation for Calls<'a> {
+    fn state(&mut self) -> &mut TableState {
+        &mut self.state
+    }
+
+    fn len(&self) -> usize {
+        self.stats.len()
     }
 }
 

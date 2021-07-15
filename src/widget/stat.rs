@@ -11,7 +11,8 @@ use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState,
 use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
 use crate::update::Updatable;
-use crate::widget::{Navigation, title_span};
+use crate::widget::navigation::Navigation;
+use crate::widget::title_span;
 
 pub struct Stat<'a> {
     title: String,
@@ -135,7 +136,7 @@ impl<'a> Updatable<&Metric> for Stat<'a> {
     }
 }
 
-impl <'a> Navigation for &mut Stat<'a> {
+impl<'a> Navigation for Stat<'a> {
     fn state(&mut self) -> &mut TableState {
         &mut self.state
     }

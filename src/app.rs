@@ -1,5 +1,4 @@
 use tui::style::Style;
-use tui::widgets::TableState;
 
 use crate::colorscheme::theme::Theme;
 use crate::widget::area_warning::AreaWarning;
@@ -8,7 +7,7 @@ use crate::widget::cpu::Cpu;
 use crate::widget::hit_rate::HitRate;
 use crate::widget::memory::Memory;
 use crate::widget::menu::Menu;
-use crate::widget::Navigation;
+use crate::widget::navigation::Navigation;
 use crate::widget::network::Network;
 use crate::widget::raw::Raw;
 use crate::widget::stat::Stat;
@@ -70,22 +69,22 @@ impl<'a, 'b> App<'a, 'b> {
     }
 
     pub fn on_key_up(&mut self) {
-        // match self.selected_tab {
-        //     0 => Navigation::prev(&mut self.stat),
-        //     1 => {}
-        //     2 => Navigation::prev(&mut self.stat),
-        //     3 => Navigation::prev(&mut self.raw),
-        //     _ => {}
-        // };
+        match self.selected_tab {
+            0 => self.stat.prev(),
+            1 => self.calls.prev(),
+            2 => self.stat.prev(),
+            3 => self.raw.prev(),
+            _ => {}
+        };
     }
 
     pub fn on_key_down(&mut self) {
-        // match self.selected_tab {
-        //     0 => Navigation::next(&mut self.stat),
-        //     1 => {}
-        //     2 => self.stat.next(),
-        //     3 => self.raw.next(),
-        //     _ => {}
-        // };
+        match self.selected_tab {
+            0 => self.stat.next(),
+            1 => self.calls.next(),
+            2 => self.stat.next(),
+            3 => self.raw.next(),
+            _ => {}
+        };
     }
 }

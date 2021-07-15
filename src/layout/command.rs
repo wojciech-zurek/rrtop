@@ -5,5 +5,5 @@ use crate::app::App;
 use crate::terminal::Backend;
 
 pub fn draw(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
-    f.render_widget(&app.calls, area);
+    f.render_widget(&mut app.calls, area);
 }

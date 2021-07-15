@@ -7,7 +7,8 @@ use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState,
 use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
 use crate::update::Updatable;
-use crate::widget::{Navigation, title_span};
+use crate::widget::navigation::Navigation;
+use crate::widget::title_span;
 
 pub struct Raw<'a> {
     title: String,
@@ -32,7 +33,6 @@ impl<'a> Raw<'a> {
 
 impl<'a> Widget for &mut Raw<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
-
         let header_cells = self.headers
             .iter()
             .map(|h| Cell::from(h.to_owned()).style(self.theme.stat_table_header));
@@ -78,7 +78,7 @@ impl<'a> Updatable<&Metric> for Raw<'a> {
     }
 }
 
-impl <'a> Navigation for &mut Raw <'a> {
+impl<'a> Navigation for Raw<'a> {
     fn state(&mut self) -> &mut TableState {
         &mut self.state
     }
