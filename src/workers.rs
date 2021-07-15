@@ -1,16 +1,18 @@
-use crossterm::event::{KeyCode, KeyModifiers};
-use flume::{Sender, Receiver};
-use crate::event::{AppEvent};
 use std::{io, thread, time};
-use std::thread::JoinHandle;
-use crossterm::event::Event::Key;
-use crossterm::event;
-use std::time::Duration;
-use redis::Client;
-use crate::response::Info;
-use r2d2::{Pool};
 use std::ops::DerefMut;
+use std::thread::JoinHandle;
+use std::time::Duration;
+
+use crossterm::event::{KeyCode, KeyModifiers};
+use crossterm::event;
+use crossterm::event::Event::Key;
+use flume::{Receiver, Sender};
+use r2d2::Pool;
+use redis::Client;
+
+use crate::event::AppEvent;
 use crate::metric::Metric;
+use crate::response::Info;
 
 pub fn setup_terminal_worker(tx: Sender<AppEvent>) -> io::Result<JoinHandle<()>> {
     thread::Builder::new().name("terminal-events".into()).spawn(move || loop {
@@ -68,8 +70,9 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                         let start = time::Instant::now();
                         match redis::cmd("INFO").arg("all").query::<Info>(client) {
                             Ok(info) => {
+                                let latency = start.elapsed().as_millis();
                                 if let Err(e) = tx.send(
-                                    AppEvent::Result(Metric::from(info).latency(start.elapsed().as_millis()))
+                                    AppEvent::Result(Metric::from(info).latency(latency))
                                 ) {
                                     eprintln!("{}", e);//todo: log error
                                     // break;

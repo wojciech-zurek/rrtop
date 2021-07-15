@@ -7,6 +7,7 @@ use crate::terminal::{Backend, Terminal};
 pub mod home;
 pub mod command;
 pub mod stat;
+pub mod raw;
 
 pub fn draw(terminal: &mut Terminal, app: &mut App) -> std::io::Result<()> {
     if let Some(style) = app.draw_background {
@@ -34,6 +35,7 @@ pub fn draw(terminal: &mut Terminal, app: &mut App) -> std::io::Result<()> {
             0 => { home::draw(f, chunks[0], app) }
             1 => { command::draw(f, chunks[0], app) }
             2 => { stat::draw(f, chunks[0], app) }
+            3 => { raw::draw(f, chunks[0], app) }
             _ => {}
         }
 

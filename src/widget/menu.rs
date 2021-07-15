@@ -6,16 +6,16 @@ use tui::widgets::{Tabs, Widget};
 
 use crate::colorscheme::theme::Theme;
 
-pub struct Menu<'a> {
-    pub titles: Vec<String>,
+pub struct Menu<'a, 'b> {
+    pub titles: Vec<&'b str>,
     selected_tab: usize,
     theme: &'a Theme,
 }
 
-impl<'a> Menu<'a> {
-    pub fn new(theme: &'a Theme) -> Self {
+impl<'a, 'b> Menu<'a, 'b> {
+    pub fn new(theme: &'a Theme, titles: Vec<&'b str>) -> Self {
         Menu {
-            titles: vec!["Main".to_owned(), "Cmd".to_owned(), "Stat".to_owned()],
+            titles,
             selected_tab: 0,
             theme,
         }
@@ -26,12 +26,12 @@ impl<'a> Menu<'a> {
     }
 }
 
-impl<'a> Widget for &Menu<'a> {
+impl<'a, 'b> Widget for &Menu<'a, 'b> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let titles = self
             .titles
             .iter()
-            .map(|it| {
+            .map(|&it| {
                 Spans::from(Span::styled(it, self.theme.menu))
             })
             .collect();

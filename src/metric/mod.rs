@@ -26,6 +26,7 @@ pub struct Metric {
     pub throughput: Throughput,
     pub keyspace: Keyspace,
     pub command: Command,
+    pub raw: Info,
 }
 
 impl Metric {
@@ -52,6 +53,7 @@ impl From<Info> for Metric {
             throughput: i.borrow().into(),
             keyspace: i.borrow().into(),
             command: i.borrow().into(),
+            raw: i,
         }
     }
 }

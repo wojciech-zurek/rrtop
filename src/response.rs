@@ -1,7 +1,8 @@
 use std::collections::HashMap;
-use redis::{FromRedisValue, RedisResult, Value, from_redis_value};
 
-#[derive(Debug, PartialEq)]
+use redis::{from_redis_value, FromRedisValue, RedisResult, Value};
+
+#[derive(Debug, Default, PartialEq)]
 pub struct Info(pub HashMap<String, String>);
 
 impl FromRedisValue for Info {

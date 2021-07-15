@@ -4,13 +4,14 @@ use chrono::Local;
 use size::Size;
 use tui::buffer::Buffer;
 use tui::layout::{Constraint, Rect};
+use tui::style::Modifier;
 use tui::text::Span;
-use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState};
+use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState, Widget};
 
 use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
 use crate::update::Updatable;
-use crate::widget::title_span;
+use crate::widget::{Navigation, title_span};
 
 pub struct Stat<'a> {
     title: String,
@@ -18,6 +19,7 @@ pub struct Stat<'a> {
     time_slices: VecDeque<TimeSlice>,
     theme: &'a Theme,
     max_elements: usize,
+    state: TableState,
 }
 
 impl<'a> Stat<'a> {
@@ -29,13 +31,14 @@ impl<'a> Stat<'a> {
                           "ops".to_owned(),
                           "user".to_owned(),
                           "sys".to_owned(),
-                          "memUsed".to_owned(),
-                          "memRss".to_owned(),
-                          "fRatio".to_owned(),
+                          "mem used".to_owned(),
+                          "mem rss".to_owned(),
+                          "frag ratio".to_owned(),
                           "keys".to_owned()],
             time_slices: VecDeque::with_capacity(max_elements),
             theme,
             max_elements,
+            state: TableState::default(),
         }
     }
 }
@@ -51,10 +54,8 @@ struct TimeSlice {
     keys: u64,
 }
 
-impl<'a> StatefulWidget for &Stat<'a> {
-    type State = TableState;
-
-    fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
+impl<'a> Widget for &mut Stat<'a> {
+    fn render(self, area: Rect, buf: &mut Buffer) {
         let header_cells = self.headers
             .iter()
             .map(|h| Cell::from(h.to_owned()).style(self.theme.stat_table_header));
@@ -78,23 +79,26 @@ impl<'a> StatefulWidget for &Stat<'a> {
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 
-        Table::new(rows)
+        let table = Table::new(rows)
             .header(header)
             .block(Block::default()
                 .borders(Borders::ALL)
                 .border_style(self.theme.stat_border)
                 .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
             )
+            .highlight_style(self.theme.stat_table_row_top_1.add_modifier(Modifier::REVERSED))
             .widths(&[
-                Constraint::Ratio(2, 20),
-                Constraint::Ratio(2, 20),
-                Constraint::Ratio(2, 20),
-                Constraint::Ratio(2, 20),
-                Constraint::Ratio(2, 20),
-                Constraint::Ratio(2, 20),
-                Constraint::Ratio(2, 20),
-                Constraint::Ratio(2, 20),
-            ]).render(area, buf, state);
+                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 16),
+            ]);
+
+        StatefulWidget::render(table, area, buf, &mut self.state);
     }
 }
 
@@ -128,5 +132,15 @@ impl<'a> Updatable<&Metric> for Stat<'a> {
             ops_per_sec,
             keys,
         });
+    }
+}
+
+impl <'a> Navigation for &mut Stat<'a> {
+    fn state(&mut self) -> &mut TableState {
+        &mut self.state
+    }
+
+    fn len(&self) -> usize {
+        self.time_slices.len()
     }
 }

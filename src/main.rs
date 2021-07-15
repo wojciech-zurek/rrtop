@@ -45,6 +45,9 @@ fn main() -> Result<(), RRTopError> {
                     Event::Key(e) => {
                         match e.code {
                             KeyCode::Tab => { app.on_tab() }
+                            KeyCode::Up => { app.on_key_up() }
+                            KeyCode::Down => { app.on_key_down() }
+                            KeyCode::Char('s') => { app.on_sort() }
                             _ => {}
                         }
                     }
@@ -67,7 +70,8 @@ fn main() -> Result<(), RRTopError> {
                 &app.memory.update(&metric);
                 &app.stat.update(&metric);
                 &app.hit_rate.update(&metric);
-                &app.commands.update(&metric);
+                &app.calls.update(&metric);
+                &app.raw.update(&metric);
             }
             _ => {}
         }
@@ -82,6 +86,7 @@ fn connect(config: &Config) -> Result<Pool<Client>, RRTopError> {
 
     let pool = r2d2::Pool::builder()
         .connection_timeout(Duration::from_secs(config.timeout))
+        .test_on_check_out(false)
         .min_idle(Some(config.worker_number as u32))
         .max_size(config.worker_number as u32).build(client)?;
 

@@ -58,5 +58,5 @@ fn draw_part_middle_left(f: &mut Frame<Backend>, area: Rect, app: &App) {
 }
 
 fn draw_part_middle_right(f: &mut Frame<Backend>, area: Rect, app: &mut App) {
-    f.render_stateful_widget(&app.stat, area, &mut app.stat_table_state);
+    f.render_widget(&mut app.stat, area);
 }

@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 use regex::Regex;
 
 use crate::response::Info;
@@ -18,32 +16,6 @@ pub struct CmdStat {
     pub calls: u64,
     pub usec: u64,
     pub usec_per_call: f64,
-}
-
-impl Ord for CmdStat {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match self.calls.cmp(&other.calls) {
-            Ordering::Equal => {
-                self.name.cmp(&other.name)
-            }
-            Ordering::Less => { Ordering::Greater }
-            Ordering::Greater => { Ordering::Less }
-        }
-    }
-}
-
-impl PartialOrd for CmdStat {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Eq for CmdStat {}
-
-impl PartialEq for CmdStat {
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
-    }
 }
 
 impl From<&Info> for Command {

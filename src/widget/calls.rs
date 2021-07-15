@@ -1,69 +1,165 @@
-use std::collections::BTreeSet;
+use std::cmp::Ordering;
 
 use tui::buffer::Buffer;
-use tui::layout::Rect;
-use tui::symbols::line;
-use tui::text::Span;
-use tui::widgets::{Block, Borders, LineGauge, Widget};
+use tui::layout::{Constraint, Rect};
+use tui::text::{Span, Spans};
+use tui::widgets::{Block, Borders, Cell, Row, Table, Widget};
 
 use crate::colorscheme::theme::Theme;
 use crate::metric::command::CmdStat;
 use crate::metric::Metric;
 use crate::update::Updatable;
+use crate::widget::linegauge::render_line_gauge;
 use crate::widget::title_span;
 
 pub struct Calls<'a> {
     title: String,
     theme: &'a Theme,
-    stats: BTreeSet<CmdStat>,
+    headers: Vec<String>,
+    stats: Vec<CmdStat>,
     sum_calls: f64,
     sum_usec: f64,
     sum_usec_per_call: f64,
+    sort_by: Sort,
+}
+
+enum Sort {
+    Calls,
+    Usec,
+    UsecPerCall,
+}
+
+impl Sort {
+    fn sort(&self) -> fn(a: &CmdStat, b: &CmdStat) -> Ordering {
+        match self {
+            Sort::Calls => { sort_by_calls }
+            Sort::Usec => { sort_by_usec }
+            Sort::UsecPerCall => { sort_by_usec_per_call }
+        }
+    }
+
+    fn title(&self) -> String {
+        match self {
+            Sort::Calls => "by calls".to_owned(),
+            Sort::Usec => "by usec".to_owned(),
+            Sort::UsecPerCall => "by usec per call".to_owned()
+        }
+    }
 }
 
 impl<'a> Calls<'a> {
     pub fn new(theme: &'a Theme) -> Self {
+        let sort_by = Sort::Calls;
         Calls {
-            title: "calls".to_owned(),
+            title: sort_by.title(),
             theme,
-            stats: BTreeSet::new(),
+            headers: vec![" command".to_owned(),
+                          "calls".to_owned(),
+                          "usec".to_owned(),
+                          "usec per call".to_owned(),
+            ],
+            stats: Vec::new(),
             sum_calls: 0.0,
             sum_usec: 0.0,
             sum_usec_per_call: 0.0,
+            sort_by,
         }
+    }
+
+    pub fn sort_next(&mut self) {
+        let next = match self.sort_by {
+            Sort::Calls => { Sort::Usec }
+            Sort::Usec => { Sort::UsecPerCall }
+            Sort::UsecPerCall => { Sort::Calls }
+        };
+        self.title = next.title();
+        self.sort_by = next;
+        self.stats.sort_by(self.sort_by.sort());
     }
 }
 
 impl<'a> Widget for &Calls<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        Block::default()
-            .borders(Borders::ALL)
-            .border_style(self.theme.memory_border)
-            .title(title_span(&self.title, self.theme.network_title, self.theme.network_border))
-            .render(area, buf);
+        let header_cells = self.headers
+            .iter()
+            .map(|h| Cell::from(h.to_owned()).style(self.theme.stat_table_header));
+        let header = Row::new(header_cells)
+            .height(1)
+            .bottom_margin(0);
 
-        let mut i = 2u16;
-        self.stats.iter().enumerate().for_each({
-            |it| {
-                let calls = it.1.calls as f64 / self.sum_calls;
-                LineGauge::default()
-                    .gauge_style(self.theme.memory_used_memory_dataset)
-                    .label(Span::styled(format!("{:>12} {:>6.2}% {:>12}", it.1.name, calls * 100.0, it.1.calls), self.theme.memory_used_memory_text))
-                    .line_set(line::THICK)
-                    .ratio(calls)
-                    .render(Rect::new(area.x + 2, area.y + it.0 as u16 + 2, area.width - 4, 1), buf);
-                i += 1;
-            }
-        });
+        let rows = self.stats.iter().enumerate().map(|it| {
+            let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+
+            let calls = it.1.calls as f64 / self.sum_calls;
+            let usec = it.1.usec as f64 / self.sum_usec;
+            let usec_per_call = it.1.usec_per_call as f64 / self.sum_usec_per_call;
+
+            vec![
+                Cell::from(Span::styled(format!(" {}", it.1.name), style1)),
+                Cell::from(Spans::from(render_line_gauge(it.1.calls, calls, area.width, style2))),
+                Cell::from(Spans::from(render_line_gauge(it.1.usec, usec, area.width, style2))),
+                Cell::from(Spans::from(render_line_gauge(it.1.usec_per_call, usec_per_call, area.width, style2))),
+            ]
+        }).map(|it| Row::new(it)).collect::<Vec<Row>>();
+
+        Table::new(rows)
+            .header(header)
+            .block(Block::default()
+                .borders(Borders::ALL)
+                .border_style(self.theme.stat_border)
+                .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
+            )
+            .widths(&[
+                Constraint::Ratio(2, 20),
+                Constraint::Ratio(6, 20),
+                Constraint::Ratio(6, 20),
+                Constraint::Ratio(6, 20),
+            ]).render(area, buf);
     }
 }
 
 impl<'a> Updatable<&Metric> for Calls<'a> {
     fn update(&mut self, metric: &Metric) {
-        self.stats = metric.command.stats.iter().map(|it| it.clone()).collect();
+        let mut stats = metric.command.stats
+            .iter()
+            .map(|it| it.clone()).collect::<Vec<CmdStat>>();
+        stats.sort_by(self.sort_by.sort());
+
+        self.stats = stats;
+
         self.sum_calls = metric.command.sum_calls;
         self.sum_usec = metric.command.sum_usec;
         self.sum_usec_per_call = metric.command.sum_usec_per_call;
     }
 }
 
+fn sort_by_calls(a: &CmdStat, b: &CmdStat) -> Ordering {
+    match a.calls.cmp(&b.calls) {
+        Ordering::Equal => {
+            a.name.cmp(&b.name)
+        }
+        Ordering::Less => { Ordering::Greater }
+        Ordering::Greater => { Ordering::Less }
+    }
+}
+
+fn sort_by_usec(a: &CmdStat, b: &CmdStat) -> Ordering {
+    match a.usec.cmp(&b.usec) {
+        Ordering::Equal => {
+            a.name.cmp(&b.name)
+        }
+        Ordering::Less => { Ordering::Greater }
+        Ordering::Greater => { Ordering::Less }
+    }
+}
+
+fn sort_by_usec_per_call(a: &CmdStat, b: &CmdStat) -> Ordering {
+    match a.usec_per_call.partial_cmp(&b.usec_per_call).unwrap_or(Ordering::Equal) {
+        Ordering::Equal => {
+            a.name.cmp(&b.name)
+        }
+        Ordering::Less => { Ordering::Greater }
+        Ordering::Greater => { Ordering::Less }
+    }
+}

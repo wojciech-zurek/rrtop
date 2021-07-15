@@ -1,5 +1,6 @@
 use tui::buffer::Buffer;
 use tui::layout::Rect;
+use tui::style::Color;
 use tui::symbols::line;
 use tui::text::Span;
 use tui::widgets::{Block, Borders, LineGauge, Widget};
@@ -34,7 +35,7 @@ impl<'a> Widget for &HitRate<'a> {
             .render(area, buf);
 
         let gauge = LineGauge::default()
-            .gauge_style(self.theme.memory_used_memory_dataset)
+            .gauge_style(self.theme.memory_used_memory_dataset.bg(Color::Black))
             .label(Span::styled(format!("{:.2}%", self.hit_rate * 100.0), self.theme.memory_used_memory_text))
             .line_set(line::THICK)
             .ratio(self.hit_rate);
