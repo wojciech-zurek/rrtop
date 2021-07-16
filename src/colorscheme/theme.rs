@@ -54,88 +54,123 @@ pub struct Theme {
     pub stat_table_row_top_1: Style,
     pub stat_table_row_top_2: Style,
     pub stat_table_row_bottom: Style,
+    pub stat_table_row_highlight: Style,
+
+
+    pub calls_title: Style,
+    pub calls_border: Style,
+    pub calls_table_header: Style,
+    pub calls_table_row_top_1: Style,
+    pub calls_table_row_top_2: Style,
+    pub calls_table_row_bottom: Style,
+    pub calls_table_row_highlight: Style,
+
+    pub warning_title: Style,
+    pub warning_border: Style,
+    pub warning_text_1: Style,
+    pub warning_text_2: Style,
 
 }
 
 impl Theme {
-    pub fn new(ch: ColorScheme) -> Theme {
+    pub fn new(cs: ColorScheme) -> Theme {
         Theme {
-            main: Style::default().fg(ch.main_fg).bg(ch.main_bg),
+            main: Style::default().fg(cs.main_fg).bg(cs.main_bg),
 
-            menu: Style::default().fg(ch.menu_fg).bg(ch.menu_bg),
-            menu_divider: Style::default().fg(ch.menu_divider_fg),
+            menu: Style::default().fg(cs.menu_fg).bg(cs.menu_bg),
+            menu_divider: Style::default().fg(cs.menu_divider_fg),
             menu_highlight: Style::default()
-                .fg(ch.menu_highlight_fg)
-                .bg(ch.menu_highlight_bg)
+                .fg(cs.menu_highlight_fg)
+                .bg(cs.menu_highlight_bg)
                 .add_modifier(Modifier::BOLD),
 
-            status_bar: Style::default().fg(ch.status_bar_fg),
+            status_bar: Style::default().fg(cs.status_bar_fg),
 
-            memory_title: Style::default().fg(ch.memory_title_fg),
-            memory_border: Style::default().fg(ch.memory_border_fg),
-            memory_chart: Style::default().bg(ch.main_bg),
+            memory_title: Style::default().fg(cs.memory_title_fg),
+            memory_border: Style::default().fg(cs.memory_border_fg),
+            memory_chart: Style::default().bg(cs.main_bg),
             memory_max_memory_text: Style::default()
-                .fg(ch.memory_max_memory_text_fg)
+                .fg(cs.memory_max_memory_text_fg)
                 .add_modifier(Modifier::BOLD),
-            memory_max_memory_dataset: Style::default().fg(ch.memory_max_memory_dataset_fg),
+            memory_max_memory_dataset: Style::default().fg(cs.memory_max_memory_dataset_fg),
             memory_used_memory_text: Style::default()
-                .fg(ch.memory_used_memory_text_fg)
+                .fg(cs.memory_used_memory_text_fg)
                 .add_modifier(Modifier::BOLD),
-            memory_used_memory_dataset: Style::default().fg(ch.memory_used_memory_dataset_fg),
-            memory_rss_memory_text: Style::default().fg(ch.memory_rss_memory_text_fg),
-            memory_rss_memory_dataset: Style::default().fg(ch.memory_rss_memory_dataset_fg),
+            memory_used_memory_dataset: Style::default().fg(cs.memory_used_memory_dataset_fg),
+            memory_rss_memory_text: Style::default().fg(cs.memory_rss_memory_text_fg),
+            memory_rss_memory_dataset: Style::default().fg(cs.memory_rss_memory_dataset_fg),
 
-            cpu_title: Style::default().fg(ch.cpu_title_fg),
-            cpu_border: Style::default().fg(ch.cpu_border_fg),
-            cpu_chart: Style::default().bg(ch.main_bg),
-            cpu_chart_line: Style::default().fg(ch.cpu_chart_line_fg),
+            cpu_title: Style::default().fg(cs.cpu_title_fg),
+            cpu_border: Style::default().fg(cs.cpu_border_fg),
+            cpu_chart: Style::default().bg(cs.main_bg),
+            cpu_chart_line: Style::default().fg(cs.cpu_chart_line_fg),
             cpu_sys_cpu_text: Style::default()
-                .fg(ch.cpu_sys_cpu_text_fg)
+                .fg(cs.cpu_sys_cpu_text_fg)
                 .add_modifier(Modifier::BOLD),
-            cpu_sys_cpu_dataset: Style::default().fg(ch.cpu_sys_cpu_dataset_fg),
+            cpu_sys_cpu_dataset: Style::default().fg(cs.cpu_sys_cpu_dataset_fg),
             cpu_user_cpu_text: Style::default()
-                .fg(ch.cpu_user_cpu_text_fg)
+                .fg(cs.cpu_user_cpu_text_fg)
                 .add_modifier(Modifier::BOLD),
-            cpu_user_cpu_dataset: Style::default().fg(ch.cpu_user_cpu_dataset_fg),
+            cpu_user_cpu_dataset: Style::default().fg(cs.cpu_user_cpu_dataset_fg),
 
-            throughput_title: Style::default().fg(ch.throughput_title_fg),
-            throughput_border: Style::default().fg(ch.throughput_border_fg),
-            throughput_sparkline: Style::default().fg(ch.throughput_sparkline_fg),
-            throughput_sparkline_baseline: Style::default().fg(ch.throughput_sparkline_baseline_fg),
+            throughput_title: Style::default().fg(cs.throughput_title_fg),
+            throughput_border: Style::default().fg(cs.throughput_border_fg),
+            throughput_sparkline: Style::default().fg(cs.throughput_sparkline_fg),
+            throughput_sparkline_baseline: Style::default().fg(cs.throughput_sparkline_baseline_fg),
             throughput_total_commands_text: Style::default()
-                .fg(ch.throughput_total_commands_text_fg)
+                .fg(cs.throughput_total_commands_text_fg)
                 .add_modifier(Modifier::BOLD),
             throughput_ops_text: Style::default()
-                .fg(ch.throughput_ops_text_fg)
+                .fg(cs.throughput_ops_text_fg)
                 .add_modifier(Modifier::BOLD),
 
-            network_title: Style::default().fg(ch.network_title_fg),
-            network_border: Style::default().fg(ch.network_border_fg),
+            network_title: Style::default().fg(cs.network_title_fg),
+            network_border: Style::default().fg(cs.network_border_fg),
             network_rx_total_text: Style::default()
-                .fg(ch.network_rx_total_text_fg)
+                .fg(cs.network_rx_total_text_fg)
                 .add_modifier(Modifier::BOLD),
             network_rx_s_text: Style::default()
-                .fg(ch.network_rx_s_text_fg)
+                .fg(cs.network_rx_s_text_fg)
                 .add_modifier(Modifier::BOLD),
-            network_rx_sparkline: Style::default().fg(ch.network_rx_sparkline_fg),
-            network_rx_sparkline_baseline: Style::default().fg(ch.network_rx_sparkline_baseline_fg),
+            network_rx_sparkline: Style::default().fg(cs.network_rx_sparkline_fg),
+            network_rx_sparkline_baseline: Style::default().fg(cs.network_rx_sparkline_baseline_fg),
             network_tx_total_text: Style::default()
-                .fg(ch.network_tx_total_text_fg)
+                .fg(cs.network_tx_total_text_fg)
                 .add_modifier(Modifier::BOLD),
             network_tx_s_text: Style::default()
-                .fg(ch.network_tx_s_text_fg)
+                .fg(cs.network_tx_s_text_fg)
                 .add_modifier(Modifier::BOLD),
-            network_tx_sparkline: Style::default().fg(ch.network_tx_sparkline_fg),
-            network_tx_sparkline_baseline: Style::default().fg(ch.network_tx_sparkline_baseline_fg),
+            network_tx_sparkline: Style::default().fg(cs.network_tx_sparkline_fg),
+            network_tx_sparkline_baseline: Style::default().fg(cs.network_tx_sparkline_baseline_fg),
 
-            stat_title: Style::default().fg(ch.stat_title_fg),
-            stat_border: Style::default().fg(ch.stat_border_fg),
+            stat_title: Style::default().fg(cs.stat_title_fg),
+            stat_border: Style::default().fg(cs.stat_border_fg),
             stat_table_header: Style::default()
-                .fg(ch.stat_table_header_fg)
+                .fg(cs.stat_table_header_fg)
                 .add_modifier(Modifier::BOLD),
-            stat_table_row_top_1: Style::default().fg(ch.stat_table_row_top_1_fg),
-            stat_table_row_top_2: Style::default().fg(ch.stat_table_row_top_2_fg),
-            stat_table_row_bottom: Style::default().fg(ch.stat_table_row_bottom_fg),
+            stat_table_row_top_1: Style::default().fg(cs.stat_table_row_top_1_fg),
+            stat_table_row_top_2: Style::default().fg(cs.stat_table_row_top_2_fg),
+            stat_table_row_bottom: Style::default().fg(cs.stat_table_row_bottom_fg),
+            stat_table_row_highlight: Style::default()
+                .bg(cs.stat_table_row_highlight_bg)
+                .add_modifier(Modifier::BOLD),
+
+            calls_title: Style::default().fg(cs.calls_title_fg),
+            calls_border: Style::default().fg(cs.calls_border_fg),
+            calls_table_header: Style::default()
+                .fg(cs.calls_table_header_fg)
+                .add_modifier(Modifier::BOLD),
+            calls_table_row_top_1: Style::default().fg(cs.calls_table_row_top_1_fg),
+            calls_table_row_top_2: Style::default().fg(cs.calls_table_row_top_2_fg),
+            calls_table_row_bottom: Style::default().fg(cs.calls_table_row_bottom_fg),
+            calls_table_row_highlight: Style::default()
+                .bg(cs.calls_table_row_highlight_bg)
+                .add_modifier(Modifier::BOLD),
+
+            warning_title: Style::default().fg(cs.warning_title_fg),
+            warning_border: Style::default().fg(cs.warning_border_fg),
+            warning_text_1: Style::default().fg(cs.warning_text_1_fg),
+            warning_text_2: Style::default().fg(cs.warning_text_2_fg),
         }
     }
 }

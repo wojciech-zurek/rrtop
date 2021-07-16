@@ -1,4 +1,4 @@
-use tui::style::{Color};
+use tui::style::Color;
 
 pub mod nord;
 pub mod default;
@@ -57,6 +57,21 @@ pub struct ColorScheme {
     stat_table_row_top_1_fg: Color,
     stat_table_row_top_2_fg: Color,
     stat_table_row_bottom_fg: Color,
+    stat_table_row_highlight_bg: Color,
+
+
+    calls_title_fg: Color,
+    calls_border_fg: Color,
+    calls_table_header_fg: Color,
+    calls_table_row_top_1_fg: Color,
+    calls_table_row_top_2_fg: Color,
+    calls_table_row_bottom_fg: Color,
+    calls_table_row_highlight_bg: Color,
+
+    warning_title_fg: Color,
+    warning_border_fg: Color,
+    warning_text_1_fg: Color,
+    warning_text_2_fg: Color,
 }
 
 impl From<&str> for ColorScheme {

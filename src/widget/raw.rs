@@ -1,6 +1,5 @@
 use tui::buffer::Buffer;
 use tui::layout::{Constraint, Rect};
-use tui::style::Modifier;
 use tui::text::Span;
 use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState, Widget};
 
@@ -57,7 +56,7 @@ impl<'a> Widget for &mut Raw<'a> {
                 .border_style(self.theme.stat_border)
                 .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
             )
-            .highlight_style(self.theme.stat_table_row_top_1.add_modifier(Modifier::REVERSED))
+            .highlight_style(self.theme.stat_table_row_highlight)
             .widths(&[
                 Constraint::Ratio(1, 2),
                 Constraint::Ratio(1, 2),

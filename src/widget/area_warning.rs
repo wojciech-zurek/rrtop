@@ -27,15 +27,15 @@ impl<'a> AreaWarning<'a> {
 impl<'a> Widget for &AreaWarning<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let spans = vec![
-            Spans::from(Span::styled(format!("Current width: {}, current height: {}", area.width, area.height), self.theme.memory_max_memory_text)),
-            Spans::from(Span::styled(format!("Minimum requirement: width: {}, height: {}", self.min_width, self.min_height), self.theme.memory_rss_memory_text))
+            Spans::from(Span::styled(format!("Current width: {}, current height: {}", area.width, area.height), self.theme.warning_text_1)),
+            Spans::from(Span::styled(format!("Minimum requirement: width: {}, height: {}", self.min_width, self.min_height), self.theme.warning_text_2))
         ];
         Paragraph::new(spans)
             .alignment(Alignment::Center)
             .block(Block::default()
                 .borders(Borders::ALL)
-                .border_style(self.theme.cpu_border)
-                .title(title_span(&self.title, self.theme.cpu_title, self.theme.cpu_border)))
+                .border_style(self.theme.warning_border)
+                .title(title_span(&self.title, self.theme.warning_title, self.theme.warning_border)))
             .render(area, buf);
     }
 }

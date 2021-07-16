@@ -1,7 +1,6 @@
-use tui::style::{Color};
+use tui::style::Color;
 
 use crate::colorscheme::ColorScheme;
-
 
 pub fn new() -> ColorScheme {
     ColorScheme {
@@ -50,5 +49,17 @@ pub fn new() -> ColorScheme {
         stat_table_row_top_1_fg: Color::Reset,
         stat_table_row_top_2_fg: Color::Reset,
         stat_table_row_bottom_fg: Color::Reset,
+        stat_table_row_highlight_bg: Color::Reset,
+        calls_title_fg: Color::Reset,
+        calls_border_fg: Color::Reset,
+        calls_table_header_fg: Color::Reset,
+        calls_table_row_top_1_fg: Color::Reset,
+        calls_table_row_top_2_fg: Color::Reset,
+        calls_table_row_bottom_fg: Color::Reset,
+        calls_table_row_highlight_bg: Color::Reset,
+        warning_title_fg: Color::Reset,
+        warning_border_fg: Color::Reset,
+        warning_text_1_fg: Color::Reset,
+        warning_text_2_fg: Color::Reset
     }
 }

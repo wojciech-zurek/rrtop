@@ -2,7 +2,6 @@ use std::cmp::Ordering;
 
 use tui::buffer::Buffer;
 use tui::layout::{Constraint, Rect};
-use tui::style::Modifier;
 use tui::text::{Span, Spans};
 use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState, Widget};
 
@@ -58,42 +57,18 @@ impl<'a> Calls<'a> {
     }
 }
 
-enum Sort {
-    Calls,
-    Usec,
-    UsecPerCall,
-}
-
-impl Sort {
-    fn sort(&self) -> fn(a: &CmdStat, b: &CmdStat) -> Ordering {
-        match self {
-            Sort::Calls => { sort_by_calls }
-            Sort::Usec => { sort_by_usec }
-            Sort::UsecPerCall => { sort_by_usec_per_call }
-        }
-    }
-
-    fn title(&self) -> String {
-        match self {
-            Sort::Calls => "by calls".to_owned(),
-            Sort::Usec => "by usec".to_owned(),
-            Sort::UsecPerCall => "by usec per call".to_owned()
-        }
-    }
-}
-
 impl<'a> Widget for &mut Calls<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let header_cells = self.headers
             .iter()
-            .map(|h| Cell::from(h.to_owned()).style(self.theme.stat_table_header));
+            .map(|h| Cell::from(h.to_owned()).style(self.theme.calls_table_header));
         let header = Row::new(header_cells)
             .height(1)
             .bottom_margin(0);
 
         let rows = self.stats.iter().enumerate().map(|it| {
-            let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
-            let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let style1 = Theme::color_table_cell(self.theme.calls_table_row_top_1, self.theme.calls_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let style2 = Theme::color_table_cell(self.theme.calls_table_row_top_2, self.theme.calls_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
 
             let calls = it.1.calls as f64 / self.sum_calls;
             let usec = it.1.usec as f64 / self.sum_usec;
@@ -111,10 +86,10 @@ impl<'a> Widget for &mut Calls<'a> {
             .header(header)
             .block(Block::default()
                 .borders(Borders::ALL)
-                .border_style(self.theme.stat_border)
-                .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
+                .border_style(self.theme.calls_border)
+                .title(title_span(&self.title, self.theme.calls_title, self.theme.calls_border))
             )
-            .highlight_style(self.theme.stat_table_row_top_1.add_modifier(Modifier::REVERSED))
+            .highlight_style(self.theme.calls_table_row_highlight)
             .widths(&[
                 Constraint::Ratio(2, 20),
                 Constraint::Ratio(6, 20),
@@ -148,6 +123,30 @@ impl<'a> Navigation for Calls<'a> {
 
     fn len(&self) -> usize {
         self.stats.len()
+    }
+}
+
+enum Sort {
+    Calls,
+    Usec,
+    UsecPerCall,
+}
+
+impl Sort {
+    fn sort(&self) -> fn(a: &CmdStat, b: &CmdStat) -> Ordering {
+        match self {
+            Sort::Calls => { sort_by_calls }
+            Sort::Usec => { sort_by_usec }
+            Sort::UsecPerCall => { sort_by_usec_per_call }
+        }
+    }
+
+    fn title(&self) -> String {
+        match self {
+            Sort::Calls => "by calls".to_owned(),
+            Sort::Usec => "by usec".to_owned(),
+            Sort::UsecPerCall => "by usec per call".to_owned()
+        }
     }
 }
 
