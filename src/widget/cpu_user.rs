@@ -64,7 +64,7 @@ impl<'a> Widget for &CpuUser<'a> {
             area.width.wrapping_sub(1).wrapping_sub(label.len() as u16),
             area.y,
             label,
-            self.theme.cpu_border,
+            self.theme.cpu_chart_axis,
         );
 
         let label = format!("{:.02}", max_cpu_user);
@@ -72,7 +72,7 @@ impl<'a> Widget for &CpuUser<'a> {
             area.width.wrapping_sub(1).wrapping_sub(label.len() as u16),
             area.y + 4,
             label,
-            self.theme.cpu_border,
+            self.theme.cpu_chart_axis,
         );
     }
 }

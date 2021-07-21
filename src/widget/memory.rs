@@ -10,8 +10,8 @@ use tui::widgets::{Block, Borders, Paragraph, Widget};
 use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
 use crate::update::Updatable;
-use crate::widget::title_span;
 use crate::widget::sparkline::{RenderDirection, Sparkline};
+use crate::widget::title_span;
 
 pub struct Memory<'a> {
     title: String,
@@ -47,7 +47,7 @@ impl<'a> Widget for &Memory<'a> {
         Block::default()
             .borders(Borders::ALL)
             .border_style(self.theme.memory_border)
-            .title(title_span(&self.title, self.theme.network_title, self.theme.network_border))
+            .title(title_span(&self.title, self.theme.memory_title, self.theme.memory_border))
             .render(area, buf);
 
         let chunks = Layout::default()
@@ -77,8 +77,8 @@ impl<'a> Widget for &Memory<'a> {
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
-            .style(self.theme.memory_used_memory_dataset)
-            .baseline_style(self.theme.network_rx_sparkline_baseline)
+            .style(self.theme.memory_used_memory_sparkline)
+            .baseline_style(self.theme.memory_used_memory_sparkline_baseline)
             .render(chunks[2], buf);
 
         //rss memory
@@ -92,8 +92,8 @@ impl<'a> Widget for &Memory<'a> {
             .show_baseline(true)
             .fill_baseline(true)
             .direction(RenderDirection::RightToLeft)
-            .style(self.theme.memory_rss_memory_dataset)
-            .baseline_style(self.theme.network_rx_sparkline_baseline)
+            .style(self.theme.memory_rss_memory_sparkline)
+            .baseline_style(self.theme.memory_rss_memory_sparkline_baseline)
             .render(chunks[5], buf);
     }
 }

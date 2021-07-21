@@ -65,7 +65,7 @@ impl<'a> Widget for &CpuSys<'a> {
             area.width.wrapping_sub(1).wrapping_sub(label.len() as u16),
             area.y,
             label,
-            self.theme.cpu_border,
+            self.theme.cpu_chart_axis,
         );
 
         let label = format!("{:.02}", min_cpu_sys);
@@ -73,7 +73,7 @@ impl<'a> Widget for &CpuSys<'a> {
             area.width.wrapping_sub(1).wrapping_sub(label.len() as u16),
             (area.y + 4).min(area.height),
             label,
-            self.theme.cpu_border,
+            self.theme.cpu_chart_axis,
         );
     }
 }

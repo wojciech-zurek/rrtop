@@ -104,12 +104,12 @@ impl<'a> Widget for &Cpu<'a> {
         let spans = vec![
             Spans::from(
                 vec![
-                    Span::styled(format!("{}", tui::symbols::DOT), self.theme.cpu_sys_cpu_text),
-                    Span::styled(format!("sys cpu: "), self.theme.cpu_border),
-                    Span::styled(format!("{:>5.02}%", self.last_delta_cpu_sys), self.theme.cpu_border),
-                    Span::styled(format!("{:>4}", tui::symbols::DOT), self.theme.cpu_user_cpu_text),
-                    Span::styled(format!("user cpu: "), self.theme.cpu_border),
-                    Span::styled(format!("{:>5.02}%", self.last_delta_cpu_user), self.theme.cpu_border),
+                    Span::styled(format!("{}", tui::symbols::DOT), self.theme.cpu_sys_cpu_dataset),
+                    Span::styled(format!("sys cpu: "), self.theme.cpu_sys_cpu_1_text),
+                    Span::styled(format!("{:>5.02}%", self.last_delta_cpu_sys), self.theme.cpu_sys_cpu_2_text),
+                    Span::styled(format!("{:>4}", tui::symbols::DOT), self.theme.cpu_user_cpu_dataset),
+                    Span::styled(format!("user cpu: "), self.theme.cpu_user_cpu_1_text),
+                    Span::styled(format!("{:>5.02}%", self.last_delta_cpu_user), self.theme.cpu_user_cpu_2_text),
                 ])];
         Paragraph::new(spans).render(Rect::new(chunks[3].x + 2, chunks[3].y, chunks[3].width, chunks[3].height), buf);
     }

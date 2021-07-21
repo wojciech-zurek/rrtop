@@ -15,20 +15,29 @@ pub struct Theme {
     pub memory_border: Style,
     pub memory_chart: Style,
     pub memory_max_memory_text: Style,
-    pub memory_max_memory_dataset: Style,
     pub memory_used_memory_text: Style,
-    pub memory_used_memory_dataset: Style,
+    pub memory_used_memory_sparkline: Style,
+    pub memory_used_memory_sparkline_baseline: Style,
     pub memory_rss_memory_text: Style,
-    pub memory_rss_memory_dataset: Style,
+    pub memory_rss_memory_sparkline: Style,
+    pub memory_rss_memory_sparkline_baseline: Style,
 
     pub cpu_title: Style,
     pub cpu_border: Style,
     pub cpu_chart: Style,
     pub cpu_chart_line: Style,
-    pub cpu_sys_cpu_text: Style,
+    pub cpu_chart_axis: Style,
+    pub cpu_sys_cpu_1_text: Style,
+    pub cpu_sys_cpu_2_text: Style,
     pub cpu_sys_cpu_dataset: Style,
-    pub cpu_user_cpu_text: Style,
+    pub cpu_user_cpu_1_text: Style,
+    pub cpu_user_cpu_2_text: Style,
     pub cpu_user_cpu_dataset: Style,
+
+    pub hit_rate_title: Style,
+    pub hit_rate_border: Style,
+    pub hit_rate_label: Style,
+    pub hit_rate_gauge: Style,
 
     pub throughput_title: Style,
     pub throughput_border: Style,
@@ -55,7 +64,6 @@ pub struct Theme {
     pub stat_table_row_top_2: Style,
     pub stat_table_row_bottom: Style,
     pub stat_table_row_highlight: Style,
-
 
     pub calls_title: Style,
     pub calls_border: Style,
@@ -92,26 +100,39 @@ impl Theme {
             memory_max_memory_text: Style::default()
                 .fg(cs.memory_max_memory_text_fg)
                 .add_modifier(Modifier::BOLD),
-            memory_max_memory_dataset: Style::default().fg(cs.memory_max_memory_dataset_fg),
             memory_used_memory_text: Style::default()
                 .fg(cs.memory_used_memory_text_fg)
                 .add_modifier(Modifier::BOLD),
-            memory_used_memory_dataset: Style::default().fg(cs.memory_used_memory_dataset_fg),
+            memory_used_memory_sparkline: Style::default().fg(cs.memory_used_memory_sparkline_fg),
+            memory_used_memory_sparkline_baseline: Style::default().fg(cs.memory_used_memory_sparkline_baseline_fg),
             memory_rss_memory_text: Style::default().fg(cs.memory_rss_memory_text_fg),
-            memory_rss_memory_dataset: Style::default().fg(cs.memory_rss_memory_dataset_fg),
+            memory_rss_memory_sparkline: Style::default().fg(cs.memory_rss_memory_sparkline_fg),
+            memory_rss_memory_sparkline_baseline: Style::default().fg(cs.memory_rss_memory_sparkline_baseline_fg),
 
             cpu_title: Style::default().fg(cs.cpu_title_fg),
             cpu_border: Style::default().fg(cs.cpu_border_fg),
             cpu_chart: Style::default().bg(cs.main_bg),
             cpu_chart_line: Style::default().fg(cs.cpu_chart_line_fg),
-            cpu_sys_cpu_text: Style::default()
-                .fg(cs.cpu_sys_cpu_text_fg)
+            cpu_chart_axis: Style::default().fg(cs.cpu_chart_axis_fg),
+            cpu_sys_cpu_1_text: Style::default()
+                .fg(cs.cpu_sys_cpu_text_1_fg)
+                .add_modifier(Modifier::BOLD),
+            cpu_sys_cpu_2_text: Style::default()
+                .fg(cs.cpu_sys_cpu_text_2_fg)
                 .add_modifier(Modifier::BOLD),
             cpu_sys_cpu_dataset: Style::default().fg(cs.cpu_sys_cpu_dataset_fg),
-            cpu_user_cpu_text: Style::default()
-                .fg(cs.cpu_user_cpu_text_fg)
+            cpu_user_cpu_1_text: Style::default()
+                .fg(cs.cpu_user_cpu_text_1_fg)
+                .add_modifier(Modifier::BOLD),
+            cpu_user_cpu_2_text: Style::default()
+                .fg(cs.cpu_user_cpu_text_2_fg)
                 .add_modifier(Modifier::BOLD),
             cpu_user_cpu_dataset: Style::default().fg(cs.cpu_user_cpu_dataset_fg),
+
+            hit_rate_title: Style::default().fg(cs.hit_rate_title_fg),
+            hit_rate_border: Style::default().fg(cs.hit_rate_border_fg),
+            hit_rate_label: Style::default().fg(cs.hit_rate_label_fg),
+            hit_rate_gauge: Style::default().fg(cs.hit_rate_gauge_fg).bg(cs.hit_rate_gauge_bg),
 
             throughput_title: Style::default().fg(cs.throughput_title_fg),
             throughput_border: Style::default().fg(cs.throughput_border_fg),

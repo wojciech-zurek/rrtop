@@ -1,14 +1,9 @@
-use std::time::Duration;
-
 use crossterm::event::{Event, KeyCode};
-use r2d2::Pool;
-use redis::Client;
 
 use cli::cli;
 use error::RRTopError;
 
 use crate::app::App;
-use crate::config::Config;
 use crate::event::{AppEvent, Events};
 use crate::metric::Metric;
 use crate::update::Updatable;
@@ -26,19 +21,20 @@ mod colorscheme;
 mod app;
 mod update;
 mod metric;
+mod connect;
 
 fn main() -> Result<(), RRTopError> {
     let config = config::Config::parse(cli())?;
-    let pool = connect(&config)?;
+    let pool = connect::connect(&config)?;
 
-    let mut terminal = terminal::create()?;
+    let mut terminal = terminal::Terminal::new()?;
 
     let mut events = Events::from_config(&config, pool)?;
     let mut app = App::new(&config.theme, config.draw_background, config.min_width, config.min_height);
 
     let mut metric = Metric::default();
     loop {
-        layout::draw(&mut terminal, &mut app)?;
+        layout::draw(&mut *terminal, &mut app)?;
         match events.next()? {
             AppEvent::Terminal(event) => {
                 match event {
@@ -52,7 +48,7 @@ fn main() -> Result<(), RRTopError> {
                         }
                     }
                     Event::Mouse(_) => {}
-                    Event::Resize(_, _) => { layout::draw(&mut terminal, &mut app)?; }
+                    Event::Resize(_, _) => { layout::draw(&mut *terminal, &mut app)?; }
                 }
             }
             AppEvent::Tick => {
@@ -77,20 +73,8 @@ fn main() -> Result<(), RRTopError> {
         }
     }
 
-    terminal::clean(terminal)?;
+    terminal.clean()?;
     Ok(())
-}
-
-fn connect(config: &Config) -> Result<Pool<Client>, RRTopError> {
-    let client = Client::open(&*config.url)?;
-
-    let pool = r2d2::Pool::builder()
-        .connection_timeout(Duration::from_secs(config.timeout))
-        .test_on_check_out(false)
-        .min_idle(Some(config.worker_number as u32))
-        .max_size(config.worker_number as u32).build(client)?;
-
-    Ok(pool)
 }
 
 

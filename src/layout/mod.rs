@@ -2,14 +2,14 @@ use tui::Frame;
 use tui::layout::{Constraint, Direction, Layout, Rect};
 
 use crate::app::App;
-use crate::terminal::{Backend, Terminal};
+use crate::terminal::{Backend, Term};
 
 pub mod home;
 pub mod command;
 pub mod stat;
 pub mod raw;
 
-pub fn draw(terminal: &mut Terminal, app: &mut App) -> std::io::Result<()> {
+pub fn draw(terminal: &mut Term, app: &mut App) -> std::io::Result<()> {
     if let Some(style) = app.draw_background {
         let area = terminal.get_frame().size();
         terminal.current_buffer_mut().set_style(area, style);
