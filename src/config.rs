@@ -1,12 +1,14 @@
 use clap::ArgMatches;
 use tui::style::Style;
 
-use crate::cli::DEFAULT_MIN_TICK_RATE;
 use crate::colorscheme::theme::Theme;
 use crate::error::RRTopError;
 
 const MIN_WIDTH: u16 = 60;
 const MIN_HEIGHT: u16 = 13;
+const MIN_TICK_RATE: f64 = 0.5;
+const MIN_WORKER_NUMBER: usize = 1;
+const MAX_WORKER_NUMBER: usize = 10;
 
 pub struct Config {
     pub timeout: u64,
@@ -24,13 +26,20 @@ impl Config {
         let host = matches.value_of("host").unwrap().to_owned();
         let port = matches.value_of("port").unwrap().parse::<u16>()?;
         let timeout = matches.value_of("connection-timeout").unwrap().parse::<u64>()?;
-        let tick_rate = matches.value_of("tick-rate").unwrap().parse::<f64>()?;
 
-        if tick_rate < DEFAULT_MIN_TICK_RATE {
-            return Err(RRTopError::CliParseError(format!("Tick rate to low. Min value {}", DEFAULT_MIN_TICK_RATE)));
+        let tick_rate = matches.value_of("tick-rate").unwrap().parse::<f64>()?;
+        if tick_rate < MIN_TICK_RATE {
+            return Err(RRTopError::CliParseError(format!("Tick rate to low. Min value {}", MIN_TICK_RATE)));
         }
 
         let worker_number = matches.value_of("worker-number").unwrap().parse::<usize>()?;
+        if worker_number < MIN_WORKER_NUMBER {
+            return Err(RRTopError::CliParseError(format!("Worker number to low. Min value {}", MIN_WORKER_NUMBER)));
+        }
+        if worker_number > MAX_WORKER_NUMBER {
+            return Err(RRTopError::CliParseError(format!("Worker number to high. Max value {}", MAX_WORKER_NUMBER)));
+        }
+
         let url = if let Some(socket) = matches.value_of("socket") {
             format!("redis+unix:///{}", socket)
         } else {

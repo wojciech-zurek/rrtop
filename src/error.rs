@@ -1,11 +1,13 @@
 use std::fmt;
-use std::num::{ParseIntError, ParseFloatError};
-use redis::RedisError;
-use flume::{RecvError, SendError};
-use crate::event::AppEvent;
+use std::fmt::{Debug, Formatter};
+use std::num::{ParseFloatError, ParseIntError};
 use std::str::ParseBoolError;
 
-#[derive(Debug)]
+use flume::{RecvError, SendError};
+use redis::RedisError;
+
+use crate::event::AppEvent;
+
 pub enum RRTopError {
     RedisError(RedisError),
     RedisPoolError(r2d2::Error),
@@ -15,12 +17,17 @@ pub enum RRTopError {
     IoError(std::io::Error),
     RecvError(RecvError),
     SendError(SendError<AppEvent>),
-    CliParseError(String)
+    CliParseError(String),
+}
+
+impl Debug for RRTopError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self)
+    }
 }
 
 impl fmt::Display for RRTopError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Error: {}", self)?;
         match self {
             RRTopError::RedisError(e) => write!(f, "{}", e),
             RRTopError::RedisPoolError(e) => { write!(f, "{}", e) }

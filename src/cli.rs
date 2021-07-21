@@ -1,4 +1,4 @@
-use clap::{ArgMatches, App, Arg};
+use clap::{App, Arg, ArgMatches};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const AUTHOR: &str = env!("CARGO_PKG_AUTHORS");
@@ -7,7 +7,6 @@ const DEFAULT_HOST: &str = "127.0.0.1";
 const DEFAULT_PORT: &str = "6379";
 const DEFAULT_CONNECTION_TIMEOUT: &str = "5";
 const DEFAULT_TICK_RATE: &str = "2.0";
-pub const DEFAULT_MIN_TICK_RATE: f64 = 0.5;
 const DEFAULT_WORKER_NUMBER: &str = "1";
 const DEFAULT_COLOR_SCHEME: &str = "default";
 const TRUE: &str = "true";
