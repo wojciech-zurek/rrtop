@@ -29,15 +29,15 @@ impl Config {
 
         let tick_rate = matches.value_of("tick-rate").unwrap().parse::<f64>()?;
         if tick_rate < MIN_TICK_RATE {
-            return Err(RRTopError::CliParseError(format!("Tick rate to low. Min value {}", MIN_TICK_RATE)));
+            return Err(RRTopError::cli_parse_error(format!("Tick rate to low. Min value {}", MIN_TICK_RATE)));
         }
 
         let worker_number = matches.value_of("worker-number").unwrap().parse::<usize>()?;
         if worker_number < MIN_WORKER_NUMBER {
-            return Err(RRTopError::CliParseError(format!("Worker number to low. Min value {}", MIN_WORKER_NUMBER)));
+            return Err(RRTopError::cli_parse_error(format!("Worker number to low. Min value {}", MIN_WORKER_NUMBER)));
         }
         if worker_number > MAX_WORKER_NUMBER {
-            return Err(RRTopError::CliParseError(format!("Worker number to high. Max value {}", MAX_WORKER_NUMBER)));
+            return Err(RRTopError::cli_parse_error(format!("Worker number to high. Max value {}", MAX_WORKER_NUMBER)));
         }
 
         let url = if let Some(socket) = matches.value_of("socket") {
