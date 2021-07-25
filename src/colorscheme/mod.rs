@@ -4,6 +4,7 @@ pub mod nord;
 pub mod default;
 pub mod theme;
 pub mod blackbird;
+pub mod dracula;
 
 pub struct ColorScheme {
     main_bg: Color,
@@ -91,6 +92,7 @@ impl From<&str> for ColorScheme {
         match s {
             "blackbird" => blackbird::new(),
             "nord" => nord::new(),
+            "dracula" => dracula::new(),
             _ => default::new()
         }
     }

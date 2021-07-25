@@ -1,7 +1,7 @@
 use tui::style::Color;
 
-use crate::colorscheme::blackbird::ColorPalette::*;
 use crate::colorscheme::ColorScheme;
+use crate::colorscheme::dracula::ColorPalette::*;
 
 #[allow(dead_code)]
 enum ColorPalette {
@@ -14,22 +14,24 @@ enum ColorPalette {
     Yellow,
     Blue,
     Orange,
-    Magenta,
+    Pink,
+    Purple,
 }
 
 impl From<ColorPalette> for Color {
     fn from(n: ColorPalette) -> Self {
         match n {
-            White => Color::Rgb(253, 247, 205),
-            Cyan => Color::Rgb(0, 236, 216),
-            Red => Color::Rgb(233, 39, 65),
-            Green => Color::Rgb(62, 200, 64),
-            Yellow => Color::Rgb(225, 220, 63),
-            Blue => Color::Rgb(65, 143, 221),
-            Orange => Color::Rgb(255, 153, 0),
-            Black1 => Color::Rgb(0, 0, 0),
-            Black2 => Color::Rgb(52, 60, 80),
-            Magenta => Color::Rgb(255, 0, 204),
+            White => Color::Rgb(248, 248, 242),
+            Cyan => Color::Rgb(139, 233, 253),
+            Red => Color::Rgb(255, 85, 85),
+            Green => Color::Rgb(80, 250, 123),
+            Yellow => Color::Rgb(241, 250, 140),
+            Blue => Color::Rgb(98, 114, 164),
+            Orange => Color::Rgb(255, 184, 108),
+            Black1 => Color::Rgb(40, 42, 54),
+            Black2 => Color::Rgb(68, 71, 90),
+            Pink => Color::Rgb(255, 121, 198),
+            Purple => Color::Rgb(189, 147, 249),
         }
     }
 }

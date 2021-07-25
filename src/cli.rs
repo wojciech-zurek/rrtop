@@ -54,7 +54,7 @@ pub fn cli() -> ArgMatches {
         .arg(Arg::new("color-scheme")
             .short('c')
             .about("Color scheme.")
-            .possible_values(&["default", "nord", "blackbird"])
+            .possible_values(&["default", "nord", "blackbird", "dracula"])
             .default_value(DEFAULT_COLOR_SCHEME)
             .required(false)
             .takes_value(true))
