@@ -62,6 +62,8 @@ pub fn new() -> ColorScheme {
         calls_title_fg: Color::Reset,
         calls_border_fg: Color::Reset,
         calls_table_header_fg: Color::Reset,
+        calls_table_row_gauge_fg: Color::Reset,
+        calls_table_row_gauge_bg: Color::Reset,
         calls_table_row_top_1_fg: Color::Reset,
         calls_table_row_top_2_fg: Color::Reset,
         calls_table_row_bottom_fg: Color::Reset,

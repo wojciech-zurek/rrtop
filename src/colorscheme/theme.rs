@@ -68,6 +68,7 @@ pub struct Theme {
     pub calls_title: Style,
     pub calls_border: Style,
     pub calls_table_header: Style,
+    pub calls_table_row_gauge: Style,
     pub calls_table_row_top_1: Style,
     pub calls_table_row_top_2: Style,
     pub calls_table_row_bottom: Style,
@@ -169,9 +170,9 @@ impl Theme {
             stat_table_header: Style::default()
                 .fg(cs.stat_table_header_fg)
                 .add_modifier(Modifier::BOLD),
-            stat_table_row_top_1: Style::default().fg(cs.stat_table_row_top_1_fg),
-            stat_table_row_top_2: Style::default().fg(cs.stat_table_row_top_2_fg),
-            stat_table_row_bottom: Style::default().fg(cs.stat_table_row_bottom_fg),
+            stat_table_row_top_1: Style::default().fg(cs.stat_table_row_top_1_fg).bg(cs.main_bg),
+            stat_table_row_top_2: Style::default().fg(cs.stat_table_row_top_2_fg).bg(cs.main_bg),
+            stat_table_row_bottom: Style::default().fg(cs.stat_table_row_bottom_fg).bg(cs.main_bg),
             stat_table_row_highlight: Style::default()
                 .bg(cs.stat_table_row_highlight_bg)
                 .add_modifier(Modifier::BOLD),
@@ -181,9 +182,10 @@ impl Theme {
             calls_table_header: Style::default()
                 .fg(cs.calls_table_header_fg)
                 .add_modifier(Modifier::BOLD),
-            calls_table_row_top_1: Style::default().fg(cs.calls_table_row_top_1_fg),
-            calls_table_row_top_2: Style::default().fg(cs.calls_table_row_top_2_fg),
-            calls_table_row_bottom: Style::default().fg(cs.calls_table_row_bottom_fg),
+            calls_table_row_gauge: Style::default().fg(cs.calls_table_row_gauge_fg).bg(cs.calls_table_row_gauge_bg),
+            calls_table_row_top_1: Style::default().fg(cs.calls_table_row_top_1_fg).bg(cs.main_bg),
+            calls_table_row_top_2: Style::default().fg(cs.calls_table_row_top_2_fg).bg(cs.main_bg),
+            calls_table_row_bottom: Style::default().fg(cs.calls_table_row_bottom_fg).bg(cs.main_bg),
             calls_table_row_highlight: Style::default()
                 .bg(cs.calls_table_row_highlight_bg)
                 .add_modifier(Modifier::BOLD),
@@ -205,7 +207,8 @@ impl From<&str> for Theme {
 
 impl Theme {
     pub fn color_table_cell(style_start: Style, style_stop: Style, index: u8, size: u16) -> Style {
-        let start_color = style_start.fg.unwrap_or(Color::Rgb(255, 255, 255));
+        let bg = style_start.bg.unwrap_or(Color::Reset);
+        let start_color = style_start.fg.unwrap_or(Color::Reset);
         let start_r: f32;
         let start_g: f32;
         let start_b: f32;
@@ -216,7 +219,7 @@ impl Theme {
                 start_g = g as f32;
                 start_b = b as f32;
             }
-            _ => return Style::default().fg(start_color)
+            _ => return Style::default().fg(start_color).bg(bg)
         }
 
         let min = start_r.min(start_g).min(start_b) as u8;
@@ -233,7 +236,7 @@ impl Theme {
                 stop_g = g as f32;
                 stop_b = b as f32;
             }
-            _ => return Style::default().fg(start_color)
+            _ => return Style::default().fg(start_color).bg(bg)
         }
 
         let s = match size {
@@ -248,6 +251,6 @@ impl Theme {
         let g = (start_g - (((start_g - stop_g).max(0.0) / s) * idx)).max(stop_g);
         let b = (start_b - (((start_b - stop_b).max(0.0) / s) * idx)).max(stop_b);
 
-        Style::default().fg(Color::Rgb(r as u8, g as u8, b as u8))
+        Style::default().fg(Color::Rgb(r as u8, g as u8, b as u8)).bg(bg)
     }
 }

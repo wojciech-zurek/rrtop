@@ -69,6 +69,7 @@ impl<'a> Widget for &mut Calls<'a> {
         let rows = self.stats.iter().enumerate().map(|it| {
             let style1 = Theme::color_table_cell(self.theme.calls_table_row_top_1, self.theme.calls_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
             let style2 = Theme::color_table_cell(self.theme.calls_table_row_top_2, self.theme.calls_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let gauge_style = Theme::color_table_cell(self.theme.calls_table_row_gauge, self.theme.calls_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
 
             let calls = it.1.calls as f64 / self.sum_calls;
             let usec = it.1.usec as f64 / self.sum_usec;
@@ -76,9 +77,9 @@ impl<'a> Widget for &mut Calls<'a> {
 
             vec![
                 Cell::from(Span::styled(format!(" {}", it.1.name), style1)),
-                Cell::from(Spans::from(render_line_gauge(it.1.calls, calls, area.width, style2))),
-                Cell::from(Spans::from(render_line_gauge(it.1.usec, usec, area.width, style2))),
-                Cell::from(Spans::from(render_line_gauge(it.1.usec_per_call, usec_per_call, area.width, style2))),
+                Cell::from(Spans::from(render_line_gauge(it.1.calls, calls, area.width, style2, gauge_style))),
+                Cell::from(Spans::from(render_line_gauge(it.1.usec, usec, area.width, style2, gauge_style))),
+                Cell::from(Spans::from(render_line_gauge(it.1.usec_per_call, usec_per_call, area.width, style2, gauge_style))),
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 

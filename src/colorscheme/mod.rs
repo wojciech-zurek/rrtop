@@ -3,6 +3,7 @@ use tui::style::Color;
 pub mod nord;
 pub mod default;
 pub mod theme;
+pub mod blackbird;
 
 pub struct ColorScheme {
     main_bg: Color,
@@ -72,6 +73,8 @@ pub struct ColorScheme {
     calls_title_fg: Color,
     calls_border_fg: Color,
     calls_table_header_fg: Color,
+    calls_table_row_gauge_fg: Color,
+    calls_table_row_gauge_bg: Color,
     calls_table_row_top_1_fg: Color,
     calls_table_row_top_2_fg: Color,
     calls_table_row_bottom_fg: Color,
@@ -86,6 +89,7 @@ pub struct ColorScheme {
 impl From<&str> for ColorScheme {
     fn from(s: &str) -> Self {
         match s {
+            "blackbird" => blackbird::new(),
             "nord" => nord::new(),
             _ => default::new()
         }
