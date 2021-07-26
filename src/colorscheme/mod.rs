@@ -5,6 +5,9 @@ pub mod default;
 pub mod theme;
 pub mod blackbird;
 pub mod dracula;
+pub mod solarized_dark;
+pub mod bw;
+pub mod one_dark;
 
 pub struct ColorScheme {
     main_bg: Color,
@@ -93,6 +96,9 @@ impl From<&str> for ColorScheme {
             "blackbird" => blackbird::new(),
             "nord" => nord::new(),
             "dracula" => dracula::new(),
+            "solarized-dark" => solarized_dark::new(),
+            "one-dark" => one_dark::new(),
+            "bw" => bw::new(),
             _ => default::new()
         }
     }
