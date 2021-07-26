@@ -107,6 +107,8 @@ pub fn new() -> ColorScheme {
         stat_title_fg: Nord7.into(),
         stat_border_fg: Nord3.into(),
         stat_table_header_fg: Nord7.into(),
+        stat_table_row_gauge_fg: Nord9.into(),
+        stat_table_row_gauge_bg: Nord1.into(),
         stat_table_row_top_1_fg: Nord6.into(),
         stat_table_row_top_2_fg: Nord9.into(),
         stat_table_row_bottom_fg: Nord3.into(),

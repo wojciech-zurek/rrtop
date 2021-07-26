@@ -54,7 +54,7 @@ fn draw_part_middle_left(f: &mut Frame<Backend>, area: Rect, app: &App) {
         .split(area);
     f.render_widget(&app.network, chunks[0]);
     f.render_widget(&app.memory, chunks[1]);
-    f.render_widget(&app.hit_rate, chunks[2]);
+    // f.render_widget(&app.hit_rate, chunks[2]);
 }
 
 fn draw_part_middle_right(f: &mut Frame<Backend>, area: Rect, app: &mut App) {

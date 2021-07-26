@@ -4,7 +4,6 @@ use crate::colorscheme::theme::Theme;
 use crate::widget::area_warning::AreaWarning;
 use crate::widget::calls::Calls;
 use crate::widget::cpu::Cpu;
-use crate::widget::hit_rate::HitRate;
 use crate::widget::memory::Memory;
 use crate::widget::menu::Menu;
 use crate::widget::navigation::Navigation;
@@ -24,7 +23,6 @@ pub struct App<'a, 'b> {
     pub network: Network<'a>,
     pub cpu: Cpu<'a>,
     pub memory: Memory<'a>,
-    pub hit_rate: HitRate<'a>,
     pub stat: Stat<'a>,
     pub calls: Calls<'a>,
     pub raw: Raw<'a>,
@@ -43,7 +41,6 @@ impl<'a, 'b> App<'a, 'b> {
             network: Network::new(theme),
             cpu: Cpu::new(theme),
             memory: Memory::new(theme),
-            hit_rate: HitRate::new(theme),
             stat: Stat::new(theme),
             calls: Calls::new(theme),
             raw: Raw::new(theme),

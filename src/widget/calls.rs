@@ -77,9 +77,9 @@ impl<'a> Widget for &mut Calls<'a> {
 
             vec![
                 Cell::from(Span::styled(format!(" {}", it.1.name), style1)),
-                Cell::from(Spans::from(render_line_gauge(it.1.calls, calls, area.width, style2, gauge_style))),
-                Cell::from(Spans::from(render_line_gauge(it.1.usec, usec, area.width, style2, gauge_style))),
-                Cell::from(Spans::from(render_line_gauge(it.1.usec_per_call, usec_per_call, area.width, style2, gauge_style))),
+                Cell::from(Spans::from(render_line_gauge(Span::styled(format!("{:>10} {:>6.2}%", it.1.calls, calls * 100.0), style2), calls, area.width, style2, gauge_style))),
+                Cell::from(Spans::from(render_line_gauge(Span::styled(format!("{:>10} {:>6.2}%", it.1.usec, usec * 100.0), style2), usec, area.width, style2, gauge_style))),
+                Cell::from(Spans::from(render_line_gauge(Span::styled(format!("{:>10} {:>6.2}%", it.1.usec_per_call, usec_per_call * 100.0), style2), usec_per_call, area.width, style2, gauge_style))),
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 

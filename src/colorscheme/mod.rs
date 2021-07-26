@@ -69,6 +69,8 @@ pub struct ColorScheme {
     stat_title_fg: Color,
     stat_border_fg: Color,
     stat_table_header_fg: Color,
+    stat_table_row_gauge_fg: Color,
+    stat_table_row_gauge_bg: Color,
     stat_table_row_top_1_fg: Color,
     stat_table_row_top_2_fg: Color,
     stat_table_row_bottom_fg: Color,

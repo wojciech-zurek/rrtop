@@ -55,6 +55,8 @@ pub fn new() -> ColorScheme {
         stat_title_fg: Color::Reset,
         stat_border_fg: Color::Reset,
         stat_table_header_fg: Color::Reset,
+        stat_table_row_gauge_fg: Color::Reset,
+        stat_table_row_gauge_bg: Color::Reset,
         stat_table_row_top_1_fg: Color::Reset,
         stat_table_row_top_2_fg: Color::Reset,
         stat_table_row_bottom_fg: Color::Reset,

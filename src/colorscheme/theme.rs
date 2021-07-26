@@ -60,6 +60,7 @@ pub struct Theme {
     pub stat_title: Style,
     pub stat_border: Style,
     pub stat_table_header: Style,
+    pub stat_table_row_gauge: Style,
     pub stat_table_row_top_1: Style,
     pub stat_table_row_top_2: Style,
     pub stat_table_row_bottom: Style,
@@ -170,6 +171,7 @@ impl Theme {
             stat_table_header: Style::default()
                 .fg(cs.stat_table_header_fg)
                 .add_modifier(Modifier::BOLD),
+            stat_table_row_gauge: Style::default().fg(cs.stat_table_row_gauge_fg).bg(cs.stat_table_row_gauge_bg),
             stat_table_row_top_1: Style::default().fg(cs.stat_table_row_top_1_fg).bg(cs.main_bg),
             stat_table_row_top_2: Style::default().fg(cs.stat_table_row_top_2_fg).bg(cs.main_bg),
             stat_table_row_bottom: Style::default().fg(cs.stat_table_row_bottom_fg).bg(cs.main_bg),

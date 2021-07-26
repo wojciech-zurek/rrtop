@@ -4,12 +4,13 @@ use chrono::Local;
 use size::Size;
 use tui::buffer::Buffer;
 use tui::layout::{Constraint, Rect};
-use tui::text::Span;
+use tui::text::{Span, Spans};
 use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState, Widget};
 
 use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
 use crate::update::Updatable;
+use crate::widget::linegauge::render_line_gauge;
 use crate::widget::navigation::Navigation;
 use crate::widget::title_span;
 
@@ -34,7 +35,8 @@ impl<'a> Stat<'a> {
                           "mem used".to_owned(),
                           "mem rss".to_owned(),
                           "frag ratio".to_owned(),
-                          "keys".to_owned()],
+                          "keys".to_owned(),
+                          "hit rate".to_owned()],
             time_slices: VecDeque::with_capacity(max_elements),
             theme,
             max_elements,
@@ -52,6 +54,7 @@ struct TimeSlice {
     memory_fragmentation_ratio: f32,
     ops_per_sec: f64,
     keys: u64,
+    hit_rate: f64,
 }
 
 impl<'a> Widget for &mut Stat<'a> {
@@ -66,6 +69,8 @@ impl<'a> Widget for &mut Stat<'a> {
         let rows = self.time_slices.iter().enumerate().map(|it| {
             let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
             let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let gauge_style = Theme::color_table_cell(self.theme.stat_table_row_gauge, self.theme.calls_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+
 
             vec![
                 Cell::from(Span::styled(format!("{}", it.1.time.format(" %H:%M:%S")), style1)),
@@ -75,7 +80,8 @@ impl<'a> Widget for &mut Stat<'a> {
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_rss_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.memory_fragmentation_ratio), style2)),
-                Cell::from(Span::styled(format!("{}", it.1.keys), style2)),
+                Cell::from(Span::styled(format!("{}", it.1.keys), style1)),
+                Cell::from(Spans::from(render_line_gauge(Span::styled(format!("{:>3.2}%", it.1.hit_rate * 100.0), style2), it.1.hit_rate, area.width, style2, gauge_style))),
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 
@@ -88,14 +94,15 @@ impl<'a> Widget for &mut Stat<'a> {
             )
             .highlight_style(self.theme.stat_table_row_highlight)
             .widths(&[
-                Constraint::Ratio(2, 16),
-                Constraint::Ratio(2, 16),
-                Constraint::Ratio(2, 16),
-                Constraint::Ratio(2, 16),
-                Constraint::Ratio(2, 16),
-                Constraint::Ratio(2, 16),
-                Constraint::Ratio(2, 16),
-                Constraint::Ratio(2, 16),
+                Constraint::Ratio(2, 15),//time
+                Constraint::Ratio(1, 15),//ops
+                Constraint::Ratio(2, 15),//user
+                Constraint::Ratio(2, 15),//sys
+                Constraint::Ratio(2, 15),//mem used
+                Constraint::Ratio(2, 15),//mem rss
+                Constraint::Ratio(1, 15),//frag ratio
+                Constraint::Ratio(1, 15),//keys
+                Constraint::Ratio(2, 15),//hit rate
             ]);
 
         StatefulWidget::render(table, area, buf, &mut self.state);
@@ -121,6 +128,7 @@ impl<'a> Updatable<&Metric> for Stat<'a> {
         let ops_per_sec = metric.throughput.last_delta_ops;
 
         let keys = metric.keyspace.total_keys;
+        let hit_rate = metric.keyspace.keyspace_hit_rate;
 
         self.time_slices.push_front(TimeSlice {
             time: Local::now(),
@@ -131,6 +139,7 @@ impl<'a> Updatable<&Metric> for Stat<'a> {
             memory_fragmentation_ratio,
             ops_per_sec,
             keys,
+            hit_rate,
         });
     }
 }
