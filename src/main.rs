@@ -4,7 +4,7 @@ use cli::cli;
 use error::RRTopError;
 
 use crate::app::App;
-use crate::event::{AppEvent, Events};
+use crate::event::{AppEvent, Events, RedisRequest, RedisResult};
 use crate::metric::Metric;
 use crate::update::Updatable;
 
@@ -52,21 +52,29 @@ fn main() -> Result<(), RRTopError> {
                 }
             }
             AppEvent::Tick => {
-                events.send(AppEvent::Command)?;
+                events.send(AppEvent::Request(RedisRequest::Info))?;
+                events.send(AppEvent::Request(RedisRequest::SlowLog))?;
             }
             AppEvent::Terminate => {
                 events.terminate();
                 break;
             }
             AppEvent::Result(m) => {
-                metric = m.calc_delta(metric, config.tick_rate);
-                &app.status_bar.update(&metric);
-                &app.network.update(&metric);
-                &app.cpu.update(&metric);
-                &app.memory.update(&metric);
-                &app.stat.update(&metric);
-                &app.calls.update(&metric);
-                &app.raw.update(&metric);
+                match m {
+                    RedisResult::Info(m) => {
+                        metric = m.calc_delta(metric, config.tick_rate);
+                        &app.status_bar.update(&metric);
+                        &app.network.update(&metric);
+                        &app.cpu.update(&metric);
+                        &app.memory.update(&metric);
+                        &app.stat.update(&metric);
+                        &app.calls.update(&metric);
+                        &app.raw.update(&metric);
+                    }
+                    RedisResult::SlowLog(log) => {
+                        &app.slow_log.update(log);
+                    }
+                }
             }
             _ => {}
         }

@@ -19,13 +19,13 @@ pub struct Space {
 
 impl From<&Info> for Keyspace {
     fn from(i: &Info) -> Self {
-        let keyspace_hits = if let Some(keyspace_hits) = i.0.get("keyspace_hits") {
+        let keyspace_hits = if let Some(keyspace_hits) = i.map.get("keyspace_hits") {
             keyspace_hits.parse::<f64>().unwrap_or(0.0)
         } else {
             0.0
         };
 
-        let keyspace_misses = if let Some(keyspace_misses) = i.0.get("keyspace_misses") {
+        let keyspace_misses = if let Some(keyspace_misses) = i.map.get("keyspace_misses") {
             keyspace_misses.parse::<f64>().unwrap_or(0.0)
         } else {
             0.0
@@ -37,7 +37,7 @@ impl From<&Info> for Keyspace {
         let regex = Regex::new("^db[0-9]+$").unwrap();
         let regex_values = Regex::new("(?P<name>keys|expires|avg_ttl)=(?P<value>[0-9]+)").unwrap();
 
-        let space = i.0.iter()
+        let space = i.map.iter()
             .filter(|&it| { regex.captures(it.0).is_some() })
             .map(|it| (it.0, regex_values.captures_iter(it.1)))
             .map(|mut it| {

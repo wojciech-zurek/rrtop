@@ -8,10 +8,11 @@ use crossterm::event;
 use crossterm::event::Event::Key;
 use flume::{Receiver, Sender};
 use r2d2::Pool;
-use redis::Client;
+use redis::{Client, Connection, RedisError};
 
-use crate::event::AppEvent;
+use crate::event::{AppEvent, RedisRequest, RedisResult};
 use crate::metric::Metric;
+use crate::metric::slow_log::SlowLog;
 use crate::response::Info;
 
 pub fn setup_terminal_worker(tx: Sender<AppEvent>) -> io::Result<JoinHandle<()>> {
@@ -57,7 +58,7 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
             loop {
                 let event = rx.recv().unwrap_or(AppEvent::Terminate);
                 match event {
-                    AppEvent::Command => {
+                    AppEvent::Request(request) => {
                         let p = &mut pool.get();
                         let client = match p {
                             Ok(c) => c.deref_mut(),
@@ -67,22 +68,29 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                             }
                         };
 
-                        let start = time::Instant::now();
-                        match redis::cmd("INFO").arg("all").query::<Info>(client) {
-                            Ok(info) => {
-                                let latency = start.elapsed().as_millis();
-                                if let Err(e) = tx.send(
-                                    AppEvent::Result(Metric::from(info).latency(latency))
-                                ) {
-                                    eprintln!("{}", e);//todo: log error
-                                    // break;
+                        let result = match request {
+                            RedisRequest::Info => {
+                                match info(client) {
+                                    Ok(result) => { result }
+                                    Err(e) => {
+                                        eprintln!("{}", e);//todo: log error
+                                        continue;// or break?
+                                    }
                                 }
                             }
-                            Err(e) => {
-                                eprintln!("{}", e);//todo: log error
-                                //break;// ?
+                            RedisRequest::SlowLog => {
+                                match slow_log(client) {
+                                    Ok(result) => { result }
+                                    Err(e) => {
+                                        eprintln!("{}", e);//todo: log error
+                                        continue;// or break?
+                                    }
+                                }
                             }
                         };
+                        if let Err(e) = tx.send(result) {
+                            eprintln!("{}", e);//todo: log error
+                        }
                     }
                     AppEvent::Terminate => {
                         break;
@@ -94,4 +102,17 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
         workers.push(worker);
     }
     Ok(workers)
+}
+
+fn info(client: &mut Connection) -> Result<AppEvent, RedisError> {
+    let start = time::Instant::now();
+    let info = redis::cmd("info").arg("all").query::<Info>(client)?;
+    let latency = start.elapsed().as_millis();
+
+    Ok(AppEvent::Result(RedisResult::Info(Metric::from(info).latency(latency))))
+}
+
+fn slow_log(client: &mut Connection) -> Result<AppEvent, RedisError> {
+    let v = redis::cmd("slowlog").arg("get").arg("50").query::<Vec<Vec<(u64, i64, i64, Vec<String>, String, String)>>>(client)?;
+    Ok(AppEvent::Result(RedisResult::SlowLog(SlowLog::from(v))))
 }

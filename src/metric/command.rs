@@ -23,7 +23,7 @@ impl From<&Info> for Command {
         let regex = Regex::new("^cmdstat_[a-z]+$").unwrap();
         let regex_values = Regex::new("(?P<name>calls|usec|usec_per_call)=(?P<value>[0-9.]+)").unwrap();
 
-        let stats = i.0.iter()
+        let stats = i.map.iter()
             .filter(|&it| { regex.captures(it.0).is_some() })
             .map(|it| (it.0, regex_values.captures_iter(it.1)))
             .map(|mut it| {

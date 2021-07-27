@@ -83,8 +83,8 @@ impl<'a> Widget for &Memory<'a> {
 
         //rss memory
         let spans = vec![
-            Spans::from(Span::styled(format!("Frag ratio: {}", self.last_fragmentation_ratio), self.theme.memory_rss_memory_text)),
-            Spans::from(Span::styled(format!("RSS memory: {}", Size::Bytes(self.last_rss_memory)), self.theme.memory_rss_memory_text))
+            Spans::from(Span::styled(format!(" Frag ratio: {}", self.last_fragmentation_ratio), self.theme.memory_rss_memory_text)),
+            Spans::from(Span::styled(format!(" RSS memory: {}", Size::Bytes(self.last_rss_memory)), self.theme.memory_rss_memory_text))
         ];
         Paragraph::new(spans).render(chunks[4], buf);
         Sparkline::default()

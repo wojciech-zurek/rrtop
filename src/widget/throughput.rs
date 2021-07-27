@@ -9,8 +9,8 @@ use tui::widgets::{Block, Borders, Paragraph, Widget};
 use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
 use crate::update::Updatable;
-use crate::widget::title_span;
 use crate::widget::sparkline::{RenderDirection, Sparkline};
+use crate::widget::title_span;
 
 pub struct Throughput<'a> {
     title: String,
@@ -60,7 +60,7 @@ impl<'a> Widget for &Throughput<'a> {
 
         let spans = vec![
             Spans::from(Span::styled(format!("Total commands: {}", self.total_commands), self.theme.throughput_total_commands_text)),
-            Spans::from(Span::styled(format!("           Ops: {:.1} ops/s", self.last_delta_ops), self.theme.throughput_ops_text))
+            Spans::from(Span::styled(format!("          Op/s: {:.1}", self.last_delta_ops), self.theme.throughput_ops_text))
         ];
         Paragraph::new(spans).render(chunks[1], buf);
 
@@ -77,13 +77,13 @@ impl<'a> Widget for &Throughput<'a> {
 
 impl<'a> Updatable<&Metric> for Throughput<'a> {
     fn update(&mut self, metric: &Metric) {
-        self.total_commands = metric.throughput.total_commands_processed;
-        self.last_delta_ops = metric.throughput.last_delta_ops;
+        self.total_commands = metric.stats.total_commands_processed;
+        self.last_delta_ops = metric.stats.last_delta_ops;
 
         if self.ops_per_sec.len() >= self.max_elements {
             self.ops_per_sec.pop_back();
         }
 
-        self.ops_per_sec.push_front((metric.throughput.last_delta_ops * 100.0) as u64);
+        self.ops_per_sec.push_front((metric.stats.last_delta_ops * 100.0) as u64);
     }
 }

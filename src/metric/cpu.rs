@@ -1,5 +1,5 @@
-use crate::response::Info;
 use crate::metric::Delta;
+use crate::response::Info;
 
 #[derive(Default)]
 pub struct Cpu {
@@ -37,13 +37,13 @@ impl Delta for Cpu {
 
 impl From<&Info> for Cpu {
     fn from(i: &Info) -> Self {
-        let used_cpu_user = if let Some(used_cpu_user) = i.0.get("used_cpu_user") {
+        let used_cpu_user = if let Some(used_cpu_user) = i.map.get("used_cpu_user") {
             used_cpu_user.parse::<f64>().unwrap_or(0.0)
         } else {
             0.0
         };
 
-        let used_cpu_sys = if let Some(used_cpu_sys) = i.0.get("used_cpu_sys") {
+        let used_cpu_sys = if let Some(used_cpu_sys) = i.map.get("used_cpu_sys") {
             used_cpu_sys.parse::<f64>().unwrap_or(0.0)
         } else {
             0.0

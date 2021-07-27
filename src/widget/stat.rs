@@ -29,14 +29,18 @@ impl<'a> Stat<'a> {
         Stat {
             title: "stat".to_owned(),
             headers: vec![" time".to_owned(),
-                          "ops".to_owned(),
+                          "op/s".to_owned(),
                           "user".to_owned(),
                           "sys".to_owned(),
                           "mem used".to_owned(),
                           "mem rss".to_owned(),
-                          "frag ratio".to_owned(),
+                          "fr ratio".to_owned(),
+                          "hit rate".to_owned(),
                           "keys".to_owned(),
-                          "hit rate".to_owned()],
+                          "exp".to_owned(),
+                          "exp/s".to_owned(),
+                          "evt/s".to_owned(),
+            ],
             time_slices: VecDeque::with_capacity(max_elements),
             theme,
             max_elements,
@@ -54,7 +58,10 @@ struct TimeSlice {
     memory_fragmentation_ratio: f32,
     ops_per_sec: f64,
     keys: u64,
+    expires: u64,
     hit_rate: f64,
+    expired_per_sec: f64,
+    evicted_per_sec: f64,
 }
 
 impl<'a> Widget for &mut Stat<'a> {
@@ -80,8 +87,11 @@ impl<'a> Widget for &mut Stat<'a> {
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_rss_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.memory_fragmentation_ratio), style2)),
-                Cell::from(Span::styled(format!("{}", it.1.keys), style1)),
                 Cell::from(Spans::from(render_line_gauge(Span::styled(format!("{:>3.2}%", it.1.hit_rate * 100.0), style2), it.1.hit_rate, area.width, style2, gauge_style))),
+                Cell::from(Span::styled(format!("{}", it.1.keys), style1)),
+                Cell::from(Span::styled(format!("{}", it.1.expires), style1)),
+                Cell::from(Span::styled(format!("{}", it.1.expired_per_sec), style2)),
+                Cell::from(Span::styled(format!("{}", it.1.evicted_per_sec), style2)),
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 
@@ -94,15 +104,18 @@ impl<'a> Widget for &mut Stat<'a> {
             )
             .highlight_style(self.theme.stat_table_row_highlight)
             .widths(&[
-                Constraint::Ratio(2, 15),//time
-                Constraint::Ratio(1, 15),//ops
-                Constraint::Ratio(2, 15),//user
-                Constraint::Ratio(2, 15),//sys
-                Constraint::Ratio(2, 15),//mem used
-                Constraint::Ratio(2, 15),//mem rss
-                Constraint::Ratio(1, 15),//frag ratio
-                Constraint::Ratio(1, 15),//keys
-                Constraint::Ratio(2, 15),//hit rate
+                Constraint::Ratio(2, 14),//time
+                Constraint::Ratio(1, 14),//op/s
+                Constraint::Ratio(1, 14),//user
+                Constraint::Ratio(1, 14),//sys
+                Constraint::Ratio(1, 14),//mem used
+                Constraint::Ratio(1, 14),//mem rss
+                Constraint::Ratio(1, 14),//frag ratio
+                Constraint::Ratio(2, 14),//hit rate
+                Constraint::Ratio(1, 14),//keys
+                Constraint::Ratio(1, 14),//expires
+                Constraint::Ratio(1, 14),//exp/s
+                Constraint::Ratio(1, 14),//evt/s
             ]);
 
         StatefulWidget::render(table, area, buf, &mut self.state);
@@ -125,10 +138,13 @@ impl<'a> Updatable<&Metric> for Stat<'a> {
 
         let memory_fragmentation_ratio = metric.memory.mem_fragmentation_ratio;
 
-        let ops_per_sec = metric.throughput.last_delta_ops;
+        let ops_per_sec = metric.stats.last_delta_ops;
 
         let keys = metric.keyspace.total_keys;
+        let expires = metric.keyspace.total_expires;
         let hit_rate = metric.keyspace.keyspace_hit_rate;
+        let expired_per_sec = metric.stats.last_delta_expired_keys;
+        let evicted_per_sec = metric.stats.last_delta_evicted_keys;
 
         self.time_slices.push_front(TimeSlice {
             time: Local::now(),
@@ -139,7 +155,10 @@ impl<'a> Updatable<&Metric> for Stat<'a> {
             memory_fragmentation_ratio,
             ops_per_sec,
             keys,
+            expires,
             hit_rate,
+            expired_per_sec,
+            evicted_per_sec,
         });
     }
 }

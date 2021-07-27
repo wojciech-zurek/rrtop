@@ -1,7 +1,7 @@
 use crate::response::Info;
 
 #[derive(Default)]
-pub struct Status {
+pub struct Server {
     pub uptime: i64,
     pub process_id: i64,
     pub latency: u128,
@@ -9,33 +9,33 @@ pub struct Status {
     pub role: String,
 }
 
-impl From<&Info> for Status {
+impl From<&Info> for Server {
     fn from(i: &Info) -> Self {
-        let uptime = if let Some(u) = i.0.get("uptime_in_seconds") {
+        let uptime = if let Some(u) = i.map.get("uptime_in_seconds") {
             u.parse::<i64>().unwrap_or(0)
         } else {
             0
         };
 
-        let process_id = if let Some(pid) = i.0.get("process_id") {
+        let process_id = if let Some(pid) = i.map.get("process_id") {
             pid.parse::<i64>().unwrap_or(0)
         } else {
             0
         };
 
-        let version = if let Some(rv) = i.0.get("redis_version") {
+        let version = if let Some(rv) = i.map.get("redis_version") {
             rv
         } else {
             ""
         }.to_owned();
 
-        let role = if let Some(r) = i.0.get("role") {
+        let role = if let Some(r) = i.map.get("role") {
             r
         } else {
             ""
         }.to_owned();
 
-        Status {
+        Server {
             uptime,
             process_id,
             latency: 0,

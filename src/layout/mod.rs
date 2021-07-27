@@ -5,9 +5,7 @@ use crate::app::App;
 use crate::terminal::{Backend, Term};
 
 pub mod home;
-pub mod command;
-pub mod stat;
-pub mod raw;
+pub mod full_screen;
 
 pub fn draw(terminal: &mut Term, app: &mut App) -> std::io::Result<()> {
     if let Some(style) = app.draw_background {
@@ -33,9 +31,10 @@ pub fn draw(terminal: &mut Term, app: &mut App) -> std::io::Result<()> {
             .split(f.size());
         match app.selected_tab {
             0 => { home::draw(f, chunks[0], app) }
-            1 => { command::draw(f, chunks[0], app) }
-            2 => { stat::draw(f, chunks[0], app) }
-            3 => { raw::draw(f, chunks[0], app) }
+            1 => { full_screen::draw(f, chunks[0], &mut app.calls) }
+            2 => { full_screen::draw(f, chunks[0], &mut app.stat) }
+            3 => { full_screen::draw(f, chunks[0], &mut app.slow_log) }
+            4 => { full_screen::draw(f, chunks[0], &mut app.raw) }
             _ => {}
         }
 

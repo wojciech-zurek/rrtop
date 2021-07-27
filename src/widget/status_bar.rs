@@ -1,10 +1,11 @@
-use crate::colorscheme::theme::Theme;
-use tui::layout::{Rect, Alignment};
 use tui::buffer::Buffer;
-use tui::widgets::{Widget, Paragraph};
+use tui::layout::{Alignment, Rect};
 use tui::text::Span;
-use crate::update::Updatable;
+use tui::widgets::{Paragraph, Widget};
+
+use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
+use crate::update::Updatable;
 
 pub struct StatusBar<'a> {
     uptime: i64,
@@ -45,12 +46,12 @@ impl<'a> Widget for &StatusBar<'a> {
 
 impl<'a> Updatable<&Metric> for StatusBar<'a> {
     fn update(&mut self, metric: &Metric) {
-        self.version = metric.status.version.to_owned();
-        self.uptime = metric.status.uptime;
+        self.version = metric.server.version.to_owned();
+        self.uptime = metric.server.uptime;
 
-        self.process_id = metric.status.process_id;
+        self.process_id = metric.server.process_id;
 
-        self.role = metric.status.role.to_owned();
-        self.latency = metric.status.latency;
+        self.role = metric.server.role.to_owned();
+        self.latency = metric.server.latency;
     }
 }

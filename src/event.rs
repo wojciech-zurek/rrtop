@@ -1,21 +1,33 @@
-use crossterm::event::Event;
 use std::io;
-use flume::{RecvError, Sender, SendError};
-use std::time::Duration;
 use std::thread::JoinHandle;
-use redis::Client;
-use crate::config::Config;
+use std::time::Duration;
 
-use crate::workers::{setup_terminal_worker, setup_tick_worker, setup_redis_workers};
+use crossterm::event::Event;
+use flume::{RecvError, Sender, SendError};
 use r2d2::Pool;
+use redis::Client;
+
+use crate::config::Config;
 use crate::metric::Metric;
+use crate::metric::slow_log::SlowLog;
+use crate::workers::{setup_redis_workers, setup_terminal_worker, setup_tick_worker};
+
+pub enum RedisRequest {
+    Info,
+    SlowLog,
+}
+
+pub enum RedisResult {
+    Info(Metric),
+    SlowLog(SlowLog),
+}
 
 pub enum AppEvent {
     Terminal(Event),
     Tick,
     Terminate,
-    Command,
-    Result(Metric),
+    Request(RedisRequest),
+    Result(RedisResult),
 }
 
 

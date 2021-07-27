@@ -18,6 +18,7 @@ pub mod calls;
 mod linegauge;
 pub mod raw;
 pub mod navigation;
+pub mod slow_log;
 
 const MIN_DOT_SYMBOL: &str = "⡀";
 const LINE_SYMBOL: &str = "_";

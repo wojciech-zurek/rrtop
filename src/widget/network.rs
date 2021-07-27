@@ -1,16 +1,17 @@
-use crate::colorscheme::theme::Theme;
-use tui::widgets::{Widget, Block, Borders, Paragraph};
-use tui::layout::{Rect, Layout, Direction, Constraint};
-use tui::buffer::Buffer;
-use crate::update::Updatable;
+use std::collections::VecDeque;
 
 use size::Size;
+use tui::buffer::Buffer;
+use tui::layout::{Constraint, Direction, Layout, Rect};
 use tui::text::Span;
 use tui::text::Spans;
-use crate::widget::sparkline::{Sparkline, RenderDirection};
-use std::collections::VecDeque;
-use crate::widget::{title_span};
+use tui::widgets::{Block, Borders, Paragraph, Widget};
+
+use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
+use crate::update::Updatable;
+use crate::widget::sparkline::{RenderDirection, Sparkline};
+use crate::widget::title_span;
 
 pub struct Network<'a> {
     title: String,
@@ -100,19 +101,19 @@ impl<'a> Widget for &Network<'a> {
 
 impl<'a> Updatable<&Metric> for Network<'a> {
     fn update(&mut self, metric: &Metric) {
-        self.total_input = metric.network.total_net_input_bytes;
-        self.total_output = metric.network.total_net_output_bytes;
-        self.last_delta_input = metric.network.last_delta_network_input_bps as i64;
-        self.last_delta_output = metric.network.last_delta_network_output_bps as i64;
+        self.total_input = metric.stats.total_net_input_bytes;
+        self.total_output = metric.stats.total_net_output_bytes;
+        self.last_delta_input = metric.stats.last_delta_network_input_bps as i64;
+        self.last_delta_output = metric.stats.last_delta_network_output_bps as i64;
 
         if self.input.len() >= self.max_elements {
             self.input.pop_back();
         }
-        self.input.push_front(metric.network.last_delta_network_input_bps);
+        self.input.push_front(metric.stats.last_delta_network_input_bps);
 
         if self.output.len() >= self.max_elements {
             self.output.pop_back();
         }
-        self.output.push_front(metric.network.last_delta_network_output_bps);
+        self.output.push_front(metric.stats.last_delta_network_output_bps);
     }
 }
