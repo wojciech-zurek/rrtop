@@ -24,8 +24,8 @@ impl<'a> SlowLog<'a> {
         SlowLog {
             title: "slow log".to_owned(),
             headers: vec![" id".to_owned(),
-                          "timestamp".to_owned(),
-                          "exec_time".to_owned(),
+                          "time".to_owned(),
+                          "exec time".to_owned(),
                           "command".to_owned(), ],
             theme,
             values: vec![],
