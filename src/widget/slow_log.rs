@@ -15,7 +15,7 @@ pub struct SlowLog<'a> {
     title: String,
     headers: Vec<String>,
     theme: &'a Theme,
-    values: Vec<Log>,
+    logs: Vec<Log>,
     state: TableState,
 }
 
@@ -26,9 +26,12 @@ impl<'a> SlowLog<'a> {
             headers: vec![" id".to_owned(),
                           "time".to_owned(),
                           "exec time".to_owned(),
-                          "command".to_owned(), ],
+                          "command".to_owned(),
+                          "client ip".to_owned(),
+                          "client name".to_owned(),
+            ],
             theme,
-            values: vec![],
+            logs: vec![],
             state: TableState::default(),
         }
     }
@@ -43,7 +46,7 @@ impl<'a> Widget for &mut SlowLog<'a> {
             .height(1)
             .bottom_margin(0);
 
-        let rows = self.values.iter().enumerate().map(|it| {
+        let rows = self.logs.iter().enumerate().map(|it| {
             let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
             let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
 
@@ -55,6 +58,8 @@ impl<'a> Widget for &mut SlowLog<'a> {
                 Cell::from(Span::styled(format!("{}", local.format("%Y-%m-%d %H:%M:%S")), style2)),
                 Cell::from(Span::styled(format!("{}s {:0.2}ms {}μs", duration.num_seconds(), duration.num_milliseconds() % 1_000,  it.1.exec_time % 1_000), style2)),
                 Cell::from(Span::styled(format!("{}", it.1.command), style2)),
+                Cell::from(Span::styled(format!("{}", it.1.client_ip), style1)),
+                Cell::from(Span::styled(format!("{}", it.1.client_name), style1)),
             ]
         }).map(|it| Row::new(it)).collect::<Vec<Row>>();
 
@@ -67,10 +72,12 @@ impl<'a> Widget for &mut SlowLog<'a> {
             )
             .highlight_style(self.theme.stat_table_row_highlight)
             .widths(&[
-                Constraint::Ratio(1, 4),
-                Constraint::Ratio(1, 4),
-                Constraint::Ratio(1, 4),
-                Constraint::Ratio(1, 4),
+                Constraint::Ratio(1, 6),
+                Constraint::Ratio(1, 6),
+                Constraint::Ratio(1, 6),
+                Constraint::Ratio(1, 6),
+                Constraint::Ratio(1, 6),
+                Constraint::Ratio(1, 6),
             ]);
 
         <Table as StatefulWidget>::render(table, area, buf, &mut self.state)
@@ -79,12 +86,7 @@ impl<'a> Widget for &mut SlowLog<'a> {
 
 impl<'a> Updatable<slow_log::SlowLog> for SlowLog<'a> {
     fn update(&mut self, logs: slow_log::SlowLog) {
-        // let mut values = metric.raw.map
-        //     .iter()
-        //     .map(|it| (it.0.clone(), it.1.clone())).collect::<Vec<(String, String)>>();
-        // values.sort_by(|a, b| a.cmp(&b));
-
-        self.values = logs.logs;
+        self.logs = logs.logs;
     }
 }
 
@@ -94,6 +96,6 @@ impl<'a> Navigation for SlowLog<'a> {
     }
 
     fn len(&self) -> usize {
-        self.values.len()
+        self.logs.len()
     }
 }

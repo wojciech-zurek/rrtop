@@ -7,6 +7,8 @@ pub struct Log {
     pub timestamp: i64,
     pub exec_time: i64,
     pub command: String,
+    pub client_ip: String,
+    pub client_name: String,
 }
 
 impl From<Vec<Vec<(u64, i64, i64, Vec<String>, String, String)>>> for SlowLog {
@@ -18,12 +20,16 @@ impl From<Vec<Vec<(u64, i64, i64, Vec<String>, String, String)>>> for SlowLog {
                 let timestamp = it.1;
                 let exec_time = it.2;
                 let command = it.3.join(" ");
+                let client_ip = it.4;
+                let client_name = it.5;
 
                 Log {
                     id,
                     timestamp,
                     exec_time,
                     command,
+                    client_ip,
+                    client_name,
                 }
             }).collect::<Vec<Log>>();
 
