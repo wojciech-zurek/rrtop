@@ -3,6 +3,8 @@ use std::fmt::{Debug, Formatter};
 use std::num::{ParseFloatError, ParseIntError};
 use std::str::ParseBoolError;
 
+use log4rs::config::runtime::ConfigErrors;
+use log::SetLoggerError;
 use redis::RedisError;
 
 use crate::event::AppEvent;
@@ -18,6 +20,7 @@ pub enum ErrorKind {
     RecvError,
     SendError,
     CliParseError,
+    LoggerError,
 }
 
 pub struct RRTopError {
@@ -116,6 +119,24 @@ impl From<flume::SendError<AppEvent>> for RRTopError {
         RRTopError {
             message: format!("{}", e),
             kind: ErrorKind::SendError,
+        }
+    }
+}
+
+impl From<ConfigErrors> for RRTopError {
+    fn from(e: ConfigErrors) -> Self {
+        RRTopError {
+            message: format!("{}", e.errors().iter().map(|it| format!("{:?}", it)).collect::<String>()),
+            kind: ErrorKind::LoggerError,
+        }
+    }
+}
+
+impl From<SetLoggerError> for RRTopError {
+    fn from(e: SetLoggerError) -> Self {
+        RRTopError {
+            message: format!("{}", e),
+            kind: ErrorKind::LoggerError,
         }
     }
 }

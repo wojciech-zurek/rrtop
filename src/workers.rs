@@ -7,6 +7,7 @@ use crossterm::event::{KeyCode, KeyModifiers};
 use crossterm::event;
 use crossterm::event::Event::Key;
 use flume::{Receiver, Sender};
+use log::error;
 use r2d2::Pool;
 use redis::{Client, Connection, RedisError};
 
@@ -21,14 +22,14 @@ pub fn setup_terminal_worker(tx: Sender<AppEvent>) -> io::Result<JoinHandle<()>>
             if let Key(key) = event {
                 if key.code == KeyCode::Char('q') || (key.modifiers == KeyModifiers::CONTROL && key.code == KeyCode::Char('c')) {
                     if let Err(e) = tx.send(AppEvent::Terminate) {
-                        eprintln!("{}", e); //todo: log error
+                        error!("{}", e);
                     }
                     return;
                 }
             }
 
             if let Err(e) = tx.send(AppEvent::Terminal(event)) {
-                eprintln!("{}", e);//todo: log error
+                error!("{}", e);
             }
         }
     })
@@ -38,7 +39,7 @@ pub fn setup_tick_worker(tx: Sender<AppEvent>, tick_rate: Duration) -> io::Resul
     thread::Builder::new().name("tick-event".into()).spawn(move || loop {
         // println!("Tick {:?}", thread::current().name());
         if let Err(e) = tx.send(AppEvent::Tick) {
-            eprintln!("{}", e);//todo: log error
+            error!("{}", e);
             break;
         }
         thread::sleep(tick_rate);
@@ -63,7 +64,7 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                         let client = match p {
                             Ok(c) => c.deref_mut(),
                             Err(e) => {
-                                eprintln!("{}", e);//todo: log error
+                                error!("{}", e);
                                 continue;// or break?
                             }
                         };
@@ -73,7 +74,7 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                                 match info(client) {
                                     Ok(result) => { result }
                                     Err(e) => {
-                                        eprintln!("{}", e);//todo: log error
+                                        error!("{}", e);
                                         continue;// or break?
                                     }
                                 }
@@ -82,14 +83,14 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
                                 match slow_log(client) {
                                     Ok(result) => { result }
                                     Err(e) => {
-                                        eprintln!("{}", e);//todo: log error
+                                        error!("{}", e);
                                         continue;// or break?
                                     }
                                 }
                             }
                         };
                         if let Err(e) = tx.send(result) {
-                            eprintln!("{}", e);//todo: log error
+                            error!("{}", e);
                         }
                     }
                     AppEvent::Terminate => {

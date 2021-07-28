@@ -22,9 +22,13 @@ mod app;
 mod update;
 mod metric;
 mod connect;
+mod logger;
 
 fn main() -> Result<(), RRTopError> {
     let config = config::Config::parse(cli())?;
+
+    logger::init_log(&config)?;
+
     let pool = connect::connect(&config)?;
 
     let mut terminal = terminal::Terminal::new()?;

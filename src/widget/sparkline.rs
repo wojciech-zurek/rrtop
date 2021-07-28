@@ -1,9 +1,11 @@
-use tui::widgets::{Block, Widget};
+use std::cmp::min;
+
+use tui::buffer::Buffer;
+use tui::layout::Rect;
 use tui::style::Style;
 use tui::symbols;
-use tui::layout::Rect;
-use tui::buffer::Buffer;
-use std::cmp::min;
+use tui::widgets::{Block, Widget};
+
 use crate::widget::LINE_SYMBOL;
 
 #[derive(Debug, Clone)]

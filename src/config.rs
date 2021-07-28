@@ -19,12 +19,35 @@ pub struct Config {
     pub draw_background: Option<Style>,
     pub min_width: u16,
     pub min_height: u16,
+    pub file_log_path: Option<String>,
 }
 
 impl Config {
     pub fn parse(matches: ArgMatches) -> Result<Config, RRTopError> {
         let host = matches.value_of("host").unwrap().to_owned();
         let port = matches.value_of("port").unwrap().parse::<u16>()?;
+
+        let username = matches.value_of("username");
+        let password = matches.value_of("password");
+
+        let url = if let Some(socket) = matches.value_of("socket") {
+            let auth = if let Some(pass) = password {
+                format!("pass={}&user={}", pass, username.unwrap_or(""))
+            } else {
+                format!("")
+            };
+
+            format!("redis+unix:///{}?{}", socket, auth)
+        } else {
+            let auth = if let Some(pass) = password {
+                format!("{}:{}@", username.unwrap_or(""), pass)
+            } else {
+                format!("")
+            };
+
+            format!("redis://{}{}:{}/", auth, host, port)
+        };
+
         let timeout = matches.value_of("connection-timeout").unwrap().parse::<u64>()?;
 
         let tick_rate = matches.value_of("tick-rate").unwrap().parse::<f64>()?;
@@ -40,17 +63,17 @@ impl Config {
             return Err(RRTopError::cli_parse_error(format!("Worker number to high. Max value {}", MAX_WORKER_NUMBER)));
         }
 
-        let url = if let Some(socket) = matches.value_of("socket") {
-            format!("redis+unix:///{}", socket)
-        } else {
-            format!("redis://{}:{}/", host, port)
-        };
-
         let theme: Theme = matches.value_of("color-scheme").unwrap().into();
 
         let draw_background = match matches.value_of("draw-background").unwrap().parse::<bool>()? {
             true => { Some(theme.main) }
             false => { None }
+        };
+
+        let file_log_path = if let Some(file_log_path) = matches.value_of("file-log-path") {
+            Some(file_log_path.to_owned())
+        } else {
+            None
         };
 
         Ok(Config {
@@ -62,6 +85,7 @@ impl Config {
             draw_background,
             min_width: MIN_WIDTH,
             min_height: MIN_HEIGHT,
+            file_log_path,
         })
     }
 }
