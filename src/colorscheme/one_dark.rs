@@ -25,7 +25,7 @@ impl From<ColorPalette> for Color {
             Green => Color::Rgb(152, 195, 121),
             Yellow => Color::Rgb(209, 154, 102),
             Blue => Color::Rgb(97, 175, 239),
-            Black1 => Color::Rgb(40, 44, 52),
+            Black1 => Color::Rgb(49, 53, 63),
             Black2 => Color::Rgb(92, 99, 112),
             Purple => Color::Rgb(198, 120, 221),
         }

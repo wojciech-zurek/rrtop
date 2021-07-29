@@ -10,7 +10,6 @@ use crate::update::Updatable;
 
 mod error;
 mod cli;
-mod response;
 mod config;
 mod terminal;
 mod event;

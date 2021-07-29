@@ -19,6 +19,7 @@ mod linegauge;
 pub mod raw;
 pub mod navigation;
 pub mod slow_log;
+mod formatter;
 
 const MIN_DOT_SYMBOL: &str = "⡀";
 const LINE_SYMBOL: &str = "_";
@@ -32,5 +33,3 @@ fn title_span(title: &str, title_style: Style, border_style: Style) -> Spans {
         ]
     )
 }
-
-

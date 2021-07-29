@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use crate::response::Info;
+use crate::metric::Info;
 
 #[derive(Default)]
 pub struct Keyspace {
@@ -67,8 +67,8 @@ mod tests {
     use std::borrow::Borrow;
     use std::collections::HashMap;
 
+    use crate::metric::Info;
     use crate::metric::keyspace::{Keyspace, Space};
-    use crate::response::Info;
 
     #[test]
     fn simple() {
@@ -82,7 +82,7 @@ mod tests {
         map.insert("other_key".to_owned(), "keys=7,expires=0,avg_ttl=0".to_owned());
         map.insert("used_cpu_sys".to_owned(), "33.888421".to_owned());
 
-        let info = Info(map);
+        let info = Info{ map };
         let keyspace: Keyspace = info.borrow().into();
         assert_eq!(keyspace.space.len(), 4);
     }
@@ -97,7 +97,7 @@ mod tests {
         map.insert("db_".to_owned(), "keys=13,expires=14,avg_ttl=15".to_owned());
         map.insert("used_cpu_sys".to_owned(), "33.888421".to_owned());
 
-        let info = Info(map);
+        let info = Info{ map };
         let keyspace: Keyspace = info.borrow().into();
 
         assert_eq!(keyspace.space.len(), 4);

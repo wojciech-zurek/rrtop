@@ -1,5 +1,4 @@
-use crate::metric::Delta;
-use crate::response::Info;
+use crate::metric::{Delta, Info};
 
 #[derive(Default)]
 pub struct Cpu {

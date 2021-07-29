@@ -10,12 +10,13 @@ const DEFAULT_TICK_RATE: &str = "2.0";
 const DEFAULT_WORKER_NUMBER: &str = "1";
 const DEFAULT_COLOR_SCHEME: &str = "default";
 const TRUE: &str = "true";
+const FALSE: &str = "false";
 
 pub fn cli() -> ArgMatches {
     App::new(NAME)
         .version(VERSION)
         .author(AUTHOR)
-        .about("[R]ust [R]edis [Top] - tool for monitoring redis server.")
+        .about("[r]ust [r]edis [top] - tool for monitoring redis server.")
         .arg(Arg::new("host")
             .short('h')
             .about("Server hostname.")
@@ -71,6 +72,7 @@ pub fn cli() -> ArgMatches {
         .arg(Arg::new("draw-background")
             .short('d')
             .about("Draw background")
+            .possible_values(&[TRUE, FALSE])
             .default_value(TRUE)
             .required(false)
             .takes_value(true))

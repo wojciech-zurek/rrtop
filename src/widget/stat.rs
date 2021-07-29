@@ -10,6 +10,7 @@ use tui::widgets::{Block, Borders, Cell, Row, StatefulWidget, Table, TableState,
 use crate::colorscheme::theme::Theme;
 use crate::metric::Metric;
 use crate::update::Updatable;
+use crate::widget::formatter::Formatter;
 use crate::widget::linegauge::render_line_gauge;
 use crate::widget::navigation::Navigation;
 use crate::widget::title_span;
@@ -81,14 +82,14 @@ impl<'a> Widget for &mut Stat<'a> {
 
             vec![
                 Cell::from(Span::styled(format!("{}", it.1.time.format(" %H:%M:%S")), style1)),
-                Cell::from(Span::styled(format!("{:.1}", it.1.ops_per_sec), style2)),
+                Cell::from(Span::styled(format!("{}",  it.1.ops_per_sec.num_format()), style2)),
                 Cell::from(Span::styled(format!("{:.02}%", it.1.cpu_user_time), style2)),
                 Cell::from(Span::styled(format!("{:.02}%", it.1.cpu_sys_time), style2)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", Size::Bytes(it.1.used_rss_memory)), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.memory_fragmentation_ratio), style2)),
                 Cell::from(Spans::from(render_line_gauge(Span::styled(format!("{:>3.2}%", it.1.hit_rate * 100.0), style2), it.1.hit_rate, area.width, style2, gauge_style))),
-                Cell::from(Span::styled(format!("{}", it.1.keys), style1)),
+                Cell::from(Span::styled(format!("{}", it.1.keys.num_format()), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.expires), style1)),
                 Cell::from(Span::styled(format!("{}", it.1.expired_per_sec), style2)),
                 Cell::from(Span::styled(format!("{}", it.1.evicted_per_sec), style2)),

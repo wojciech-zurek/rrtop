@@ -1,4 +1,4 @@
-use crate::response::Info;
+use crate::metric::Info;
 
 #[derive(Default)]
 pub struct Memory {

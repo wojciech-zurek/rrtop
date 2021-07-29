@@ -14,7 +14,6 @@ use redis::{Client, Connection, RedisError};
 use crate::event::{AppEvent, RedisRequest, RedisResult};
 use crate::metric::Metric;
 use crate::metric::slow_log::SlowLog;
-use crate::response::Info;
 
 pub fn setup_terminal_worker(tx: Sender<AppEvent>) -> io::Result<JoinHandle<()>> {
     thread::Builder::new().name("terminal-events".into()).spawn(move || loop {
@@ -107,7 +106,7 @@ pub fn setup_redis_workers(tx: Sender<AppEvent>, rx: Receiver<AppEvent>, worker_
 
 fn info(client: &mut Connection) -> Result<AppEvent, RedisError> {
     let start = time::Instant::now();
-    let info = redis::cmd("info").arg("all").query::<Info>(client)?;
+    let info = redis::cmd("info").arg("all").query::<String>(client)?;
     let latency = start.elapsed().as_millis();
 
     Ok(AppEvent::Result(RedisResult::Info(Metric::from(info).latency(latency))))

@@ -1,4 +1,5 @@
 use std::borrow::Borrow;
+use std::collections::HashMap;
 
 use crate::metric::command::Command;
 use crate::metric::cpu::Cpu;
@@ -6,7 +7,6 @@ use crate::metric::keyspace::Keyspace;
 use crate::metric::memory::Memory;
 use crate::metric::server::Server;
 use crate::metric::stats::Stats;
-use crate::response::Info;
 
 pub mod server;
 pub mod cpu;
@@ -15,6 +15,11 @@ pub mod keyspace;
 pub mod command;
 pub mod stats;
 pub mod slow_log;
+
+#[derive(Debug, Default, PartialEq)]
+pub struct Info {
+    pub map: HashMap<String, String>,
+}
 
 #[derive(Default)]
 pub struct Metric {
@@ -40,8 +45,21 @@ impl Metric {
     }
 }
 
-impl From<Info> for Metric {
-    fn from(i: Info) -> Self {
+impl From<String> for Metric {
+    fn from(result: String) -> Self {
+        let map = result.lines()
+            .filter(|&it| !it.is_empty() && !it.starts_with("#"))
+            .map(|it| it.splitn(2, ":"))
+            .map(|mut key| (key.next(), key.next()))
+            .filter_map(|(key, value)| {
+                if key.is_some() && value.is_some() {
+                    Some((key.unwrap().to_owned(), value.unwrap().to_owned()))
+                } else { None }
+            })
+            .collect();
+
+        let i = Info { map };
+
         Metric {
             server: i.borrow().into(),
             stats: i.borrow().into(),

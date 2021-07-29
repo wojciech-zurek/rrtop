@@ -1,18 +1,23 @@
 # rrtop
 
-[r]ust [r]edis [t]op
+[r]ust [r]edis [top]
 
 ### Tool for monitoring redis server.
 
 
 ### Screenshots
-
+blackbird color scheme
 ![rrtop](shots/rrtop1.png "rrtop1")
-![rrtop](shots/rrtop2.png "rrtop1")
-![rrtop](shots/rrtop3.png "rrtop1")
-![rrtop](shots/rrtop4.png "rrtop1")
+one dark color scheme
+![rrtop](shots/rrtop5.png "rrtop5")
+nord color scheme
+![rrtop](shots/rrtop2.png "rrtop2")
+dracula color scheme
+![rrtop](shots/rrtop3.png "rrtop3")
+solarized dark color scheme
+![rrtop](shots/rrtop4.png "rrtop4")
 
-### Project status
+### Project status:
 - alpha (more testing needed)
 - ui - layout, widgets may change in future
 
@@ -30,7 +35,7 @@
 
 Other not tested
 
-### Usage
+### Usage:
 ```fish
 rrtop 0.1.0
 Wojciech Żurek
@@ -58,19 +63,33 @@ OPTIONS:
     -w <worker-number>             Worker number. Be careful. [default: 1]
 ```
 
-### How to connect
+### How to connect:
 #### via tcp:
 ```fish
-rrtop -h 127.0.0.1 -p 6379
+# default host and port
+rrtop
+
+# custom host and port
+rrtop -h 192.168.2.2 -p 6379
+
+# custom host, port and password
+rrtop -h 192.168.2.2 -p 6379 -a 123456
 ```
 #### via unix socket:
 ```
 rrtop -s path/to/socket/file
 ```
 
+### Supported color schemes:
+- blackbird.
+- bw,
+- default,
+- dracula, 
+- nord, 
+- one-dark, 
+- solarized-dark
 
 ### Clone, build, run (linux)
-
 ```fish
 git clone git@github.com:wojciech-zurek/rrtop.git
 
@@ -84,18 +103,18 @@ rrtop --help
 
 ```
 
-### Todo
+### Todo:
 - fix bugs :), optimize code, clean code,
 - support REDISCLI_AUTH for password auth,
 - more test,
 - support more metrics,
 - support more themes
 
-### Known issues
+### Known issues:
  - no windows test,
  - no mac os test
 
-Some inspiration came from:
+#### Some inspiration came from:
 - bpytop,
 - ytop,
 - redis-stat
