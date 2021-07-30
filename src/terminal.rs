@@ -7,7 +7,7 @@ use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use crossterm::terminal::{EnterAlternateScreen, LeaveAlternateScreen};
 use tui::backend::CrosstermBackend;
 
-use crate::error::RRTopError;
+use crate::error::AppError;
 
 pub type Backend = CrosstermBackend<Stdout>;
 pub type Term = tui::Terminal<Backend>;
@@ -17,7 +17,7 @@ pub struct Terminal {
 }
 
 impl Terminal {
-    pub fn new() -> Result<Self, RRTopError> {
+    pub fn new() -> Result<Self, AppError> {
         enable_raw_mode()?;
 
         let mut stdout = stdout();
@@ -32,7 +32,7 @@ impl Terminal {
         Ok(Terminal { terminal })
     }
 
-    pub fn clean(&mut self) -> Result<(), RRTopError>{
+    pub fn clean(&mut self) -> Result<(), AppError>{
         self.terminal.clear()?;
         disable_raw_mode()?;
         execute!( self.terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;

@@ -35,7 +35,7 @@ impl<'a> Widget for &StatusBar<'a> {
 
         let uptime = format!("{}d {:02}:{:02}:{:02}", duration.num_days(), duration.num_hours() % 24, duration.num_minutes() % 60, duration.num_seconds() % 60);
 
-        let s = Span::from(format!("{}ms {} (v{}) pid:{}({})", self.latency, uptime, self.version, self.process_id, self.role));
+        let s = Span::from(format!("\u{21c5} {}ms \u{2191} {} (\u{2387} {}) pid:{}({})", self.latency, uptime, self.version, self.process_id, self.role));
 
         Paragraph::new(s)
             .alignment(Alignment::Right)

@@ -1,7 +1,7 @@
 use crossterm::event::{Event, KeyCode};
 
 use cli::cli;
-use error::RRTopError;
+use error::AppError;
 
 use crate::app::App;
 use crate::event::{AppEvent, Events, RedisRequest, RedisResult};
@@ -23,7 +23,7 @@ mod metric;
 mod connect;
 mod logger;
 
-fn main() -> Result<(), RRTopError> {
+fn main() -> Result<(), AppError> {
     let config = config::Config::parse(cli())?;
 
     logger::init_log(&config)?;

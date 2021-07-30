@@ -12,7 +12,7 @@ pub fn new() -> ColorScheme {
         menu_fg: DarkGray,
         menu_divider_fg: DarkGray,
         menu_highlight_bg: Black,
-        menu_highlight_fg: Color::Reset,
+        menu_highlight_fg: Blue,
         status_bar_fg: DarkGray,
 
         memory_title_fg: Color::Reset,

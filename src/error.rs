@@ -23,118 +23,118 @@ pub enum ErrorKind {
     LoggerError,
 }
 
-pub struct RRTopError {
+pub struct AppError {
     message: String,
     kind: ErrorKind,
 }
 
-impl RRTopError {
+impl AppError {
     pub fn cli_parse_error(message: String) -> Self {
-        RRTopError {
+        AppError {
             message,
             kind: ErrorKind::CliParseError,
         }
     }
 }
 
-impl Debug for RRTopError {
+impl Debug for AppError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self)
     }
 }
 
-impl fmt::Display for RRTopError {
+impl fmt::Display for AppError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?} -> {}", self.kind, self.message)
     }
 }
 
-impl std::error::Error for RRTopError {}
+impl std::error::Error for AppError {}
 
-impl From<ParseIntError> for RRTopError {
+impl From<ParseIntError> for AppError {
     fn from(e: ParseIntError) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::ParseIntError,
         }
     }
 }
 
-impl From<ParseFloatError> for RRTopError {
+impl From<ParseFloatError> for AppError {
     fn from(e: ParseFloatError) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::ParseFloatError,
         }
     }
 }
 
-impl From<ParseBoolError> for RRTopError {
+impl From<ParseBoolError> for AppError {
     fn from(e: ParseBoolError) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::ParseBoolError,
         }
     }
 }
 
-impl From<RedisError> for RRTopError {
+impl From<RedisError> for AppError {
     fn from(e: RedisError) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::RedisError,
         }
     }
 }
 
-impl From<r2d2::Error> for RRTopError {
+impl From<r2d2::Error> for AppError {
     fn from(e: r2d2::Error) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::RedisPoolError,
         }
     }
 }
 
-impl From<std::io::Error> for RRTopError {
+impl From<std::io::Error> for AppError {
     fn from(e: std::io::Error) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::IoError,
         }
     }
 }
 
-impl From<flume::RecvError> for RRTopError {
+impl From<flume::RecvError> for AppError {
     fn from(e: flume::RecvError) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::RecvError,
         }
     }
 }
 
-impl From<flume::SendError<AppEvent>> for RRTopError {
+impl From<flume::SendError<AppEvent>> for AppError {
     fn from(e: flume::SendError<AppEvent>) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::SendError,
         }
     }
 }
 
-impl From<ConfigErrors> for RRTopError {
+impl From<ConfigErrors> for AppError {
     fn from(e: ConfigErrors) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e.errors().iter().map(|it| format!("{:?}", it)).collect::<String>()),
             kind: ErrorKind::LoggerError,
         }
     }
 }
 
-impl From<SetLoggerError> for RRTopError {
+impl From<SetLoggerError> for AppError {
     fn from(e: SetLoggerError) -> Self {
-        RRTopError {
+        AppError {
             message: format!("{}", e),
             kind: ErrorKind::LoggerError,
         }

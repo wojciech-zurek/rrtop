@@ -2,7 +2,7 @@ use clap::ArgMatches;
 use tui::style::Style;
 
 use crate::colorscheme::theme::Theme;
-use crate::error::RRTopError;
+use crate::error::AppError;
 
 const MIN_WIDTH: u16 = 60;
 const MIN_HEIGHT: u16 = 13;
@@ -23,7 +23,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn parse(matches: ArgMatches) -> Result<Config, RRTopError> {
+    pub fn parse(matches: ArgMatches) -> Result<Config, AppError> {
         let host = matches.value_of("host").unwrap().to_owned();
         let port = matches.value_of("port").unwrap().parse::<u16>()?;
 
@@ -52,15 +52,15 @@ impl Config {
 
         let tick_rate = matches.value_of("tick-rate").unwrap().parse::<f64>()?;
         if tick_rate < MIN_TICK_RATE {
-            return Err(RRTopError::cli_parse_error(format!("Tick rate to low. Min value {}", MIN_TICK_RATE)));
+            return Err(AppError::cli_parse_error(format!("Tick rate to low. Min value {}", MIN_TICK_RATE)));
         }
 
         let worker_number = matches.value_of("worker-number").unwrap().parse::<usize>()?;
         if worker_number < MIN_WORKER_NUMBER {
-            return Err(RRTopError::cli_parse_error(format!("Worker number to low. Min value {}", MIN_WORKER_NUMBER)));
+            return Err(AppError::cli_parse_error(format!("Worker number to low. Min value {}", MIN_WORKER_NUMBER)));
         }
         if worker_number > MAX_WORKER_NUMBER {
-            return Err(RRTopError::cli_parse_error(format!("Worker number to high. Max value {}", MAX_WORKER_NUMBER)));
+            return Err(AppError::cli_parse_error(format!("Worker number to high. Max value {}", MAX_WORKER_NUMBER)));
         }
 
         let theme: Theme = matches.value_of("color-scheme").unwrap().into();

@@ -4,9 +4,9 @@ use r2d2::Pool;
 use redis::Client;
 
 use crate::config::Config;
-use crate::error::RRTopError;
+use crate::error::AppError;
 
-pub fn connect(config: &Config) -> Result<Pool<Client>, RRTopError> {
+pub fn connect(config: &Config) -> Result<Pool<Client>, AppError> {
     let client = Client::open(&*config.url)?;
 
     let pool = r2d2::Pool::builder()

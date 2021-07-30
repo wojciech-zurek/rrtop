@@ -3,9 +3,9 @@ use log4rs::config::{Appender, Root};
 use log::LevelFilter;
 
 use crate::config::Config;
-use crate::error::RRTopError;
+use crate::error::AppError;
 
-pub fn init_log(config: &Config) -> Result<(), RRTopError> {
+pub fn init_log(config: &Config) -> Result<(), AppError> {
     if let Some(log_file_path) = &config.file_log_path {
         let logfile = FileAppender::builder()
             .build(log_file_path)?;

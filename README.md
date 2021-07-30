@@ -4,8 +4,8 @@
 
 ### Tool for monitoring redis server.
 
-
 ### Screenshots
+
 blackbird color scheme
 ![rrtop](shots/rrtop1.png "rrtop1")
 one dark color scheme
@@ -17,25 +17,68 @@ dracula color scheme
 solarized dark color scheme
 ![rrtop](shots/rrtop4.png "rrtop4")
 
+### Features:
+
+rrtop is an application that allows you to monitor your redis server.
+
+- latency,
+- uptime,
+- server version,
+- pid,
+- role,
+- cpu sys utilization,
+- cpu user utilization,
+- op/s,
+- total commands,
+- network usage:
+    - total rx,
+    - rx/s,
+    - total tx,
+    - tx/s.
+- memory usage:
+    - max memory,
+    - used memory,
+    - rss memory,
+    - fragmentation ratio.
+- hit rate,
+- total keys number,
+- keys to expire,
+- keys expired/s,
+- evicted keys/s,
+- command stats (with ratio), sort by:
+    - call,
+    - usec,
+    - usec per call.
+- slow log:
+    - id,
+    - time,
+    - exec time,
+    - command,
+    - client ip/socket file,
+    - client name (if set).
+- raw info.
+
 ### Project status:
-- alpha (more testing needed)
-- ui - layout, widgets may change in future
+
+- alpha (more testing needed),
+- ui - layout, widgets may change in the future.
 
 ### Requirements:
 
-- rust (for self compiling/building)
-- redis :)
-- modern terminal (like tilix) with true colors support
-- min terminal size: 60x13 (more is better)
+- rust (for self compiling/building),
+- redis :),
+- modern terminal (like tilix) with true colors support,
+- min terminal size: 60x13 (more is better).
 
 ### Supported redis version:
 
 - 5
 - 6
 
-Other not tested
+Other versions not tested.
 
 ### Usage:
+
 ```fish
 rrtop 0.1.0
 Wojciech Żurek
@@ -64,7 +107,9 @@ OPTIONS:
 ```
 
 ### How to connect:
+
 #### via tcp:
+
 ```fish
 # default host and port
 rrtop
@@ -74,22 +119,40 @@ rrtop -h 192.168.2.2 -p 6379
 
 # custom host, port and password
 rrtop -h 192.168.2.2 -p 6379 -a 123456
+
+# custom user and password
+rrtop -u test -a 123456
 ```
+
 #### via unix socket:
+
 ```
+# simple usage
 rrtop -s path/to/socket/file
+
+# custom password
+rrtop -s path/to/socket/file -a 123456
 ```
 
 ### Supported color schemes:
+
 - blackbird.
 - bw,
 - default,
-- dracula, 
-- nord, 
-- one-dark, 
+- dracula,
+- nord,
+- one-dark,
 - solarized-dark
 
-### Clone, build, run (linux)
+#### How to change color scheme:
+
+```
+# use -c option
+rrtop -c blackbird
+```
+
+### Clone, build, run (linux):
+
 ```fish
 git clone git@github.com:wojciech-zurek/rrtop.git
 
@@ -104,6 +167,7 @@ rrtop --help
 ```
 
 ### Todo:
+
 - fix bugs :), optimize code, clean code,
 - support REDISCLI_AUTH for password auth,
 - more test,
@@ -111,10 +175,18 @@ rrtop --help
 - support more themes
 
 ### Known issues:
- - no windows test,
- - no mac os test
+
+- no windows test,
+- no mac os test
 
 #### Some inspiration came from:
+
 - bpytop,
 - ytop,
 - redis-stat
+
+### License
+
+MIT see [LICENSE][] for the full license text.
+
+[LICENSE]: https://github.com/wojciech-zurek/rrtop/blob/master/LICENSE
