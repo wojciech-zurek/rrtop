@@ -16,6 +16,8 @@ dracula color scheme
 ![rrtop](shots/rrtop3.png "rrtop3")
 solarized dark color scheme
 ![rrtop](shots/rrtop4.png "rrtop4")
+raw info
+![rrtop](shots/rrtop6.png "rrtop6")
 
 ### Features:
 
