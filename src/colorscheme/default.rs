@@ -36,12 +36,6 @@ pub fn new() -> ColorScheme {
         cpu_user_cpu_text_2_fg: Green,
         cpu_user_cpu_dataset_fg: Green,
 
-        hit_rate_title_fg: Color::Reset,
-        hit_rate_border_fg: DarkGray,
-        hit_rate_label_fg: Blue,
-        hit_rate_gauge_fg: Blue,
-        hit_rate_gauge_bg: DarkGray,
-
         throughput_title_fg: Color::Reset,
         throughput_border_fg: DarkGray,
         throughput_total_commands_text_fg: Blue,
@@ -79,6 +73,22 @@ pub fn new() -> ColorScheme {
         calls_table_row_top_2_fg: Blue,
         calls_table_row_bottom_fg: Gray,
         calls_table_row_highlight_bg: DarkGray,
+
+        raw_title_fg: Color::Reset,
+        raw_border_fg: DarkGray,
+        raw_table_header_fg: Cyan,
+        raw_table_row_top_1_fg: Color::Reset,
+        raw_table_row_top_2_fg: Blue,
+        raw_table_row_bottom_fg: Gray,
+        raw_table_row_highlight_bg: DarkGray,
+
+        slow_title_fg: Color::Reset,
+        slow_border_fg: DarkGray,
+        slow_table_header_fg: Cyan,
+        slow_table_row_top_1_fg: Color::Reset,
+        slow_table_row_top_2_fg: Blue,
+        slow_table_row_bottom_fg: Gray,
+        slow_table_row_highlight_bg: DarkGray,
 
         warning_title_fg: Color::Reset,
         warning_border_fg: DarkGray,

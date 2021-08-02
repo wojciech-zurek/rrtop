@@ -80,12 +80,6 @@ pub fn new() -> ColorScheme {
         cpu_user_cpu_text_2_fg: Nord3.into(),
         cpu_user_cpu_dataset_fg: Nord9.into(),
 
-        hit_rate_title_fg: Nord7.into(),
-        hit_rate_border_fg: Nord3.into(),
-        hit_rate_label_fg: Nord9.into(),
-        hit_rate_gauge_fg: Nord9.into(),
-        hit_rate_gauge_bg: Nord3.into(),
-
         throughput_title_fg: Nord7.into(),
         throughput_border_fg: Nord3.into(),
         throughput_total_commands_text_fg: Nord9.into(),
@@ -123,6 +117,22 @@ pub fn new() -> ColorScheme {
         calls_table_row_top_2_fg: Nord9.into(),
         calls_table_row_bottom_fg: Nord3.into(),
         calls_table_row_highlight_bg: Nord2.into(),
+
+        raw_title_fg: Nord7.into(),
+        raw_border_fg: Nord3.into(),
+        raw_table_header_fg: Nord7.into(),
+        raw_table_row_top_1_fg: Nord6.into(),
+        raw_table_row_top_2_fg: Nord9.into(),
+        raw_table_row_bottom_fg: Nord3.into(),
+        raw_table_row_highlight_bg: Nord2.into(),
+
+        slow_title_fg: Nord7.into(),
+        slow_border_fg: Nord3.into(),
+        slow_table_header_fg: Nord7.into(),
+        slow_table_row_top_1_fg: Nord6.into(),
+        slow_table_row_top_2_fg: Nord9.into(),
+        slow_table_row_bottom_fg: Nord3.into(),
+        slow_table_row_highlight_bg: Nord2.into(),
 
         warning_title_fg: Nord7.into(),
         warning_border_fg: Nord3.into(),

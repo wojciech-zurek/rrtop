@@ -12,7 +12,6 @@ pub mod memory;
 pub mod stat;
 mod cpu_sys;
 mod cpu_user;
-pub mod hit_rate;
 pub mod area_warning;
 pub mod calls;
 mod linegauge;

@@ -31,13 +31,13 @@ pub struct App<'a, 'b> {
     pub raw: Raw<'a>,
     pub area_warning: AreaWarning<'a>,
     pub selected_tab: usize,
-    pub draw_background: Option<Style>,
+    pub background_style: Option<Style>,
     pub min_width: u16,
     pub min_height: u16,
 }
 
 impl<'a, 'b> App<'a, 'b> {
-    pub fn new(theme: &'a Theme, draw_background: Option<Style>, min_width: u16, min_height: u16) -> Self {
+    pub fn new(theme: &'a Theme, background_style: Option<Style>, min_width: u16, min_height: u16) -> Self {
         App {
             menu: Menu::new(theme, vec![MAIN, CMD, STAT, SLOW, RAW]),
             status_bar: StatusBar::new(theme),
@@ -50,7 +50,7 @@ impl<'a, 'b> App<'a, 'b> {
             raw: Raw::new(theme),
             area_warning: AreaWarning::new(theme, min_width, min_height),
             selected_tab: 0,
-            draw_background,
+            background_style,
             min_width,
             min_height,
         }

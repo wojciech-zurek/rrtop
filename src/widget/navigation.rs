@@ -19,7 +19,7 @@ pub trait Navigation  {
     fn next_item(state: &TableState, len: usize) -> usize {
         match state.selected() {
             Some(i) => {
-                if i >= len - 1 {
+                if i >= len.wrapping_sub(1)  {
                     0
                 } else {
                     i + 1
@@ -33,7 +33,7 @@ pub trait Navigation  {
         match state.selected() {
             Some(i) => {
                 if i == 0 {
-                    len - 1
+                    len.wrapping_sub(1)
                 } else {
                     i - 1
                 }

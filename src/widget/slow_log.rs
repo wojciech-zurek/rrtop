@@ -41,14 +41,14 @@ impl<'a> Widget for &mut SlowLog<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let header_cells = self.headers
             .iter()
-            .map(|h| Cell::from(h.to_owned()).style(self.theme.stat_table_header));
+            .map(|h| Cell::from(h.to_owned()).style(self.theme.slow_table_header));
         let header = Row::new(header_cells)
             .height(1)
             .bottom_margin(0);
 
         let rows = self.logs.iter().enumerate().map(|it| {
-            let style1 = Theme::color_table_cell(self.theme.stat_table_row_top_1, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
-            let style2 = Theme::color_table_cell(self.theme.stat_table_row_top_2, self.theme.stat_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let style1 = Theme::color_table_cell(self.theme.slow_table_row_top_1, self.theme.slow_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
+            let style2 = Theme::color_table_cell(self.theme.slow_table_row_top_2, self.theme.slow_table_row_bottom, it.0 as u8, area.height.wrapping_sub(1));
 
             let local = Local.timestamp(it.1.timestamp, 0);
             let duration = Duration::microseconds(it.1.exec_time);
@@ -67,10 +67,10 @@ impl<'a> Widget for &mut SlowLog<'a> {
             .header(header)
             .block(Block::default()
                 .borders(Borders::ALL)
-                .border_style(self.theme.stat_border)
-                .title(title_span(&self.title, self.theme.stat_title, self.theme.stat_border))
+                .border_style(self.theme.slow_border)
+                .title(title_span(&self.title, self.theme.slow_title, self.theme.slow_border))
             )
-            .highlight_style(self.theme.stat_table_row_highlight)
+            .highlight_style(self.theme.slow_table_row_highlight)
             .widths(&[
                 Constraint::Ratio(1, 6),
                 Constraint::Ratio(1, 6),

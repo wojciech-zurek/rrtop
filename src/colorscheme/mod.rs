@@ -42,12 +42,6 @@ pub struct ColorScheme {
     cpu_user_cpu_text_2_fg: Color,
     cpu_user_cpu_dataset_fg: Color,
 
-    hit_rate_title_fg: Color,
-    hit_rate_border_fg: Color,
-    hit_rate_label_fg: Color,
-    hit_rate_gauge_fg: Color,
-    hit_rate_gauge_bg: Color,
-
     throughput_title_fg: Color,
     throughput_border_fg: Color,
     throughput_total_commands_text_fg: Color,
@@ -85,6 +79,22 @@ pub struct ColorScheme {
     calls_table_row_top_2_fg: Color,
     calls_table_row_bottom_fg: Color,
     calls_table_row_highlight_bg: Color,
+
+    raw_title_fg: Color,
+    raw_border_fg: Color,
+    raw_table_header_fg: Color,
+    raw_table_row_top_1_fg: Color,
+    raw_table_row_top_2_fg: Color,
+    raw_table_row_bottom_fg: Color,
+    raw_table_row_highlight_bg: Color,
+
+    slow_title_fg: Color,
+    slow_border_fg: Color,
+    slow_table_header_fg: Color,
+    slow_table_row_top_1_fg: Color,
+    slow_table_row_top_2_fg: Color,
+    slow_table_row_bottom_fg: Color,
+    slow_table_row_highlight_bg: Color,
 
     warning_title_fg: Color,
     warning_border_fg: Color,

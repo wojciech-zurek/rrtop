@@ -13,7 +13,6 @@ pub struct Theme {
 
     pub memory_title: Style,
     pub memory_border: Style,
-    pub memory_chart: Style,
     pub memory_max_memory_text: Style,
     pub memory_used_memory_text: Style,
     pub memory_used_memory_sparkline: Style,
@@ -33,11 +32,6 @@ pub struct Theme {
     pub cpu_user_cpu_1_text: Style,
     pub cpu_user_cpu_2_text: Style,
     pub cpu_user_cpu_dataset: Style,
-
-    pub hit_rate_title: Style,
-    pub hit_rate_border: Style,
-    pub hit_rate_label: Style,
-    pub hit_rate_gauge: Style,
 
     pub throughput_title: Style,
     pub throughput_border: Style,
@@ -75,6 +69,22 @@ pub struct Theme {
     pub calls_table_row_bottom: Style,
     pub calls_table_row_highlight: Style,
 
+    pub raw_title: Style,
+    pub raw_border: Style,
+    pub raw_table_header: Style,
+    pub raw_table_row_top_1: Style,
+    pub raw_table_row_top_2: Style,
+    pub raw_table_row_bottom: Style,
+    pub raw_table_row_highlight: Style,
+
+    pub slow_title: Style,
+    pub slow_border: Style,
+    pub slow_table_header: Style,
+    pub slow_table_row_top_1: Style,
+    pub slow_table_row_top_2: Style,
+    pub slow_table_row_bottom: Style,
+    pub slow_table_row_highlight: Style,
+
     pub warning_title: Style,
     pub warning_border: Style,
     pub warning_text_1: Style,
@@ -83,22 +93,27 @@ pub struct Theme {
 }
 
 impl Theme {
-    pub fn new(cs: ColorScheme) -> Theme {
-        Theme {
-            main: Style::default().fg(cs.main_fg).bg(cs.main_bg),
+    pub fn new(color_scheme: &str, draw_background: bool) -> Self {
+        let cs = ColorScheme::from(color_scheme);
 
-            menu: Style::default().fg(cs.menu_fg).bg(cs.menu_bg),
+        let main_bg = if draw_background { cs.main_bg } else { Color::Reset };
+        let menu_bg = if draw_background { cs.menu_bg } else { Color::Reset };
+        let menu_highlight_bg = if draw_background { cs.menu_highlight_bg } else { Color::Reset };
+
+        Theme {
+            main: Style::default().fg(cs.main_fg).bg(main_bg),
+
+            menu: Style::default().fg(cs.menu_fg).bg(menu_bg),
             menu_divider: Style::default().fg(cs.menu_divider_fg),
             menu_highlight: Style::default()
                 .fg(cs.menu_highlight_fg)
-                .bg(cs.menu_highlight_bg)
+                .bg(menu_highlight_bg)
                 .add_modifier(Modifier::BOLD),
 
             status_bar: Style::default().fg(cs.status_bar_fg),
 
             memory_title: Style::default().fg(cs.memory_title_fg),
             memory_border: Style::default().fg(cs.memory_border_fg),
-            memory_chart: Style::default().bg(cs.main_bg),
             memory_max_memory_text: Style::default()
                 .fg(cs.memory_max_memory_text_fg)
                 .add_modifier(Modifier::BOLD),
@@ -113,7 +128,7 @@ impl Theme {
 
             cpu_title: Style::default().fg(cs.cpu_title_fg),
             cpu_border: Style::default().fg(cs.cpu_border_fg),
-            cpu_chart: Style::default().bg(cs.main_bg),
+            cpu_chart: Style::default().bg(main_bg),
             cpu_chart_line: Style::default().fg(cs.cpu_chart_line_fg),
             cpu_chart_axis: Style::default().fg(cs.cpu_chart_axis_fg),
             cpu_sys_cpu_1_text: Style::default()
@@ -130,11 +145,6 @@ impl Theme {
                 .fg(cs.cpu_user_cpu_text_2_fg)
                 .add_modifier(Modifier::BOLD),
             cpu_user_cpu_dataset: Style::default().fg(cs.cpu_user_cpu_dataset_fg),
-
-            hit_rate_title: Style::default().fg(cs.hit_rate_title_fg),
-            hit_rate_border: Style::default().fg(cs.hit_rate_border_fg),
-            hit_rate_label: Style::default().fg(cs.hit_rate_label_fg),
-            hit_rate_gauge: Style::default().fg(cs.hit_rate_gauge_fg).bg(cs.hit_rate_gauge_bg),
 
             throughput_title: Style::default().fg(cs.throughput_title_fg),
             throughput_border: Style::default().fg(cs.throughput_border_fg),
@@ -172,9 +182,9 @@ impl Theme {
                 .fg(cs.stat_table_header_fg)
                 .add_modifier(Modifier::BOLD),
             stat_table_row_gauge: Style::default().fg(cs.stat_table_row_gauge_fg).bg(cs.stat_table_row_gauge_bg),
-            stat_table_row_top_1: Style::default().fg(cs.stat_table_row_top_1_fg).bg(cs.main_bg),
-            stat_table_row_top_2: Style::default().fg(cs.stat_table_row_top_2_fg).bg(cs.main_bg),
-            stat_table_row_bottom: Style::default().fg(cs.stat_table_row_bottom_fg).bg(cs.main_bg),
+            stat_table_row_top_1: Style::default().fg(cs.stat_table_row_top_1_fg).bg(main_bg),
+            stat_table_row_top_2: Style::default().fg(cs.stat_table_row_top_2_fg).bg(main_bg),
+            stat_table_row_bottom: Style::default().fg(cs.stat_table_row_bottom_fg).bg(main_bg),
             stat_table_row_highlight: Style::default()
                 .bg(cs.stat_table_row_highlight_bg)
                 .add_modifier(Modifier::BOLD),
@@ -185,11 +195,35 @@ impl Theme {
                 .fg(cs.calls_table_header_fg)
                 .add_modifier(Modifier::BOLD),
             calls_table_row_gauge: Style::default().fg(cs.calls_table_row_gauge_fg).bg(cs.calls_table_row_gauge_bg),
-            calls_table_row_top_1: Style::default().fg(cs.calls_table_row_top_1_fg).bg(cs.main_bg),
-            calls_table_row_top_2: Style::default().fg(cs.calls_table_row_top_2_fg).bg(cs.main_bg),
-            calls_table_row_bottom: Style::default().fg(cs.calls_table_row_bottom_fg).bg(cs.main_bg),
+            calls_table_row_top_1: Style::default().fg(cs.calls_table_row_top_1_fg).bg(main_bg),
+            calls_table_row_top_2: Style::default().fg(cs.calls_table_row_top_2_fg).bg(main_bg),
+            calls_table_row_bottom: Style::default().fg(cs.calls_table_row_bottom_fg).bg(main_bg),
             calls_table_row_highlight: Style::default()
                 .bg(cs.calls_table_row_highlight_bg)
+                .add_modifier(Modifier::BOLD),
+
+            raw_title: Style::default().fg(cs.raw_title_fg),
+            raw_border: Style::default().fg(cs.raw_border_fg),
+            raw_table_header: Style::default()
+                .fg(cs.raw_table_header_fg)
+                .add_modifier(Modifier::BOLD),
+            raw_table_row_top_1: Style::default().fg(cs.raw_table_row_top_1_fg).bg(main_bg),
+            raw_table_row_top_2: Style::default().fg(cs.raw_table_row_top_2_fg).bg(main_bg),
+            raw_table_row_bottom: Style::default().fg(cs.raw_table_row_bottom_fg).bg(main_bg),
+            raw_table_row_highlight: Style::default()
+                .bg(cs.raw_table_row_highlight_bg)
+                .add_modifier(Modifier::BOLD),
+
+            slow_title: Style::default().fg(cs.slow_title_fg),
+            slow_border: Style::default().fg(cs.slow_border_fg),
+            slow_table_header: Style::default()
+                .fg(cs.slow_table_header_fg)
+                .add_modifier(Modifier::BOLD),
+            slow_table_row_top_1: Style::default().fg(cs.slow_table_row_top_1_fg).bg(main_bg),
+            slow_table_row_top_2: Style::default().fg(cs.slow_table_row_top_2_fg).bg(main_bg),
+            slow_table_row_bottom: Style::default().fg(cs.slow_table_row_bottom_fg).bg(main_bg),
+            slow_table_row_highlight: Style::default()
+                .bg(cs.slow_table_row_highlight_bg)
                 .add_modifier(Modifier::BOLD),
 
             warning_title: Style::default().fg(cs.warning_title_fg),
@@ -198,16 +232,7 @@ impl Theme {
             warning_text_2: Style::default().fg(cs.warning_text_2_fg),
         }
     }
-}
 
-impl From<&str> for Theme {
-    fn from(s: &str) -> Self {
-        let ch = ColorScheme::from(s);
-        Theme::new(ch)
-    }
-}
-
-impl Theme {
     pub fn color_table_cell(style_start: Style, style_stop: Style, index: u8, size: u16) -> Style {
         let bg = style_start.bg.unwrap_or(Color::Reset);
         let start_color = style_start.fg.unwrap_or(Color::Reset);

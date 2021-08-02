@@ -68,12 +68,6 @@ pub fn new() -> ColorScheme {
         cpu_user_cpu_text_2_fg: Green.into(),
         cpu_user_cpu_dataset_fg: Green.into(),
 
-        hit_rate_title_fg: White.into(),
-        hit_rate_border_fg: Black2.into(),
-        hit_rate_label_fg: Blue.into(),
-        hit_rate_gauge_fg: Blue.into(),
-        hit_rate_gauge_bg: Black2.into(),
-
         throughput_title_fg: White.into(),
         throughput_border_fg: Black2.into(),
         throughput_total_commands_text_fg: Blue.into(),
@@ -111,6 +105,22 @@ pub fn new() -> ColorScheme {
         calls_table_row_top_2_fg: Blue.into(),
         calls_table_row_bottom_fg: Black2.into(),
         calls_table_row_highlight_bg: Orange.into(),
+
+        raw_title_fg: White.into(),
+        raw_border_fg: Black2.into(),
+        raw_table_header_fg: Cyan.into(),
+        raw_table_row_top_1_fg: White.into(),
+        raw_table_row_top_2_fg: Blue.into(),
+        raw_table_row_bottom_fg: Black2.into(),
+        raw_table_row_highlight_bg: Orange.into(),
+
+        slow_title_fg: White.into(),
+        slow_border_fg: Black2.into(),
+        slow_table_header_fg: Cyan.into(),
+        slow_table_row_top_1_fg:White.into(),
+        slow_table_row_top_2_fg: Blue.into(),
+        slow_table_row_bottom_fg: Black2.into(),
+        slow_table_row_highlight_bg: Orange.into(),
 
         warning_title_fg: White.into(),
         warning_border_fg: Black2.into(),

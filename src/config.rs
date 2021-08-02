@@ -16,7 +16,7 @@ pub struct Config {
     pub worker_number: usize,
     pub tick_rate: f64,
     pub theme: Theme,
-    pub draw_background: Option<Style>,
+    pub background_style: Option<Style>,
     pub min_width: u16,
     pub min_height: u16,
     pub file_log_path: Option<String>,
@@ -63,11 +63,15 @@ impl Config {
             return Err(AppError::cli_parse_error(format!("Worker number to high. Max value {}", MAX_WORKER_NUMBER)));
         }
 
-        let theme: Theme = matches.value_of("color-scheme").unwrap().into();
+        let color_scheme = matches.value_of("color-scheme").unwrap();
+        let draw_background = matches.value_of("draw-background").unwrap().parse::<bool>()?;
 
-        let draw_background = match matches.value_of("draw-background").unwrap().parse::<bool>()? {
-            true => { Some(theme.main) }
-            false => { None }
+        let theme = Theme::new(color_scheme, draw_background);
+
+        let background_style = if draw_background {
+            Some(theme.main)
+        } else {
+            None
         };
 
         let file_log_path = if let Some(file_log_path) = matches.value_of("file-log-path") {
@@ -82,7 +86,7 @@ impl Config {
             worker_number,
             tick_rate,
             theme,
-            draw_background,
+            background_style,
             min_width: MIN_WIDTH,
             min_height: MIN_HEIGHT,
             file_log_path,

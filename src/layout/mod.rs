@@ -8,7 +8,7 @@ pub mod home;
 pub mod full_screen;
 
 pub fn draw(terminal: &mut Term, app: &mut App) -> std::io::Result<()> {
-    if let Some(style) = app.draw_background {
+    if let Some(style) = app.background_style {
         let area = terminal.get_frame().size();
         terminal.current_buffer_mut().set_style(area, style);
     }

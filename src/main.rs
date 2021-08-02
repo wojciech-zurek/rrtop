@@ -33,7 +33,7 @@ fn main() -> Result<(), AppError> {
     let mut terminal = terminal::Terminal::new()?;
 
     let mut events = Events::from_config(&config, pool)?;
-    let mut app = App::new(&config.theme, config.draw_background, config.min_width, config.min_height);
+    let mut app = App::new(&config.theme, config.background_style, config.min_width, config.min_height);
 
     let mut metric = Metric::default();
     loop {
