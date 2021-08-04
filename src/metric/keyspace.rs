@@ -2,6 +2,11 @@ use regex::Regex;
 
 use crate::metric::Info;
 
+lazy_static! {
+    static ref REGEX: Regex = Regex::new("^db[0-9]+$").unwrap();
+    static ref REGEX_VALUES: Regex = Regex::new("(?P<name>keys|expires|avg_ttl)=(?P<value>[0-9]+)").unwrap();
+}
+
 #[derive(Default)]
 pub struct Keyspace {
     pub keyspace_hit_rate: f64,
@@ -34,12 +39,9 @@ impl From<&Info> for Keyspace {
         let keyspace_hit_rate = keyspace_hits / (keyspace_hits + keyspace_misses);
         let keyspace_hit_rate = keyspace_hit_rate.max(0.0).min(100.0);
 
-        let regex = Regex::new("^db[0-9]+$").unwrap();
-        let regex_values = Regex::new("(?P<name>keys|expires|avg_ttl)=(?P<value>[0-9]+)").unwrap();
-
         let space = i.map.iter()
-            .filter(|&it| { regex.captures(it.0).is_some() })
-            .map(|it| (it.0, regex_values.captures_iter(it.1)))
+            .filter(|&it| { REGEX.captures(it.0).is_some() })
+            .map(|it| (it.0, REGEX_VALUES.captures_iter(it.1)))
             .map(|mut it| {
                 let keys = it.1.next().unwrap().name("value").map(|it| it.as_str()).unwrap_or("0");
                 let expires = it.1.next().unwrap().name("value").map(|it| it.as_str()).unwrap_or("0");
@@ -72,7 +74,6 @@ mod tests {
 
     #[test]
     fn simple() {
-
         let mut map = HashMap::new();
         map.insert("db0".to_owned(), "keys=3,expires=0,avg_ttl=0".to_owned());
         map.insert("db1".to_owned(), "keys=6,expires=0,avg_ttl=0".to_owned());
@@ -82,7 +83,7 @@ mod tests {
         map.insert("other_key".to_owned(), "keys=7,expires=0,avg_ttl=0".to_owned());
         map.insert("used_cpu_sys".to_owned(), "33.888421".to_owned());
 
-        let info = Info{ map };
+        let info = Info { map };
         let keyspace: Keyspace = info.borrow().into();
         assert_eq!(keyspace.space.len(), 4);
     }
@@ -97,7 +98,7 @@ mod tests {
         map.insert("db_".to_owned(), "keys=13,expires=14,avg_ttl=15".to_owned());
         map.insert("used_cpu_sys".to_owned(), "33.888421".to_owned());
 
-        let info = Info{ map };
+        let info = Info { map };
         let keyspace: Keyspace = info.borrow().into();
 
         assert_eq!(keyspace.space.len(), 4);

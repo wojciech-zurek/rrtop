@@ -648,6 +648,7 @@ dependencies = [
  "clap",
  "crossterm 0.20.0",
  "flume",
+ "lazy_static",
  "log",
  "log4rs",
  "r2d2",

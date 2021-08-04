@@ -2,6 +2,11 @@ use regex::Regex;
 
 use crate::metric::Info;
 
+lazy_static! {
+    static ref REGEX: Regex = Regex::new("^cmdstat_[a-z]+$").unwrap();
+    static ref REGEX_VALUES: Regex = Regex::new("(?P<name>calls|usec|usec_per_call)=(?P<value>[0-9.]+)").unwrap();
+}
+
 #[derive(Default)]
 pub struct Command {
     pub stats: Vec<CmdStat>,
@@ -20,12 +25,9 @@ pub struct CmdStat {
 
 impl From<&Info> for Command {
     fn from(i: &Info) -> Self {
-        let regex = Regex::new("^cmdstat_[a-z]+$").unwrap();
-        let regex_values = Regex::new("(?P<name>calls|usec|usec_per_call)=(?P<value>[0-9.]+)").unwrap();
-
         let stats = i.map.iter()
-            .filter(|&it| { regex.captures(it.0).is_some() })
-            .map(|it| (it.0, regex_values.captures_iter(it.1)))
+            .filter(|&it| { REGEX.captures(it.0).is_some() })
+            .map(|it| (it.0, REGEX_VALUES.captures_iter(it.1)))
             .map(|mut it| {
                 let calls = it.1.next().unwrap().name("value").map(|it| it.as_str()).unwrap_or("0");
                 let usec = it.1.next().unwrap().name("value").map(|it| it.as_str()).unwrap_or("0");
@@ -70,7 +72,7 @@ mod tests {
         map.insert("other_key".to_owned(), "keys=7,expires=0,avg_ttl=0".to_owned());
         map.insert("used_cpu_sys".to_owned(), "33.888421".to_owned());
 
-        let info = Info{ map };
+        let info = Info { map };
         let command: Command = info.borrow().into();
         assert_eq!(command.stats.len(), 1);
         assert_eq!(command.stats.first().unwrap().name, "ping".to_owned());
@@ -86,7 +88,7 @@ mod tests {
         map.insert("db_".to_owned(), "keys=13,expires=14,avg_ttl=15".to_owned());
         map.insert("used_cpu_sys".to_owned(), "33.888421".to_owned());
 
-        let info = Info{ map };
+        let info = Info { map };
         let command: Command = info.borrow().into();
 
         assert_eq!(command.stats.len(), 3);
