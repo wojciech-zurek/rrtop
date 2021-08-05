@@ -4,20 +4,56 @@
 
 ### Tool for monitoring redis server.
 
-### Screenshots
+### Screenshots:
 
 blackbird color scheme
 ![rrtop](shots/rrtop1.png "rrtop1")
 one dark color scheme
 ![rrtop](shots/rrtop5.png "rrtop5")
-nord color scheme
-![rrtop](shots/rrtop2.png "rrtop2")
-dracula color scheme
-![rrtop](shots/rrtop3.png "rrtop3")
-solarized dark color scheme
-![rrtop](shots/rrtop4.png "rrtop4")
-raw info
-![rrtop](shots/rrtop6.png "rrtop6")
+
+### Install:
+
+Fetch the [latest release][]
+
+#### Install (linux x86_64)
+
+```fish
+sudo wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-x86_64-unknown-linux-gnu -O /usr/local/bin/rrtop
+sudo chmod +x /usr/local/bin/rrtop
+```
+
+#### Install (linux arm64)
+
+```fish
+sudo wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-aarch64-unknown-linux-gnu -O /usr/local/bin/rrtop
+sudo chmod +x /usr/local/bin/rrtop
+```
+
+#### Install (aarch64-linux-android, termux, tested on Gemini PDA)
+
+```fish
+wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-aarch64-linux-android -O $HOME/../usr/bin/rrtop
+chmod +x $HOME/../usr/bin/rrtop
+```
+
+#### Install (windows x86_64)
+
+Fetch windows version: [windows release][]
+
+#### Clone, self-build, run (linux):
+
+```fish
+git clone git@github.com:wojciech-zurek/rrtop.git
+
+cd rrtop
+
+RUSTFLAGS="-C target-cpu=native" cargo build --release
+
+sudo cp target/release/rrtop /bin/rrtop
+
+rrtop --help
+
+```
 
 ### Features:
 
@@ -153,49 +189,6 @@ rrtop -s path/to/socket/file -a 123456
 rrtop -c blackbird
 ```
 
-### Install
-
-Fetch the [latest release][]
-
-#### Install (linux x86_64)
-
-```fish
-sudo wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-x86_64-unknown-linux-gnu -O /usr/local/bin/rrtop
-sudo chmod +x /usr/local/bin/rrtop
-```
-
-#### Install (linux arm64)
-
-```fish
-sudo wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-aarch64-unknown-linux-gnu -O /usr/local/bin/rrtop
-sudo chmod +x /usr/local/bin/rrtop
-```
-
-#### Install (aarch64-linux-android, termux, tested on Gemini PDA)
-
-```fish
-wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-aarch64-linux-android -O $HOME/../usr/bin/rrtop
-chmod +x $HOME/../usr/bin/rrtop
-```
-
-#### Install (windows x86_64)
-Fetch windows version: [windows release][]
-
-#### Clone, self-build, run (linux):
-
-```fish
-git clone git@github.com:wojciech-zurek/rrtop.git
-
-cd rrtop
-
-RUSTFLAGS="-C target-cpu=native" cargo build --release
-
-sudo cp target/release/rrtop /bin/rrtop
-
-rrtop --help
-
-```
-
 ### Todo:
 
 - fix bugs :), optimize code, clean code,
@@ -209,6 +202,19 @@ rrtop --help
 - no windows test,
 - no mac os test
 
+### More screenshots
+
+nord color scheme
+![rrtop](shots/rrtop2.png "rrtop2")
+dracula color scheme
+![rrtop](shots/rrtop3.png "rrtop3")
+solarized dark color scheme
+![rrtop](shots/rrtop4.png "rrtop4")
+raw info
+![rrtop](shots/rrtop6.png "rrtop6")
+android, termux
+![rrtop](shots/rrtop7.png "rrtop7")
+
 #### Some inspiration came from:
 
 - bpytop,
@@ -220,5 +226,7 @@ rrtop --help
 MIT see [LICENSE][] for the full license text.
 
 [LICENSE]: https://github.com/wojciech-zurek/rrtop/blob/master/LICENSE
+
 [latest release]: https://github.com/wojciech-zurek/rrtop/releases
+
 [windows release]: https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-x86_64-pc-windows-gnu.exe
