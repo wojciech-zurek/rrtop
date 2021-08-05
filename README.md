@@ -153,7 +153,35 @@ rrtop -s path/to/socket/file -a 123456
 rrtop -c blackbird
 ```
 
-### Clone, build, run (linux):
+### Install
+
+Fetch the [latest release][]
+
+#### Install (linux x86_64)
+
+```fish
+sudo wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-x86_64-unknown-linux-gnu -O /usr/local/bin/rrtop
+sudo chmod +x /usr/local/bin/rrtop
+```
+
+#### Install (linux arm64)
+
+```fish
+sudo wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-aarch64-unknown-linux-gnu -O /usr/local/bin/rrtop
+sudo chmod +x /usr/local/bin/rrtop
+```
+
+#### Install (aarch64-linux-android, termux, tested on Gemini PDA)
+
+```fish
+wget https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-aarch64-linux-android -O $HOME/../usr/bin/rrtop
+chmod +x $HOME/../usr/bin/rrtop
+```
+
+#### Install (windows x86_64)
+Fetch windows version: [windows release][]
+
+#### Clone, self-build, run (linux):
 
 ```fish
 git clone git@github.com:wojciech-zurek/rrtop.git
@@ -192,3 +220,5 @@ rrtop --help
 MIT see [LICENSE][] for the full license text.
 
 [LICENSE]: https://github.com/wojciech-zurek/rrtop/blob/master/LICENSE
+[latest release]: https://github.com/wojciech-zurek/rrtop/releases
+[windows release]: https://github.com/wojciech-zurek/rrtop/releases/download/v0.1.0/rrtop-x86_64-pc-windows-gnu.exe
